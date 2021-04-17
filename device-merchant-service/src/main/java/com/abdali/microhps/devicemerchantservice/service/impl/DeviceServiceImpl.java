@@ -60,12 +60,12 @@ public class DeviceServiceImpl implements DeviceService {
 	}
 	
 	@Override
-	public DeviceDto findByDeviceNumber(Integer id) {
-		if (id == null) {
+	public DeviceDto findByDeviceNumber(String deviceNumber) {
+		if (deviceNumber == null) {
 	      return null;
 	    }
-		return deviceRepository.findDeviceByDeviceNumber(id).map(DeviceDto::fromEntity).orElseThrow(() -> 
-			new NoDataFoundException("Aucune Device Found With Id = " + id)
+		return deviceRepository.findDeviceByDeviceNumber(deviceNumber).map(DeviceDto::fromEntity).orElseThrow(() -> 
+			new NoDataFoundException("Aucune Device Found With Id = " + deviceNumber)
 		);
 	}
 	

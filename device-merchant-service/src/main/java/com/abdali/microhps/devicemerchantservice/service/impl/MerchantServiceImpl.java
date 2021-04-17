@@ -76,7 +76,7 @@ public class MerchantServiceImpl implements MerchantService {
 	}
 	
 	@Override
-	public List<MerchantDto> findAllMerchantByIdDevice(Long idDevice) {
+	public List<MerchantDto> findAllMerchantByIdDevice(Integer idDevice) {
 		return merchantRepository.findAllByDeviceId(idDevice).stream().map(MerchantDto::fromEntity).collect(Collectors.toList());
 	}
 	

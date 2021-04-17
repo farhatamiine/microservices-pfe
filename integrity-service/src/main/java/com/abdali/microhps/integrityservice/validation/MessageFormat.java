@@ -4,6 +4,8 @@ import static com.abdali.microhps.integrityservice.utils.Constants.BAG_NUMBER;
 import static com.abdali.microhps.integrityservice.utils.Constants.COINS_INDICATOR;
 import static com.abdali.microhps.integrityservice.utils.Constants.DEVICE_NUMBER;
 import static com.abdali.microhps.integrityservice.utils.Constants.DROP_INDICATOR;
+import static com.abdali.microhps.integrityservice.utils.Constants.MESSAGE_INVALID_CODE;
+import static com.abdali.microhps.integrityservice.utils.Constants.MESSAGE_INVALID_DESCRIPTION;
 import static com.abdali.microhps.integrityservice.utils.Constants.NOTES_INDICATOR;
 import static com.abdali.microhps.integrityservice.utils.Constants.REMOVAL_INDICATOR;
 import static com.abdali.microhps.integrityservice.utils.Constants.TRANSACTION_ID_LENGTH;
@@ -17,7 +19,7 @@ import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 
-import com.abdali.microhps.integrityservice.exceptions.MessageFormatException;
+import com.abdali.microhps.integrityservice.exceptions.IntegrityException;
 
 
 //- step 1 : Message indicator is not recognised or not present. -- must equal D || R || V
@@ -44,8 +46,6 @@ public class MessageFormat {
 			String transmitionDate, 
 			String transactionId) {
 		
-		Boolean messageReturn = false;
-		
 		// STEP 1 - check Indicator. -- it can be one of others status ...
 		if(indicator == DROP_INDICATOR || indicator == REMOVAL_INDICATOR || indicator == VERIFICATION_INDICATOR) {		
 			// STEP 3 && STEP 4 - check for Device Number and bag Number.
@@ -58,24 +58,18 @@ public class MessageFormat {
 					try {
 						Instant.from(formatter.parse(transmitionDate));
 					} catch (Exception e) {
-//			        throw new NoDataFoundException("date time format invalid " + matcher.matches() + TransmitionDate);
-						throw new MessageFormatException();
+						throw new IntegrityException(MESSAGE_INVALID_CODE, MESSAGE_INVALID_DESCRIPTION);
 					} 
 					// STEP 8 - check for transaction ID - we need to check just if its present.
 		        	if(transactionId.length() == TRANSACTION_ID_LENGTH) {
-		        		return messageReturn = true;
+		        		return true;
 		        	}
-//		        	throw new NoDataFoundException("Transaction Id not present " + TransactionId);
-		        	throw new MessageFormatException();
+					throw new IntegrityException(MESSAGE_INVALID_CODE, MESSAGE_INVALID_DESCRIPTION);
 				}
-//				throw new NoDataFoundException("There is problem with Container Indicator ");
-				throw new MessageFormatException();
+				throw new IntegrityException(MESSAGE_INVALID_CODE, MESSAGE_INVALID_DESCRIPTION);
 			}  
-//			throw new NoDataFoundException(" device number " + Device.length() + "____");
-			throw new MessageFormatException();
-		} else { 
-//			throw new NoDataFoundException("the Indicator is not valid");
-			throw new MessageFormatException();
+			throw new IntegrityException(MESSAGE_INVALID_CODE, MESSAGE_INVALID_DESCRIPTION);
 		}
+		throw new IntegrityException(MESSAGE_INVALID_CODE, MESSAGE_INVALID_DESCRIPTION);
 	}
 }

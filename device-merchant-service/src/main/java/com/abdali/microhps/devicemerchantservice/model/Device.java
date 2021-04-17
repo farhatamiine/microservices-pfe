@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "device")
 public class Device extends AuditEntity {
 
-	private Integer deviceNumber;
+	private String deviceNumber;
 
 	@OneToMany(mappedBy = "device")
 	private List<Merchant> merchants;

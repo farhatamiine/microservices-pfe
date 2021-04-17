@@ -11,7 +11,7 @@ public interface DeviceService {
 	
 	DeviceDto save(DeviceDto deviceDto);
 	
-	DeviceDto findByDeviceNumber(Integer id);
+	DeviceDto findByDeviceNumber(String deviceNumber);
 	
 	DeviceDto findById(Integer id);
 }

@@ -1,8 +1,12 @@
 package com.abdali.microhps.integrityservice.validation;
 
+import static com.abdali.microhps.integrityservice.utils.Constants.MESSAGE_VERIFICATION_CODE;
+import static com.abdali.microhps.integrityservice.utils.Constants.MESSAGE_VERIFICATION_DESCRIPTION;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.abdali.microhps.integrityservice.exceptions.IntegrityException;
 import com.abdali.microhps.integrityservice.proxy.DropMessageProxy;
 
 //- Verification message without drops
@@ -25,6 +29,9 @@ public class TransactionVerify {
 	
 	
 	public Boolean transactionVerification(String bagNumber) {
-		return dropMessageProxy.verifyTransactionForIntegrityBagNumber(bagNumber);
+		if(dropMessageProxy.verifyTransactionForIntegrityBagNumber(bagNumber)) {			
+			return true;
+		}
+		throw new IntegrityException(MESSAGE_VERIFICATION_CODE, MESSAGE_VERIFICATION_DESCRIPTION);
 	}
 }

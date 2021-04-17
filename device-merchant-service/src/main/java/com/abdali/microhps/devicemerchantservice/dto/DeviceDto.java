@@ -13,7 +13,7 @@ import lombok.Data;
 public class DeviceDto {
 
 	private Integer id;
-	private Integer deviceNumber;
+	private String deviceNumber;
 
 	@JsonIgnore
 	private List<MerchantDto> merchants;

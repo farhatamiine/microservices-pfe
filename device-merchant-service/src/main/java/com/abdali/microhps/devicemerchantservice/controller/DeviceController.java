@@ -36,7 +36,7 @@ public class DeviceController {
     }
     
     @GetMapping("/devices/{deviceId}")
-    public DeviceDto getDeviceById(@PathVariable("deviceId") Integer Id) {
-        return deviceService.findByDeviceNumber(Id);
+    public DeviceDto getDeviceById(@PathVariable("deviceId") String deviceNumber) {
+        return deviceService.findByDeviceNumber(deviceNumber);
     }
 }

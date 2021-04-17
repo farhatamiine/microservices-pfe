@@ -5,28 +5,22 @@ import static com.abdali.microhps.integrityservice.utils.Constants.MERCHANT_NUMB
 import static com.abdali.microhps.integrityservice.utils.Constants.REMOVAL_INDICATOR;
 import static com.abdali.microhps.integrityservice.utils.Constants.VERIFICATION_INDICATOR;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import static com.abdali.microhps.integrityservice.utils.Constants.MESSAGE_INVALID_CODE;
+import static com.abdali.microhps.integrityservice.utils.Constants.MESSAGE_INVALID_DESCRIPTION;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.abdali.microhps.integrityservice.dto.DenominationDto;
-import com.abdali.microhps.integrityservice.dto.DropTransactionDto;
-import com.abdali.microhps.integrityservice.dto.RemovalDropTransactionDto;
-import com.abdali.microhps.integrityservice.dto.VerificationTransactionDto;
+import com.abdali.microhps.integrityservice.exceptions.IntegrityException;
 import com.abdali.microhps.integrityservice.exceptions.NoDataFoundException; 
 import com.abdali.microhps.integrityservice.proxy.DropMessageProxy;
 import com.abdali.microhps.integrityservice.service.TransactionService;
 import com.abdali.microhps.integrityservice.validation.MerchantNotFound;
+import com.abdali.microhps.integrityservice.validation.MerchantNotMapped;
 import com.abdali.microhps.integrityservice.validation.MessageFormat;
+import com.abdali.microhps.integrityservice.validation.TransactionVerify;
  
 
 @RestController
@@ -36,19 +30,25 @@ public class IntegrityController {
 	private MerchantNotFound merchantNotFound;
 	private TransactionService transactionService;
 	private DropMessageProxy dropMessageProxy;
+	private MerchantNotMapped merchantNotMapped;
+	private TransactionVerify transactionVerify;
 	
 	@Autowired
 	public IntegrityController(
 			MessageFormat messageFormat,
 			MerchantNotFound merchantNotFound,
 			TransactionService transactionService,
-			DropMessageProxy dropMessageProxy
+			DropMessageProxy dropMessageProxy,
+			MerchantNotMapped merchantNotMapped,
+			TransactionVerify transactionVerify
 			) {
 		// TODO Auto-generated constructor stub
 		this.messageFormat = messageFormat;
 		this.merchantNotFound = merchantNotFound;
 		this.transactionService = transactionService;
 		this.dropMessageProxy = dropMessageProxy;
+		this.merchantNotMapped = merchantNotMapped;
+		this.transactionVerify = transactionVerify;
 	}
 	
 	
@@ -87,13 +87,14 @@ public class IntegrityController {
 			
 			// GLOBAL STEPS 1 : INVALID MESSAGE FORMAT .
 			if(messageFormat.checkMessageFormat(indicator, merchantNumber, deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId)) {
-				// GLOBAL STEPS 2 : MERCHANT NOT FOUND .
-//				if(merchantNotFound.checkMerchantNotFound(data[1])) {
-//					message_format = true;
-//				}
+				// GLOBAL STEPS 2 & 3 & 4 : MERCHANT NOT FOUND - NOT MAPPED - TRANSACTION VERIFY.
+				if(merchantNotFound.checkMerchantNotFound(merchantNumber) && merchantNotMapped.simpleMerchant(merchantNumber, deviceNumber) && transactionVerify.transactionVerification(bagNumber)) {
+					// return message
+					return true;
+				}
 			}
-		} else if(indicator == REMOVAL_INDICATOR) { 
 			
+		} else if(indicator == REMOVAL_INDICATOR) { 
 			merchantNumber = null; 
 			deviceNumber = data[1];
 			bagNumber = data[2]; 
@@ -119,14 +120,5 @@ public class IntegrityController {
 		}
 		return message_format;
 	}
-	
-	@GetMapping("/verify/merchant/{merchantNumber}/bag/{bagNumber}/tranasction/{transactionId}/date/{datetime}")
-	public Boolean testProxy(@PathVariable("merchantNumber") Long merchantNumber, 
-	@PathVariable("bagNumber") String bagNumber, 
-	@PathVariable("transactionId") Integer transactionId,
-	@PathVariable("datetime") String transmitionDate) {
-		return dropMessageProxy.getListDropMessages(merchantNumber, bagNumber, transactionId, transmitionDate);
-	}
-
 	
 }

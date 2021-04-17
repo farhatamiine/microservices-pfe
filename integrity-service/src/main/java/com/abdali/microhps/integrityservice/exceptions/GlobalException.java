@@ -1,8 +1,5 @@
 package com.abdali.microhps.integrityservice.exceptions;
 
-import static com.abdali.microhps.integrityservice.utils.Constants.MESSAGE_INVALID_CODE;
-import static com.abdali.microhps.integrityservice.utils.Constants.MESSAGE_INVALID_DESCRIPTION;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -40,10 +37,10 @@ public class GlobalException {
 //	}
 	
 	@ExceptionHandler
-	public ResponseEntity<IntegrityMessage> handleMessageFormatException (MessageFormatException ex) {
+	public ResponseEntity<IntegrityMessage> handleMessageFormatException (IntegrityException ex) {
 		IntegrityMessage eObject = new IntegrityMessage();
-		eObject.setStatus(MESSAGE_INVALID_CODE);
-		eObject.setMessage(MESSAGE_INVALID_DESCRIPTION);
+		eObject.setStatus(ex.getErrorCode());
+		eObject.setMessage(ex.getMessage());
 		return new ResponseEntity<IntegrityMessage>(eObject, HttpStatus.OK);
 	}
 }

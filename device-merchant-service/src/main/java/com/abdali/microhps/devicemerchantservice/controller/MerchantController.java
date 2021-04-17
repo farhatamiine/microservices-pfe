@@ -41,7 +41,7 @@ public class MerchantController {
 	}
 	
 	@GetMapping(value = "/merchants/device/{device}")
-	public List<MerchantDto> getMerchantByDevice(@PathVariable Long deviceNumber) {
+	public List<MerchantDto> getMerchantByDevice(@PathVariable Integer deviceNumber) {
 		return merchantService.findAllMerchantByIdDevice(deviceNumber);
 	}
 	
@@ -51,6 +51,16 @@ public class MerchantController {
 	}
 	
 
+	@GetMapping(value = "/merchants/merchant-number/{merchantNumber}/device-number/{deviceNumber}")
+	public Boolean relationDeviceMerchant(@PathVariable Long merchantNumber, @PathVariable Integer deviceNumber) {
+		MerchantDto merchant = merchantService.findByMerchantNumber(merchantNumber);
+
+		if(merchant.getDevice().getDeviceNumber().equals(deviceNumber)) {			
+			return true;
+		}
+		return false;
+	}
+	
 	@GetMapping("/merchant-device/status/{merchantNumber}")
 	public Boolean checkMerchantState(@PathVariable("merchantNumber") Long merchantNumber) {
 		return merchantService.merchantCheckStatus(merchantNumber, POWERCARD_MERCHANT_STATUS);

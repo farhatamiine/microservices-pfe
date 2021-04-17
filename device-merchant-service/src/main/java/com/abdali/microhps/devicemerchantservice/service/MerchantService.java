@@ -16,5 +16,5 @@ public interface MerchantService {
 	
 	List<MerchantDto> findAllMerchantByIdDevice(Long idDevice);
 	
-	Integer merchantCheckStatus(Long merchantNumber, List<String> status);
+	Boolean merchantCheckStatus(Long merchantNumber, List<String> status);
 }

@@ -57,6 +57,14 @@ public class DropController {
 		return dropMessageService.findByBagNumber(Id);
 	}
 	
+	@GetMapping("/dropmessage/bag/{bagNumber}")
+	public Boolean verifyTransactionForIntegrityBagNumber(@PathVariable("bagNumber") String Id) {
+		if(dropMessageService.findByBagNumber(Id).isEmpty()) {
+			return false;
+		}
+		return true;
+	}
+	
 	@GetMapping("dropmessage/merchant/{merchantNumber}/bag/{bagNumber}/tranasction/{transactionId}/date/{datetime}")
 	public Boolean verifyMessage(
 			@PathVariable("merchantNumber") Long merchantNumber, 

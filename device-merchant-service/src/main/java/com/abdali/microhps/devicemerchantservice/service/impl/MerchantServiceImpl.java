@@ -86,13 +86,15 @@ public class MerchantServiceImpl implements MerchantService {
 	}
 
 	@Override
-	public Integer merchantCheckStatus(Long merchantNumber, List<String> status) {
+	public Boolean merchantCheckStatus(Long merchantNumber, List<String> status) {
 		if (merchantNumber == null) {
-			log.warn("ID merchant is NULL");
-			return Integer.valueOf(1);
+//			log.warn("ID merchant is NULL");
+//			return Integer.valueOf(1);
 		}
-//      log.warn(status);
-		return merchantRepository.merchantStatus(merchantNumber, status);
+		if(merchantRepository.merchantStatus(merchantNumber, status) == 0) {
+			return false;
+		};
+		return true;
 	}
 
 }

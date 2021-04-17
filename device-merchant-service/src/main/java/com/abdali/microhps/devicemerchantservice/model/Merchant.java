@@ -1,6 +1,7 @@
 package com.abdali.microhps.devicemerchantservice.model;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -23,8 +24,11 @@ import lombok.Setter;
 public class Merchant extends AuditEntity {
 	
 	private Long merchantNumber;
+	
 	private String merchantName;
-	private String status;
+	
+	@Column(name="status")
+	private MerchantStatus status;
 
 	@ManyToOne
 	@JoinColumn(name = "iddevice")

@@ -1,6 +1,7 @@
 package com.abdali.microhps.devicemerchantservice.dto;
 
 import com.abdali.microhps.devicemerchantservice.model.Merchant;
+import com.abdali.microhps.devicemerchantservice.model.MerchantStatus;
 
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +13,7 @@ public class MerchantDto {
 	private Integer id;
 	private Long merchantNumber;
 	private String merchantName;
-	private String status;
+	private MerchantStatus status;
 	private DeviceDto device;
 	
 	public static MerchantDto fromEntity(Merchant merchant) {

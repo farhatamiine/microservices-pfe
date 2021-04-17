@@ -1,6 +1,9 @@
 package com.abdali.microhps.integrityservice.validation;
  
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.abdali.microhps.integrityservice.proxy.MerchantDeviceProxy;
  
 
 //- Merchant not found: this validation fails when the merchant number meet any of the following conditions
@@ -12,21 +15,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class MerchantNotFound {
 	
-//	@Autowired
-//	private MerchantService merchantService;
-//	
-//	public Boolean checkMerchantNotFound(String Merchant) {
-//		Boolean messageReturn = false; 
-//		
-//		int value = merchantService.merchantCheckStatus(Long.valueOf(Merchant), POWERCARD_OUTLET_STATUS);
-////		return "value = " + value + POWERCARD_OUTLET_STATUS;
-//		if(value == 0) {
-//			throw new NoDataFoundException("Merchant Not Found " + Merchant);
-//		} else {
-//			messageReturn = true;
-//		}
-//		
-//		return messageReturn;
-//	}
+	private MerchantDeviceProxy merchantDeviceProxy;
+	
+	@Autowired
+	public MerchantNotFound(MerchantDeviceProxy merchantDeviceProxy) {
+		this.merchantDeviceProxy = merchantDeviceProxy;
+	}
+
+	public Boolean checkMerchantNotFound(String Merchant) {
+		
+		return merchantDeviceProxy.checkMerchantState(Long.valueOf(Merchant));
+	}
 
 }

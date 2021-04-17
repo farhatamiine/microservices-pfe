@@ -9,6 +9,9 @@ import static com.abdali.microhps.integrityservice.utils.Constants.REMOVAL_INDIC
 import static com.abdali.microhps.integrityservice.utils.Constants.TRANSACTION_ID_LENGTH;
 import static com.abdali.microhps.integrityservice.utils.Constants.VERIFICATION_INDICATOR;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,37 +35,38 @@ public class MessageFormat {
 //	private DateTimeFormatter dateFormatter;
 	
 	public Boolean checkMessageFormat(
-			char Indicator, 
-			String MerchantNumber, 
-			String Device, 
-			String Bag, 
-			char Container, 
-			String Sequence, 
-			String TransmitionDate, 
-			String TransactionId) {
+			char indicator, 
+			Long merchantNumber, 
+			String deviceNumber, 
+			String bagNumber, 
+			char containerType, 
+			int sequenceNumber, 
+			String transmitionDate, 
+			String transactionId) {
 		
 		Boolean messageReturn = false;
 		
 		// STEP 1 - check Indicator. -- it can be one of others status ...
-		if(Indicator == DROP_INDICATOR || Indicator == REMOVAL_INDICATOR || Indicator == VERIFICATION_INDICATOR) {		
-			// STEP 3 && STEP 4 - check for Device Number and bag NUmber.
-			if(Device.length() == DEVICE_NUMBER && Bag.length() == BAG_NUMBER) {
+		if(indicator == DROP_INDICATOR || indicator == REMOVAL_INDICATOR || indicator == VERIFICATION_INDICATOR) {		
+			// STEP 3 && STEP 4 - check for Device Number and bag Number.
+			if(deviceNumber.length() == DEVICE_NUMBER && bagNumber.length() == BAG_NUMBER) {
 				// STEP 5 - check for container
-				if(Container == NOTES_INDICATOR || Container == COINS_INDICATOR) {	
-					// STEP 7 - verify date using expression not -- TODO : change this validation
-					String regex = "^[0-9]{4}-[0-9]{2}-[0-9]{4}:[0-9]{2}:[0-9]{2}:[0-9]{5}$";
-			        Pattern pattern = Pattern.compile(regex);
-			        Matcher matcher = pattern.matcher((CharSequence)TransmitionDate);  
-			        if(matcher.matches()) {		
-			        	// STEP 8 - check for transaction ID - we need to check just if its present.
-			        	if(TransactionId.length() == TRANSACTION_ID_LENGTH) {
-			        		return messageReturn = true;
-			        	}
-//			        	throw new NoDataFoundException("Transaction Id not present " + TransactionId);
-			        	throw new MessageFormatException();
-			        } 
+				if(containerType == NOTES_INDICATOR || containerType == COINS_INDICATOR) {	
+					final DateTimeFormatter formatter = DateTimeFormatter
+			                .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
+			                .withZone(ZoneId.systemDefault());
+					try {
+						Instant.from(formatter.parse(transmitionDate));
+					} catch (Exception e) {
 //			        throw new NoDataFoundException("date time format invalid " + matcher.matches() + TransmitionDate);
-			        throw new MessageFormatException();
+						throw new MessageFormatException();
+					} 
+					// STEP 8 - check for transaction ID - we need to check just if its present.
+		        	if(transactionId.length() == TRANSACTION_ID_LENGTH) {
+		        		return messageReturn = true;
+		        	}
+//		        	throw new NoDataFoundException("Transaction Id not present " + TransactionId);
+		        	throw new MessageFormatException();
 				}
 //				throw new NoDataFoundException("There is problem with Container Indicator ");
 				throw new MessageFormatException();

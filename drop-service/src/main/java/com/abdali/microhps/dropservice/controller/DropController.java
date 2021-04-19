@@ -43,23 +43,23 @@ public class DropController {
 	}
 	
 	@GetMapping("/dropmessage/merchant/{merchantNumber}")
-	public List<DropMessageDto> getMessageByMerchantNumber(@PathVariable("merchantNumber") Long Id) {
-		return dropMessageService.findByMerchantNumber(Id);
+	public List<DropMessageDto> getMessageByMerchantNumber(@PathVariable("merchantNumber") Long merchantNumber) {
+		return dropMessageService.findByMerchantNumber(merchantNumber);
 	}
 	
 	@GetMapping("/dropmessage/device/{deviceNumber}")
-	public List<DropMessageDto> getMessageByDeviceNumber(@PathVariable("deviceNumber") String Id) {
-		return dropMessageService.findByDeviceNumber(Id);
+	public List<DropMessageDto> getMessageByDeviceNumber(@PathVariable("deviceNumber") String deviceNumber) {
+		return dropMessageService.findByDeviceNumber(deviceNumber);
 	}
 
 	@GetMapping("/dropmessage/bag/{bagNumber}")
-	public List<DropMessageDto> getMessageByBagNumber(@PathVariable("bagNumber") String Id) {
-		return dropMessageService.findByBagNumber(Id);
+	public List<DropMessageDto> getMessageByBagNumber(@PathVariable("bagNumber") String bagNumber) {
+		return dropMessageService.findByBagNumber(bagNumber);
 	}
 	
-	@GetMapping("/dropmessage/bag/{bagNumber}")
-	public Boolean verifyTransactionForIntegrityBagNumber(@PathVariable("bagNumber") String Id) {
-		if(dropMessageService.findByBagNumber(Id).isEmpty()) {
+	@GetMapping("/dropmessage/verify/bag/{bagNumber}")
+	public Boolean verifyTransactionForIntegrityBagNumber(@PathVariable("bagNumber") String bagNumber) {
+		if(dropMessageService.findByBagNumber(bagNumber).isEmpty()) {
 			return false;
 		}
 		return true;

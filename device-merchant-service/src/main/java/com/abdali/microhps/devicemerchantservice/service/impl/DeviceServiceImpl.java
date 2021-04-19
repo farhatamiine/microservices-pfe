@@ -42,7 +42,6 @@ public class DeviceServiceImpl implements DeviceService {
 		List<String> errors = DeviceValidation.validate(deviceDto);
 		
 	    if (!errors.isEmpty()) {
-	      log.error("Article is not valid {}", deviceDto);
 	      throw new InvalidEntityException("Device n'est pas valide", errors);
 	    }
 	    

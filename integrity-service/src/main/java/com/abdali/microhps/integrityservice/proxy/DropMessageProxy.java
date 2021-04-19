@@ -15,6 +15,6 @@ public interface DropMessageProxy {
 			@PathVariable("datetime") String transmitionDate);
 	
 	
-	@GetMapping("/dropmessage/bag/{bagNumber}")
+	@GetMapping("/dropmessage/verify/bag/{bagNumber}")
 	public Boolean verifyTransactionForIntegrityBagNumber(@PathVariable("bagNumber") String bagNumber);
 }

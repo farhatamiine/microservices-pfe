@@ -12,6 +12,7 @@ import com.abdali.microhps.devicemerchantservice.exceptions.types.InvalidEntityE
 import com.abdali.microhps.devicemerchantservice.exceptions.types.NoDataFoundException;
 import com.abdali.microhps.devicemerchantservice.model.Device;
 import com.abdali.microhps.devicemerchantservice.model.Merchant;
+import com.abdali.microhps.devicemerchantservice.model.MerchantStatus;
 import com.abdali.microhps.devicemerchantservice.repository.DeviceRepository;
 import com.abdali.microhps.devicemerchantservice.repository.MerchantRepository;
 import com.abdali.microhps.devicemerchantservice.service.MerchantService;
@@ -70,9 +71,7 @@ public class MerchantServiceImpl implements MerchantService {
 		if(merchantNumber == null) {
 			return null;
 		}
-		return merchantRepository.findByMerchantNumber(merchantNumber).map(MerchantDto::fromEntity).orElseThrow(() ->
-			new NoDataFoundException("Aucune Merchant Found With Id = " + merchantNumber)
-		);
+		return merchantRepository.findByMerchantNumber(merchantNumber).map(MerchantDto::fromEntity).orElse(null);
 	}
 	
 	@Override
@@ -86,7 +85,7 @@ public class MerchantServiceImpl implements MerchantService {
 	}
 
 	@Override
-	public Boolean merchantCheckStatus(Long merchantNumber, List<String> status) {
+	public Boolean merchantCheckStatus(Long merchantNumber, MerchantStatus status) {
 		if (merchantNumber == null) {
 //			log.warn("ID merchant is NULL");
 //			return Integer.valueOf(1);

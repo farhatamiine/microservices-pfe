@@ -1,7 +1,5 @@
 package com.abdali.microhps.devicemerchantservice.controller;
 
-import static com.abdali.microhps.devicemerchantservice.utils.Constants.POWERCARD_MERCHANT_STATUS;
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abdali.microhps.devicemerchantservice.dto.MerchantDto;
+import com.abdali.microhps.devicemerchantservice.model.MerchantStatus;
 import com.abdali.microhps.devicemerchantservice.service.MerchantService;
  
 @RestController
@@ -52,10 +51,10 @@ public class MerchantController {
 	
 
 	@GetMapping(value = "/merchants/merchant-number/{merchantNumber}/device-number/{deviceNumber}")
-	public Boolean relationDeviceMerchant(@PathVariable Long merchantNumber, @PathVariable Integer deviceNumber) {
+	public Boolean relationDeviceMerchant(@PathVariable Long merchantNumber, @PathVariable String deviceNumber) {
 		MerchantDto merchant = merchantService.findByMerchantNumber(merchantNumber);
 
-		if(merchant.getDevice().getDeviceNumber().equals(deviceNumber)) {			
+		if(merchant != null && merchant.getDevice().getDeviceNumber().equals(deviceNumber)) {			
 			return true;
 		}
 		return false;
@@ -63,7 +62,7 @@ public class MerchantController {
 	
 	@GetMapping("/merchant-device/status/{merchantNumber}")
 	public Boolean checkMerchantState(@PathVariable("merchantNumber") Long merchantNumber) {
-		return merchantService.merchantCheckStatus(merchantNumber, POWERCARD_MERCHANT_STATUS);
+		return merchantService.merchantCheckStatus(merchantNumber, MerchantStatus.activated);
 	}
 	
 	

@@ -53,23 +53,23 @@ public class MessageFormat {
 				// STEP 5 - check for container
 				if(containerType == NOTES_INDICATOR || containerType == COINS_INDICATOR) {	
 					final DateTimeFormatter formatter = DateTimeFormatter
-			                .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
+			                .ofPattern("yyyy-MM-ddHH:mm:ss:SSSSSS")
 			                .withZone(ZoneId.systemDefault());
 					try {
 						Instant.from(formatter.parse(transmitionDate));
 					} catch (Exception e) {
-						throw new IntegrityException(MESSAGE_INVALID_CODE, MESSAGE_INVALID_DESCRIPTION);
+						throw new IntegrityException(MESSAGE_INVALID_CODE, "error date time");
 					} 
 					// STEP 8 - check for transaction ID - we need to check just if its present.
 		        	if(transactionId.length() == TRANSACTION_ID_LENGTH) {
 		        		return true;
 		        	}
-					throw new IntegrityException(MESSAGE_INVALID_CODE, MESSAGE_INVALID_DESCRIPTION);
+					throw new IntegrityException(MESSAGE_INVALID_CODE, "error transaction id");
 				}
-				throw new IntegrityException(MESSAGE_INVALID_CODE, MESSAGE_INVALID_DESCRIPTION);
+				throw new IntegrityException(MESSAGE_INVALID_CODE, "error notes or coins");
 			}  
-			throw new IntegrityException(MESSAGE_INVALID_CODE, MESSAGE_INVALID_DESCRIPTION);
+			throw new IntegrityException(MESSAGE_INVALID_CODE, "error device or bag number");
 		}
-		throw new IntegrityException(MESSAGE_INVALID_CODE, MESSAGE_INVALID_DESCRIPTION);
+		throw new IntegrityException(MESSAGE_INVALID_CODE, "error indicator");
 	}
 }

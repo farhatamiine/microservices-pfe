@@ -25,7 +25,7 @@ public class DropMessage extends AuditEntity {
 
 	@Column(columnDefinition = "char")
 	private Character indicator;
-	@Column(unique=true)
+	@Column(unique=false)
 	private Integer transactionId;
 	@Column(columnDefinition = "varchar(15)")
 	private String deviceNumber;
@@ -33,17 +33,18 @@ public class DropMessage extends AuditEntity {
 	private String bagNumber; 
 	@Column(columnDefinition = "char")
 	private Character containerType;
-
 	private Instant transmitionDate; 
-	
 	private Long merchantNumber;
-	
+	@Column(length=20)
+	private String depositReference;
+	@Column(columnDefinition = "smallint")
+	private Integer sequenceNumber;
 	private Integer totalCoins;
 	private Integer totalNotes;
 	private BigDecimal totalAmount;
 	@Column(columnDefinition = "varchar(3)")
 	private String currency;
-	@Column(columnDefinition = "smallint")
+	@Column(columnDefinition = "int")
 	private Integer canisterNumber;
 	
 	@Embedded

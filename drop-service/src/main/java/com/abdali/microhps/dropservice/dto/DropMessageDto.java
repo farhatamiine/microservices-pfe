@@ -2,7 +2,7 @@ package com.abdali.microhps.dropservice.dto;
 
 import java.math.BigDecimal;
 import java.time.Instant;
- 
+
 import com.abdali.microhps.dropservice.model.DropMessage;
 
 import lombok.Builder;
@@ -25,6 +25,8 @@ public class DropMessageDto {
 	private String currency;
 	private Integer canisterNumber;
 	private DenominationDto denomination;
+	private String depositReference;
+	private Integer sequenceNumber;
 	
 	public static DropMessageDto fromEntity(DropMessage dropMessage) {
 		if(dropMessage == null)
@@ -38,6 +40,8 @@ public class DropMessageDto {
 				.bagNumber(dropMessage.getBagNumber())
 				.containerType(dropMessage.getContainerType())
 				.transmitionDate(dropMessage.getTransmitionDate())
+				.depositReference(dropMessage.getDepositReference())
+				.sequenceNumber(dropMessage.getSequenceNumber())
 				.merchantNumber(dropMessage.getMerchantNumber())
 				.totalCoins(dropMessage.getTotalCoins())
 				.totalNotes(dropMessage.getTotalNotes())
@@ -59,6 +63,8 @@ public class DropMessageDto {
 		dropMessage.setBagNumber(dropMessageDto.getBagNumber());
 		dropMessage.setContainerType(dropMessageDto.getContainerType());
 		dropMessage.setTransmitionDate(dropMessageDto.getTransmitionDate());
+		dropMessage.setDepositReference(dropMessageDto.getDepositReference());
+		dropMessage.setSequenceNumber(dropMessageDto.getSequenceNumber());
 		dropMessage.setMerchantNumber(dropMessageDto.getMerchantNumber());
 		dropMessage.setTotalCoins(dropMessageDto.getTotalCoins());
 		dropMessage.setTotalNotes(dropMessageDto.getTotalNotes());

@@ -1,4 +1,4 @@
-package com.abdali.microhps.dropservice.controller;
+package com.abdali.microhps.removalservice.controller;
 
 import java.math.BigDecimal;
 import java.net.URLDecoder;
@@ -15,26 +15,26 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.abdali.microhps.dropservice.dto.DenominationDto;
-import com.abdali.microhps.dropservice.dto.DropMessageDto;
-import com.abdali.microhps.dropservice.model.Denomination;
-import com.abdali.microhps.dropservice.model.MessageRequest;
-import com.abdali.microhps.dropservice.service.DropMessageService;
+import com.abdali.microhps.removalservice.dto.DenominationDto;
+import com.abdali.microhps.removalservice.dto.RemovalMessageDto;
+import com.abdali.microhps.removalservice.model.Denomination;
+import com.abdali.microhps.removalservice.model.MessageRequest;
+import com.abdali.microhps.removalservice.service.RemovalMessageService;
 
 @RestController
-public class DropController {
+public class RemovalController {
 	
-	DropMessageService dropMessageService;
+	RemovalMessageService removalMessageService;
 	
 	@Autowired
-	public DropController(
-			DropMessageService dropMessageService
+	public RemovalController(
+			RemovalMessageService removalMessageService
 			) {
-		this.dropMessageService = dropMessageService;
+		this.removalMessageService = removalMessageService;
 	}
 
-	@PostMapping("/dropmessage/new")
-	public DropMessageDto addMessage(@RequestBody MessageRequest messageRequest) throws Exception {
+	@PostMapping("/removalmessage/new")
+	public RemovalMessageDto addMessage(@RequestBody MessageRequest messageRequest) throws Exception {
 		
 		String message = URLDecoder.decode(messageRequest.getMessage(), StandardCharsets.UTF_8);
 		
@@ -42,7 +42,7 @@ public class DropController {
 		
 		Instant transmitionDate = null; 
 				
-//		 -- Check for drop message and verify Merchant Number -- contain just numbers with 15 in length.
+//		 -- Check for removal message and verify Merchant Number -- contain just numbers with 15 in length.
 		Denomination denomination = new Denomination();	
 		if(messageArray[14].contains("=")) {
 			denomination.setDenomination2(Integer.parseInt(messageArray[14].split("=")[1]));
@@ -99,7 +99,7 @@ public class DropController {
 //					throw new IntegrityException(MESSAGE_INVALID_CODE, "error date time");
 		} 
 				
-		DropMessageDto dropMessageDto = DropMessageDto.builder()
+		RemovalMessageDto removalMessageDto = RemovalMessageDto.builder()
 				.indicator(messageArray[0].charAt(0)) 
 				.merchantNumber(Long.parseLong(messageArray[1]))
 				.deviceNumber(messageArray[2])
@@ -116,60 +116,33 @@ public class DropController {
 				.totalCoins(Integer.parseInt(messageArray[13]))
 				.denomination(DenominationDto.fromEntity(denomination))
 				.build();
-		
-//		if(true) {
-//			throw new Exception("-----------" + dropMessageDto + "______________" + Integer.parseInt(messageArray[5]) + "_____" + messageArray[7]);
-//		}
-		
-		return dropMessageService.save(dropMessageDto);
+				
+		return removalMessageService.save(removalMessageDto);
 	}
 	
-	@GetMapping("/dropmessage")
-	public List<DropMessageDto> getMessages() {
-		return dropMessageService.findAll();
+	@GetMapping("/removalmessage")
+	public List<RemovalMessageDto> getMessages() {
+		return removalMessageService.findAll();
 	}
 	
-	@GetMapping("/dropmessage/{messageId}")
-	public DropMessageDto getMessageById(@PathVariable("messageId") Long Id) {
-		return dropMessageService.findById(Id);
-	}
-	
-	@GetMapping("/dropmessage/merchant/{merchantNumber}")
-	public List<DropMessageDto> getMessageByMerchantNumber(@PathVariable("merchantNumber") Long merchantNumber) {
-		return dropMessageService.findByMerchantNumber(merchantNumber);
-	}
-	
-	@GetMapping("/dropmessage/device/{deviceNumber}")
-	public List<DropMessageDto> getMessageByDeviceNumber(@PathVariable("deviceNumber") String deviceNumber) {
-		return dropMessageService.findByDeviceNumber(deviceNumber);
+	@GetMapping("/removalmessage/{messageId}")
+	public RemovalMessageDto getMessageById(@PathVariable("messageId") Long Id) {
+		return removalMessageService.findById(Id);
 	}
 
-	@GetMapping("/dropmessage/bag/{bagNumber}")
-	public List<DropMessageDto> getMessageByBagNumber(@PathVariable("bagNumber") String bagNumber) {
-		return dropMessageService.findByBagNumber(bagNumber);
+	@GetMapping("/removalmessage/device/{deviceNumber}")
+	public List<RemovalMessageDto> getMessageByDeviceNumber(@PathVariable("deviceNumber") String deviceNumber) {
+		return removalMessageService.findByDeviceNumber(deviceNumber);
+	}
+
+	@GetMapping("/removalmessage/bag/{bagNumber}")
+	public List<RemovalMessageDto> getMessageByBagNumber(@PathVariable("bagNumber") String bagNumber) {
+		return removalMessageService.findByBagNumber(bagNumber);
 	}
 	
-	@GetMapping("/dropmessage/verify/bag/{bagNumber}")
+	@GetMapping("/removalmessage/verify/bag/{bagNumber}")
 	public Boolean verifyTransactionForIntegrityBagNumber(@PathVariable("bagNumber") String bagNumber) {
-		if(dropMessageService.findByBagNumber(bagNumber).isEmpty()) {
-			return false;
-		}
-		return true;
-	}
-	
-	@GetMapping("dropmessage/merchant/{merchantNumber}/bag/{bagNumber}/tranasction/{transactionId}/date/{datetime}")
-	public Boolean verifyMessage(
-			@PathVariable("merchantNumber") Long merchantNumber, 
-			@PathVariable("bagNumber") String bagNumber, 
-			@PathVariable("transactionId") Integer transactionId,
-			@PathVariable("datetime") String transmitionDate) {
-
-		final DateTimeFormatter formatter = DateTimeFormatter
-                .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
-                .withZone(ZoneId.systemDefault());
-		Instant transmitionInstant = Instant.from(formatter.parse(transmitionDate));
-		
-		if(dropMessageService.findByMerchantNumberAndBagNumberAndTransactionIdAndTransmitionDate(merchantNumber, bagNumber, transactionId, transmitionInstant).isEmpty()) {
+		if(removalMessageService.findByBagNumber(bagNumber).isEmpty()) {
 			return false;
 		}
 		return true;

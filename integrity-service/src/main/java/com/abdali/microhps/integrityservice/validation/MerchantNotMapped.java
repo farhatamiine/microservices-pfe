@@ -10,9 +10,10 @@ import com.abdali.microhps.integrityservice.exceptions.IntegrityException;
 import com.abdali.microhps.integrityservice.proxy.DropMessageProxy;
 import com.abdali.microhps.integrityservice.proxy.MerchantDeviceProxy;
 
+// - NOTE:: AVAILABLE JUST FOR "DROPS" OTHERS DIDN'T HAVE MERCHANT NUMBER.
 //- Device not mapped: this validation fails in 2 different cases
 //o Simple merchant: device do not belong to the merchant in the message.
-//o Deposit merchant: deposit outlet and device not linked to the same sponsor outlet. ????????????????
+//o Deposit merchant: deposit outlet and device not linked to the same sponsor outlet. // TODO: LATER MISSING CONCEPT.
 
 @Service
 public class MerchantNotMapped {

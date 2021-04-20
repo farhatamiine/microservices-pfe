@@ -1,4 +1,4 @@
-package com.abdali.microhps.dropservice.controller;
+package com.abdali.microhps.verificationservice.controller;
 
 import java.math.BigDecimal;
 import java.net.URLDecoder;
@@ -15,26 +15,26 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.abdali.microhps.dropservice.dto.DenominationDto;
-import com.abdali.microhps.dropservice.dto.DropMessageDto;
-import com.abdali.microhps.dropservice.model.Denomination;
-import com.abdali.microhps.dropservice.model.MessageRequest;
-import com.abdali.microhps.dropservice.service.DropMessageService;
+import com.abdali.microhps.verificationservice.dto.DenominationDto;
+import com.abdali.microhps.verificationservice.dto.VerificationMessageDto;
+import com.abdali.microhps.verificationservice.model.Denomination;
+import com.abdali.microhps.verificationservice.model.MessageRequest;
+import com.abdali.microhps.verificationservice.service.VerificationMessageService;
 
 @RestController
-public class DropController {
+public class VerificationController {
 	
-	DropMessageService dropMessageService;
+	VerificationMessageService verificationMessageService;
 	
 	@Autowired
-	public DropController(
-			DropMessageService dropMessageService
+	public VerificationController(
+			VerificationMessageService verificationMessageService
 			) {
-		this.dropMessageService = dropMessageService;
+		this.verificationMessageService = verificationMessageService;
 	}
 
-	@PostMapping("/dropmessage/new")
-	public DropMessageDto addMessage(@RequestBody MessageRequest messageRequest) throws Exception {
+	@PostMapping("/verificationmessage/new")
+	public VerificationMessageDto addMessage(@RequestBody MessageRequest messageRequest) throws Exception {
 		
 		String message = URLDecoder.decode(messageRequest.getMessage(), StandardCharsets.UTF_8);
 		
@@ -42,7 +42,7 @@ public class DropController {
 		
 		Instant transmitionDate = null; 
 				
-//		 -- Check for drop message and verify Merchant Number -- contain just numbers with 15 in length.
+//		 -- Check for verification message and verify Merchant Number -- contain just numbers with 15 in length.
 		Denomination denomination = new Denomination();	
 		if(messageArray[14].contains("=")) {
 			denomination.setDenomination2(Integer.parseInt(messageArray[14].split("=")[1]));
@@ -99,7 +99,7 @@ public class DropController {
 //					throw new IntegrityException(MESSAGE_INVALID_CODE, "error date time");
 		} 
 				
-		DropMessageDto dropMessageDto = DropMessageDto.builder()
+		VerificationMessageDto verificationMessageDto = VerificationMessageDto.builder()
 				.indicator(messageArray[0].charAt(0)) 
 				.merchantNumber(Long.parseLong(messageArray[1]))
 				.deviceNumber(messageArray[2])
@@ -116,60 +116,33 @@ public class DropController {
 				.totalCoins(Integer.parseInt(messageArray[13]))
 				.denomination(DenominationDto.fromEntity(denomination))
 				.build();
-		
-//		if(true) {
-//			throw new Exception("-----------" + dropMessageDto + "______________" + Integer.parseInt(messageArray[5]) + "_____" + messageArray[7]);
-//		}
-		
-		return dropMessageService.save(dropMessageDto);
+				
+		return verificationMessageService.save(verificationMessageDto);
 	}
 	
-	@GetMapping("/dropmessage")
-	public List<DropMessageDto> getMessages() {
-		return dropMessageService.findAll();
+	@GetMapping("/verificationmessage")
+	public List<VerificationMessageDto> getMessages() {
+		return verificationMessageService.findAll();
 	}
 	
-	@GetMapping("/dropmessage/{messageId}")
-	public DropMessageDto getMessageById(@PathVariable("messageId") Long Id) {
-		return dropMessageService.findById(Id);
-	}
-	
-	@GetMapping("/dropmessage/merchant/{merchantNumber}")
-	public List<DropMessageDto> getMessageByMerchantNumber(@PathVariable("merchantNumber") Long merchantNumber) {
-		return dropMessageService.findByMerchantNumber(merchantNumber);
-	}
-	
-	@GetMapping("/dropmessage/device/{deviceNumber}")
-	public List<DropMessageDto> getMessageByDeviceNumber(@PathVariable("deviceNumber") String deviceNumber) {
-		return dropMessageService.findByDeviceNumber(deviceNumber);
+	@GetMapping("/verificationmessage/{messageId}")
+	public VerificationMessageDto getMessageById(@PathVariable("messageId") Long Id) {
+		return verificationMessageService.findById(Id);
 	}
 
-	@GetMapping("/dropmessage/bag/{bagNumber}")
-	public List<DropMessageDto> getMessageByBagNumber(@PathVariable("bagNumber") String bagNumber) {
-		return dropMessageService.findByBagNumber(bagNumber);
+	@GetMapping("/verificationmessage/device/{deviceNumber}")
+	public List<VerificationMessageDto> getMessageByDeviceNumber(@PathVariable("deviceNumber") String deviceNumber) {
+		return verificationMessageService.findByDeviceNumber(deviceNumber);
+	}
+
+	@GetMapping("/verificationmessage/bag/{bagNumber}")
+	public List<VerificationMessageDto> getMessageByBagNumber(@PathVariable("bagNumber") String bagNumber) {
+		return verificationMessageService.findByBagNumber(bagNumber);
 	}
 	
-	@GetMapping("/dropmessage/verify/bag/{bagNumber}")
+	@GetMapping("/verificationmessage/verify/bag/{bagNumber}")
 	public Boolean verifyTransactionForIntegrityBagNumber(@PathVariable("bagNumber") String bagNumber) {
-		if(dropMessageService.findByBagNumber(bagNumber).isEmpty()) {
-			return false;
-		}
-		return true;
-	}
-	
-	@GetMapping("dropmessage/merchant/{merchantNumber}/bag/{bagNumber}/tranasction/{transactionId}/date/{datetime}")
-	public Boolean verifyMessage(
-			@PathVariable("merchantNumber") Long merchantNumber, 
-			@PathVariable("bagNumber") String bagNumber, 
-			@PathVariable("transactionId") Integer transactionId,
-			@PathVariable("datetime") String transmitionDate) {
-
-		final DateTimeFormatter formatter = DateTimeFormatter
-                .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
-                .withZone(ZoneId.systemDefault());
-		Instant transmitionInstant = Instant.from(formatter.parse(transmitionDate));
-		
-		if(dropMessageService.findByMerchantNumberAndBagNumberAndTransactionIdAndTransmitionDate(merchantNumber, bagNumber, transactionId, transmitionInstant).isEmpty()) {
+		if(verificationMessageService.findByBagNumber(bagNumber).isEmpty()) {
 			return false;
 		}
 		return true;

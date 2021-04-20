@@ -26,10 +26,10 @@ public class DeviceController {
 	  }
 	
 	@GetMapping("/devices")
-    public List<DeviceDto> getAllPosts() {
+    public List<DeviceDto> getAllDevices() {
         return deviceService.findAll();
-    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-
+    }   
+    
     @PostMapping("/devices")
     public DeviceDto addDevice(@RequestBody DeviceDto deviceDto) {
         return deviceService.save(deviceDto);

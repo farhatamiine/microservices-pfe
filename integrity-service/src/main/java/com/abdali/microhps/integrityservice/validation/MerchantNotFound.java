@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import com.abdali.microhps.integrityservice.exceptions.IntegrityException;
 import com.abdali.microhps.integrityservice.proxy.MerchantDeviceProxy;
  
-
-//- Merchant not found: this validation fails when the merchant number meet any of the following conditions
+// - NOTE:: AVAILABLE JUST FOR "DROPS" OTHERS DIDN'T HAVE MERCHANT NUMBER.
+// - Merchant not found: this validation fails when the merchant number meet any of the following conditions
 //o Not found in PowerCARD outlet table.
 //o Outlet status is closed.
 //o Outlet status is suspended.

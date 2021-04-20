@@ -1,7 +1,7 @@
-package com.abdali.microhps.dropservice.dto;
+package com.abdali.microhps.verificationservice.dto;
 
 
-import com.abdali.microhps.dropservice.model.Denomination;
+import com.abdali.microhps.verificationservice.model.Denomination;
 
 import lombok.Builder;
 import lombok.Data;

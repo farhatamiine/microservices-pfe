@@ -2,14 +2,8 @@ package com.abdali.microhps.integrityservice.controller;
 
 import static com.abdali.microhps.integrityservice.utils.Constants.DROP_INDICATOR;
 import static com.abdali.microhps.integrityservice.utils.Constants.MERCHANT_NUMBER_LENGTH;
-import static com.abdali.microhps.integrityservice.utils.Constants.MESSAGE_INVALID_CODE;
 import static com.abdali.microhps.integrityservice.utils.Constants.REMOVAL_INDICATOR;
 import static com.abdali.microhps.integrityservice.utils.Constants.VERIFICATION_INDICATOR;
-
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,23 +12,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.abdali.microhps.integrityservice.dto.DenominationDto;
-import com.abdali.microhps.integrityservice.dto.DropTransactionDto;
-import com.abdali.microhps.integrityservice.dto.RemovalDropTransactionDto;
-import com.abdali.microhps.integrityservice.dto.TransactionDto;
-import com.abdali.microhps.integrityservice.dto.VerificationTransactionDto;
-import com.abdali.microhps.integrityservice.exceptions.IntegrityException;
 import com.abdali.microhps.integrityservice.exceptions.NoDataFoundException;
-import com.abdali.microhps.integrityservice.model.Denomination;
-import com.abdali.microhps.integrityservice.model.DropTransaction;
-import com.abdali.microhps.integrityservice.model.RemovalDropTransaction;
 import com.abdali.microhps.integrityservice.model.ResponseRequest;
 import com.abdali.microhps.integrityservice.model.TransactionRequest;
 import com.abdali.microhps.integrityservice.proxy.DropMessageProxy;
+import com.abdali.microhps.integrityservice.proxy.RemovalMessageProxy;
+import com.abdali.microhps.integrityservice.proxy.VerificationMessageProxy;
+import com.abdali.microhps.integrityservice.service.TransactionService;
+import com.abdali.microhps.integrityservice.validation.DuplicatedMessage;
 import com.abdali.microhps.integrityservice.validation.MerchantNotFound;
 import com.abdali.microhps.integrityservice.validation.MerchantNotMapped;
 import com.abdali.microhps.integrityservice.validation.MessageFormat;
 import com.abdali.microhps.integrityservice.validation.TransactionVerify;
+
+import org.springframework.util.StringUtils;
  
 
 @RestController
@@ -43,8 +34,11 @@ public class IntegrityController {
 	private MessageFormat messageFormat;
 	private MerchantNotFound merchantNotFound;
 	private MerchantNotMapped merchantNotMapped;
+	private DuplicatedMessage duplicatedMessage;
 	private TransactionVerify transactionVerify;
-	private DropMessageProxy DropMessageProxy;
+	private DropMessageProxy dropMessageProxy;
+	private RemovalMessageProxy removalMessageProxy;
+	private VerificationMessageProxy verificationMessageProxy;
 	
 	@Autowired
 	public IntegrityController(
@@ -52,98 +46,105 @@ public class IntegrityController {
 			MerchantNotFound merchantNotFound,
 			MerchantNotMapped merchantNotMapped,
 			TransactionVerify transactionVerify,
-			DropMessageProxy dropMessageProxy
+			DropMessageProxy dropMessageProxy,
+			DuplicatedMessage duplicatedMessage,
+			RemovalMessageProxy removalMessageProxy,
+			VerificationMessageProxy verificationMessageProxy
 			) {
 		// TODO Auto-generated constructor stub
 		this.messageFormat = messageFormat;
 		this.merchantNotFound = merchantNotFound;
 		this.merchantNotMapped = merchantNotMapped;
+		this.duplicatedMessage = duplicatedMessage;
 		this.transactionVerify = transactionVerify;
-		this.DropMessageProxy = dropMessageProxy;
+		this.dropMessageProxy = dropMessageProxy;
+		this.removalMessageProxy = removalMessageProxy;
+		this.verificationMessageProxy = verificationMessageProxy;
 	}
 	
 	
 	@PostMapping("/check")
 	public ResponseEntity<ResponseRequest> testController(@RequestBody TransactionRequest transactionRequest) {
 		
-		// variable 
+		// variable.
 		Long merchantNumber; 
 		char indicator; 
 		String deviceNumber;
 		String bagNumber; 
 		char containerType; 
 		Integer sequenceNumber;
-		// we keep them string for now
+		// keep them string for now.
 		String transmitionDate; 
 		String transactionId;
 		
-		
 		// split message into array
-		String[] data = transactionRequest.getMessage().split(",");
+		String[] messageSplited = transactionRequest.getMessage().split(",");
 		
-		indicator = data[0].charAt(0);
+		indicator = messageSplited[0].charAt(0);
 		
-		if(indicator == DROP_INDICATOR && data[1].length() == MERCHANT_NUMBER_LENGTH && data[1].matches("[0-9_]+")) {  
+		if(indicator == DROP_INDICATOR && messageSplited[1].length() == MERCHANT_NUMBER_LENGTH && messageSplited[1].matches("[0-9_]+")) {  
 			
-			merchantNumber = Long.parseLong(data[1]); 
-			deviceNumber = data[2];
-			bagNumber = data[3]; 
-			containerType = data[4].charAt(0); 
-			transactionId = data[6];
-			sequenceNumber = Integer.parseInt(data[5]);
-			transmitionDate = data[8];
+			merchantNumber = Long.parseLong(messageSplited[1]); 
+			deviceNumber = messageSplited[2];
+			bagNumber = messageSplited[3]; 
+			containerType = messageSplited[4].charAt(0); 
+			transactionId = messageSplited[6];
+			sequenceNumber = Integer.parseInt(messageSplited[5]);
+			transmitionDate = messageSplited[8];
 			
 			// GLOBAL STEPS 1 : INVALID MESSAGE FORMAT .
-			if(messageFormat.checkMessageFormat(indicator, merchantNumber, deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId)) {
+			if(messageFormat.checkMessageFormat(indicator, merchantNumber, deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId) && duplicatedMessage.checkForDuplicatedMessage(merchantNumber, bagNumber, transmitionDate, Integer.parseInt(transactionId)) && merchantNotFound.checkMerchantNotFound(merchantNumber) && merchantNotMapped.simpleMerchant(merchantNumber, deviceNumber)) {
 				// GLOBAL STEPS 2 & 3 & 4 : MERCHANT NOT FOUND - NOT MAPPED - TRANSACTION VERIFY.
-				if(merchantNotFound.checkMerchantNotFound(merchantNumber) && merchantNotMapped.simpleMerchant(merchantNumber, deviceNumber)) {
-					DropMessageProxy.saveDropMessage(transactionRequest.getMessage());
-					// return message
-					return requestResponse("process completed", HttpStatus.OK);
+				// check for message code status -- DOC: TransactionControl_V1 PAGE 8/38.
+				String messageCodeStatus = messageSplited[(messageSplited.length - 1)];
+				if(StringUtils.hasLength(messageCodeStatus) && messageCodeStatus.contentEquals("000")) {						
+					dropMessageProxy.saveDropMessage(transactionRequest.getMessage());
+				} else {
+					/// send to others table.
 				}
-			}
+				// return message
+				return requestResponse("process completed" + messageCodeStatus, HttpStatus.OK);
+			} 
 			
 		} else if(indicator == REMOVAL_INDICATOR) { 
 			
 			merchantNumber = null; 
-			deviceNumber = data[1];
-			bagNumber = data[2]; 
-			containerType = data[3].charAt(0); 
-			transactionId = data[5];
-			sequenceNumber = Integer.parseInt(data[4]);
-			transmitionDate = data[7];
+			deviceNumber = messageSplited[1];
+			bagNumber = messageSplited[2]; 
+			containerType = messageSplited[3].charAt(0); 
+			transactionId = messageSplited[5];
+			sequenceNumber = Integer.parseInt(messageSplited[4]);
+			transmitionDate = messageSplited[7];
 			
 			// MERCHANT NOT EXIST FOR REMOVAL.
 			if(messageFormat.checkMessageFormat(indicator, merchantNumber, deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId)) {
 				// GLOBAL STEPS 4 : TRANSACTION VERIFY.
 				if(transactionVerify.transactionVerification(bagNumber)) {
-//					DropMessageProxy.saveDropMessage(transactionRequest.getMessage());
-					// return message
+					removalMessageProxy.saveRemovalMessage(transactionRequest.getMessage());
 					return requestResponse("process completed", HttpStatus.OK);
 				}
 			}
 		} else if(indicator == VERIFICATION_INDICATOR) {  
 			
 			merchantNumber = null; 
-			deviceNumber = data[1];
-			bagNumber = data[2]; 
-			containerType = data[3].charAt(0); 
-			transactionId = data[4];
+			deviceNumber = messageSplited[1];
+			bagNumber = messageSplited[2]; 
+			containerType = messageSplited[3].charAt(0); 
+			transactionId = messageSplited[4];
 			sequenceNumber = 0;
-			transmitionDate = data[5];
+			transmitionDate = messageSplited[5];
 			
 			// MERCHANT AND SEQUENCE NOT EXIST FOR VERIFICATION.
 			if(messageFormat.checkMessageFormat(indicator, merchantNumber, deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId)) {
 				// GLOBAL STEPS 4 : TRANSACTION VERIFY.
 				if(transactionVerify.transactionVerification(bagNumber)) {
-//					DropMessageProxy.saveDropMessage(transactionRequest.getMessage());
-					// return message
+					verificationMessageProxy.saveVerificationMessage(transactionRequest.getMessage());
 					return requestResponse("process completed", HttpStatus.OK);
 				}
 			}
 		} else {		
 			// TODO :: there is other INDICATORS to handle.
-			throw new NoDataFoundException("the Indicator is not valid from Controller " + data[0].charAt(0) + " " + DROP_INDICATOR);
+			throw new NoDataFoundException("the Indicator is not valid from Controller " + messageSplited[0].charAt(0) + " " + DROP_INDICATOR);
 		}
 		return requestResponse("process not completed", HttpStatus.CONFLICT);
 	}

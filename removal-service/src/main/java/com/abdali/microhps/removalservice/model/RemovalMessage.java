@@ -32,8 +32,8 @@ public class RemovalMessage extends AuditEntity {
 	@Column(columnDefinition = "char")
 	private Character containerType;
 	private Instant transmitionDate; 
-	@Column(columnDefinition = "default 0")
-	private Character settlementFlag;
+	@Column(columnDefinition = "varchar(3) default 0")
+	private String settlementFlag;
 	@Column(length=20)
 	private String depositReference;
 	@Column(columnDefinition = "smallint")

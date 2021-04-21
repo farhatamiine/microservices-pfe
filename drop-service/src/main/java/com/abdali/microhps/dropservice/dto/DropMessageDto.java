@@ -29,7 +29,7 @@ public class DropMessageDto {
 	private DenominationDto denomination;
 	private String depositReference;
 	private Integer sequenceNumber;
-	private Character settlementFlag;
+	private String settlementFlag;
 	
 	public static DropMessageDto fromEntity(DropMessage dropMessage) {
 		if(dropMessage == null)

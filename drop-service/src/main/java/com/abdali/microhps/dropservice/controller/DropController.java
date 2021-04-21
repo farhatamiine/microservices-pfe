@@ -1,5 +1,8 @@
 package com.abdali.microhps.dropservice.controller;
 
+import static com.abdali.microhps.dropservice.utils.Constants.NOTES_INDICATOR;
+import static com.abdali.microhps.dropservice.utils.Constants.COINS_INDICATOR;
+
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -38,44 +41,54 @@ public class DropController {
 		String message = URLDecoder.decode(messageRequest, StandardCharsets.UTF_8);
 		
 		String[] messageArray = message.split(",");
+
+		for(int i =0; i < messageArray.length; i++) {
+			messageArray[i] = messageArray[i].trim().replace("_+$", "");
+		}
 		
 		Instant transmitionDate = null; 
-
-//		 -- Check for drop message and verify Merchant Number -- contain just numbers with 15 in length.
+		
 		Denomination denomination = new Denomination();	
-		if(messageArray[14].contains("=")) {
-			denomination.setDenomination1(Integer.parseInt(messageArray[14].split("=")[1]));
+		
+		if(messageArray[4].charAt(0) == COINS_INDICATOR) {			
+			if(messageArray[14].contains("=")) {
+				denomination.setDenomination1(Integer.parseInt(messageArray[14].split("=")[1]));
+			}
+			if(messageArray[15].contains("=")) {
+				denomination.setDenomination2(Integer.parseInt(messageArray[15].split("=")[1]));
+			}
+			if(messageArray[16].contains("=")) {
+				denomination.setDenomination3(Integer.parseInt(messageArray[16].split("=")[1]));
+			}
+			if(messageArray[17].contains("=")) {
+				denomination.setDenomination4(Integer.parseInt(messageArray[17].split("=")[1]));
+			}
+			if(messageArray[18].contains("=")) {
+				denomination.setDenomination5(Integer.parseInt(messageArray[18].split("=")[1]));
+			}
+			if(messageArray[19].contains("=")) {
+				denomination.setDenomination6(Integer.parseInt(messageArray[19].split("=")[1]));
+			}
 		}
-		if(messageArray[15].contains("=")) {
-			denomination.setDenomination2(Integer.parseInt(messageArray[15].split("=")[1]));
+		
+		if(messageArray[4].charAt(0) == NOTES_INDICATOR) {			
+			if(messageArray[20].contains("=")) {
+				denomination.setDenomination7(Integer.parseInt(messageArray[20].split("=")[1]));
+			}
+			if(messageArray[21].contains("=")) {
+				denomination.setDenomination8(Integer.parseInt(messageArray[21].split("=")[1]));
+			}
+			if(messageArray[22].contains("=")) {
+				denomination.setDenomination9(Integer.parseInt(messageArray[22].split("=")[1]));
+			}
+			if(messageArray[23].contains("=")) {
+				denomination.setDenomination10(Integer.parseInt(messageArray[23].split("=")[1]));
+			}
+			if(messageArray[24].contains("=")) {
+				denomination.setDenomination11(Integer.parseInt(messageArray[24].split("=")[1]));
+			}
 		}
-		if(messageArray[16].contains("=")) {
-			denomination.setDenomination3(Integer.parseInt(messageArray[16].split("=")[1]));
-		}
-		if(messageArray[17].contains("=")) {
-			denomination.setDenomination4(Integer.parseInt(messageArray[17].split("=")[1]));
-		}
-		if(messageArray[18].contains("=")) {
-			denomination.setDenomination5(Integer.parseInt(messageArray[18].split("=")[1]));
-		}
-		if(messageArray[19].contains("=")) {
-			denomination.setDenomination6(Integer.parseInt(messageArray[19].split("=")[1]));
-		}
-		if(messageArray[20].contains("=")) {
-			denomination.setDenomination7(Integer.parseInt(messageArray[20].split("=")[1]));
-		}
-		if(messageArray[21].contains("=")) {
-			denomination.setDenomination8(Integer.parseInt(messageArray[21].split("=")[1]));
-		}
-		if(messageArray[22].contains("=")) {
-			denomination.setDenomination9(Integer.parseInt(messageArray[22].split("=")[1]));
-		}
-		if(messageArray[23].contains("=")) {
-			denomination.setDenomination10(Integer.parseInt(messageArray[23].split("=")[1]));
-		}
-		if(messageArray[24].contains("=")) {
-			denomination.setDenomination11(Integer.parseInt(messageArray[24].split("=")[1]));
-		}
+		
 		if(messageArray[25].contains("=")) {
 			denomination.setDenomination12(Integer.parseInt(messageArray[25].split("=")[1]));
 		}
@@ -116,8 +129,11 @@ public class DropController {
 				.denomination(DenominationDto.fromEntity(denomination))
 				.build();
 		
+		DropMessageDto savedDropMessage = dropMessageService.save(dropMessageDto);
 		
-		return dropMessageService.save(dropMessageDto);
+		
+		return savedDropMessage;
+		
 	}
 	
 	@GetMapping("/dropmessage")

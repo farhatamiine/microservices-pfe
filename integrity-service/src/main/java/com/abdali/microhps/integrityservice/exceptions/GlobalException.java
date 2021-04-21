@@ -39,7 +39,7 @@ public class GlobalException {
 	@ExceptionHandler
 	public ResponseEntity<IntegrityMessage> handleMessageFormatException (IntegrityException ex) {
 		IntegrityMessage eObject = new IntegrityMessage();
-		eObject.setStatus(ex.getErrorCode());
+		eObject.setStatus(ex.getCode());
 		eObject.setMessage(ex.getMessage());
 		return new ResponseEntity<IntegrityMessage>(eObject, HttpStatus.OK);
 	}

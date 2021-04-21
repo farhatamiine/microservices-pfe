@@ -20,7 +20,6 @@ public class RemovalMessageDto {
 	private String bagNumber; 
 	private Character containerType;
 	private Instant transmitionDate; 
-	private Long merchantNumber;
 	private Integer totalCoins;
 	private Integer totalNotes;
 	private BigDecimal totalAmount;
@@ -29,7 +28,7 @@ public class RemovalMessageDto {
 	private DenominationDto denomination;
 	private String depositReference;
 	private Integer sequenceNumber;
-	private Character settlementFlag;
+	private String settlementFlag;
 	
 	public static RemovalMessageDto fromEntity(RemovalMessage removalMessage) {
 		if(removalMessage == null)

@@ -10,6 +10,9 @@ public interface MerchantDeviceProxy {
 	@GetMapping("/merchant-device/status/{merchantNumber}")
 	public Boolean checkMerchantState(@PathVariable("merchantNumber") Long merchantNumber);
 	
-	@GetMapping("/merchants/merchant-number/{merchantNumber}/device-number/{deviceNumber}")
+	@GetMapping("/merchant-device/merchant-number/{merchantNumber}/device-number/{deviceNumber}")
 	public Boolean relationMerchantDevice(@PathVariable("merchantNumber") Long merchantNumber, @PathVariable("deviceNumber") String deviceNumber);
+	
+	@GetMapping("/merchant-device/{deviceNumber}")
+	public Boolean checkDeviceNumber(@PathVariable("deviceNumber") String deviceNumber);
 }

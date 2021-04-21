@@ -46,8 +46,8 @@ public class DropMessage extends AuditEntity {
 	private String currency;
 	@Column(columnDefinition = "int")
 	private Integer canisterNumber;
-	@Column(columnDefinition = "default 0")
-	private Character settlementFlag;
+	@Column(columnDefinition = "varchar(3) default 0")
+	private String settlementFlag;
 	@Embedded
 	private Denomination denomination;
 }

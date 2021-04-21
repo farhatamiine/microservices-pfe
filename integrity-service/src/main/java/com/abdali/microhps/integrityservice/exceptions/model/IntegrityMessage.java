@@ -10,6 +10,5 @@ import lombok.ToString;
 public class IntegrityMessage {
 
 	private String status;
-	
 	private String message;
 }

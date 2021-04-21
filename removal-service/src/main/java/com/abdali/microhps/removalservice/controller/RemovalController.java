@@ -1,5 +1,8 @@
 package com.abdali.microhps.removalservice.controller;
 
+import static com.abdali.microhps.removalservice.utils.Constants.COINS_INDICATOR;
+import static com.abdali.microhps.removalservice.utils.Constants.NOTES_INDICATOR;
+
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -18,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.abdali.microhps.removalservice.dto.DenominationDto;
 import com.abdali.microhps.removalservice.dto.RemovalMessageDto;
 import com.abdali.microhps.removalservice.model.Denomination;
-import com.abdali.microhps.removalservice.model.MessageRequest;
 import com.abdali.microhps.removalservice.service.RemovalMessageService;
 
 @RestController
@@ -40,54 +42,64 @@ public class RemovalController {
 		
 		String[] messageArray = message.split(",");
 		
+		for(int i =0; i < messageArray.length; i++) {
+			messageArray[i] = messageArray[i].trim().replace("_+$", "");
+		}
+		
 		Instant transmitionDate = null; 
 				
-//		 -- Check for removal message and verify Merchant Number -- contain just numbers with 15 in length.
 		Denomination denomination = new Denomination();	
-		if(messageArray[13].contains("=")) {
-			denomination.setDenomination1(Integer.parseInt(messageArray[13].split("=")[1]));
+		
+		if(messageArray[4].charAt(0) == COINS_INDICATOR) {			
+			if(messageArray[14].contains("=")) {
+				denomination.setDenomination1(Integer.parseInt(messageArray[14].split("=")[1]));
+			}
+			if(messageArray[15].contains("=")) {
+				denomination.setDenomination2(Integer.parseInt(messageArray[15].split("=")[1]));
+			}
+			if(messageArray[16].contains("=")) {
+				denomination.setDenomination3(Integer.parseInt(messageArray[16].split("=")[1]));
+			}
+			if(messageArray[17].contains("=")) {
+				denomination.setDenomination4(Integer.parseInt(messageArray[17].split("=")[1]));
+			}
+			if(messageArray[18].contains("=")) {
+				denomination.setDenomination5(Integer.parseInt(messageArray[18].split("=")[1]));
+			}
+			if(messageArray[19].contains("=")) {
+				denomination.setDenomination6(Integer.parseInt(messageArray[19].split("=")[1]));
+			}
 		}
-		if(messageArray[14].contains("=")) {
-			denomination.setDenomination2(Integer.parseInt(messageArray[14].split("=")[1]));
+		
+		if(messageArray[4].charAt(0) == NOTES_INDICATOR) {			
+			if(messageArray[20].contains("=")) {
+				denomination.setDenomination7(Integer.parseInt(messageArray[20].split("=")[1]));
+			}
+			if(messageArray[21].contains("=")) {
+				denomination.setDenomination8(Integer.parseInt(messageArray[21].split("=")[1]));
+			}
+			if(messageArray[22].contains("=")) {
+				denomination.setDenomination9(Integer.parseInt(messageArray[22].split("=")[1]));
+			}
+			if(messageArray[23].contains("=")) {
+				denomination.setDenomination10(Integer.parseInt(messageArray[23].split("=")[1]));
+			}
+			if(messageArray[24].contains("=")) {
+				denomination.setDenomination11(Integer.parseInt(messageArray[24].split("=")[1]));
+			}
 		}
-		if(messageArray[15].contains("=")) {
-			denomination.setDenomination3(Integer.parseInt(messageArray[15].split("=")[1]));
-		}
-		if(messageArray[16].contains("=")) {
-			denomination.setDenomination4(Integer.parseInt(messageArray[16].split("=")[1]));
-		}
-		if(messageArray[17].contains("=")) {
-			denomination.setDenomination5(Integer.parseInt(messageArray[17].split("=")[1]));
-		}
-		if(messageArray[18].contains("=")) {
-			denomination.setDenomination6(Integer.parseInt(messageArray[18].split("=")[1]));
-		}
-		if(messageArray[19].contains("=")) {
-			denomination.setDenomination7(Integer.parseInt(messageArray[19].split("=")[1]));
-		}
-		if(messageArray[20].contains("=")) {
-			denomination.setDenomination8(Integer.parseInt(messageArray[20].split("=")[1]));
-		}
-		if(messageArray[21].contains("=")) {
-			denomination.setDenomination9(Integer.parseInt(messageArray[21].split("=")[1]));
-		}
-		if(messageArray[22].contains("=")) {
-			denomination.setDenomination10(Integer.parseInt(messageArray[22].split("=")[1]));
-		}
-		if(messageArray[23].contains("=")) {
-			denomination.setDenomination11(Integer.parseInt(messageArray[23].split("=")[1]));
-		}
-		if(messageArray[24].contains("=")) {
-			denomination.setDenomination12(Integer.parseInt(messageArray[24].split("=")[1]));
-		}
+		
 		if(messageArray[25].contains("=")) {
-			denomination.setDenomination13(Integer.parseInt(messageArray[25].split("=")[1]));
+			denomination.setDenomination12(Integer.parseInt(messageArray[25].split("=")[1]));
 		}
 		if(messageArray[26].contains("=")) {
-			denomination.setDenomination14(Integer.parseInt(messageArray[26].split("=")[1]));
+			denomination.setDenomination13(Integer.parseInt(messageArray[26].split("=")[1]));
 		}
 		if(messageArray[27].contains("=")) {
-			denomination.setDenomination15(Integer.parseInt(messageArray[27].split("=")[1]));
+			denomination.setDenomination14(Integer.parseInt(messageArray[27].split("=")[1]));
+		}
+		if(messageArray[28].contains("=")) {
+			denomination.setDenomination15(Integer.parseInt(messageArray[28].split("=")[1]));
 		}
 				
 		final DateTimeFormatter formatter = DateTimeFormatter
@@ -137,13 +149,5 @@ public class RemovalController {
 	@GetMapping("/removalmessage/bag/{bagNumber}")
 	public List<RemovalMessageDto> getMessageByBagNumber(@PathVariable("bagNumber") String bagNumber) {
 		return removalMessageService.findByBagNumber(bagNumber);
-	}
-	
-	@GetMapping("/removalmessage/verify/bag/{bagNumber}")
-	public Boolean verifyTransactionForIntegrityBagNumber(@PathVariable("bagNumber") String bagNumber) {
-		if(removalMessageService.findByBagNumber(bagNumber).isEmpty()) {
-			return false;
-		}
-		return true;
 	}
 }

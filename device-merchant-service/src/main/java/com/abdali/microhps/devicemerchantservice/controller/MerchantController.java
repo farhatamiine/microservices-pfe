@@ -50,7 +50,7 @@ public class MerchantController {
 	}
 	
 
-	@GetMapping(value = "/merchants/merchant-number/{merchantNumber}/device-number/{deviceNumber}")
+	@GetMapping(value = "/merchant-device/merchant-number/{merchantNumber}/device-number/{deviceNumber}")
 	public Boolean relationDeviceMerchant(@PathVariable Long merchantNumber, @PathVariable String deviceNumber) {
 		MerchantDto merchant = merchantService.findByMerchantNumber(merchantNumber);
 

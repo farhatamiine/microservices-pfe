@@ -70,6 +70,6 @@ public class MessageFormat {
 			}  
 			throw new IntegrityException(MESSAGE_INVALID_CODE, "error device or bag number");
 		}
-		throw new IntegrityException(MESSAGE_INVALID_CODE, "error indicator");
+		return false;
 	}
 }

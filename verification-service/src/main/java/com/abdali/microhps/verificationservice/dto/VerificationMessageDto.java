@@ -18,17 +18,15 @@ public class VerificationMessageDto {
 	private String bagNumber; 
 	private Character containerType;
 	private Instant transmitionDate; 
-	private Long merchantNumber;
 	private Integer totalCoins;
 	private Integer totalNotes;
 	private BigDecimal totalAmount;
 	private String currency;
 	private Integer canisterNumber;
 	private DenominationDto denomination;
-	private String depositReference;
 	private String cashCenterType; 
 	private String cashCenterCode;
-	private Character settlementFlag;
+	private String settlementFlag;
 	
 	public static VerificationMessageDto fromEntity(VerificationMessage verificationMessage) {
 		if(verificationMessage == null)
@@ -42,7 +40,6 @@ public class VerificationMessageDto {
 				.bagNumber(verificationMessage.getBagNumber())
 				.containerType(verificationMessage.getContainerType())
 				.transmitionDate(verificationMessage.getTransmitionDate())
-				.depositReference(verificationMessage.getDepositReference())
 				.cashCenterCode(verificationMessage.getCashCenterCode())
 				.cashCenterType(verificationMessage.getCashCenterType())
 				.totalCoins(verificationMessage.getTotalCoins())
@@ -66,7 +63,6 @@ public class VerificationMessageDto {
 		verificationMessage.setBagNumber(verificationMessageDto.getBagNumber());
 		verificationMessage.setContainerType(verificationMessageDto.getContainerType());
 		verificationMessage.setTransmitionDate(verificationMessageDto.getTransmitionDate());
-		verificationMessage.setDepositReference(verificationMessageDto.getDepositReference());
 		verificationMessage.setCashCenterCode(verificationMessageDto.getCashCenterCode());
 		verificationMessage.setCashCenterType(verificationMessageDto.getCashCenterType());
 		verificationMessage.setTotalCoins(verificationMessageDto.getTotalCoins());

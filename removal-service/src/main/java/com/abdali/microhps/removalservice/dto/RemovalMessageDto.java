@@ -3,6 +3,8 @@ package com.abdali.microhps.removalservice.dto;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+import javax.persistence.Column;
+
 import com.abdali.microhps.removalservice.model.RemovalMessage;
 
 import lombok.Builder;
@@ -27,6 +29,7 @@ public class RemovalMessageDto {
 	private DenominationDto denomination;
 	private String depositReference;
 	private Integer sequenceNumber;
+	private Character settlementFlag;
 	
 	public static RemovalMessageDto fromEntity(RemovalMessage removalMessage) {
 		if(removalMessage == null)
@@ -42,11 +45,11 @@ public class RemovalMessageDto {
 				.transmitionDate(removalMessage.getTransmitionDate())
 				.depositReference(removalMessage.getDepositReference())
 				.sequenceNumber(removalMessage.getSequenceNumber())
-				.merchantNumber(removalMessage.getMerchantNumber())
 				.totalCoins(removalMessage.getTotalCoins())
 				.totalNotes(removalMessage.getTotalNotes())
 				.totalAmount(removalMessage.getTotalAmount())
 				.currency(removalMessage.getCurrency())
+				.settlementFlag(removalMessage.getSettlementFlag())
 				.canisterNumber(removalMessage.getCanisterNumber())
 				.denomination(DenominationDto.fromEntity(removalMessage.getDenomination()))
 				.build();
@@ -65,11 +68,11 @@ public class RemovalMessageDto {
 		removalMessage.setTransmitionDate(removalMessageDto.getTransmitionDate());
 		removalMessage.setDepositReference(removalMessageDto.getDepositReference());
 		removalMessage.setSequenceNumber(removalMessageDto.getSequenceNumber());
-		removalMessage.setMerchantNumber(removalMessageDto.getMerchantNumber());
 		removalMessage.setTotalCoins(removalMessageDto.getTotalCoins());
 		removalMessage.setTotalNotes(removalMessageDto.getTotalNotes());
 		removalMessage.setTotalAmount(removalMessageDto.getTotalAmount());
 		removalMessage.setCurrency(removalMessageDto.getCurrency());
+		removalMessage.setSettlementFlag(removalMessageDto.getSettlementFlag());
 		removalMessage.setCanisterNumber(removalMessageDto.getCanisterNumber());
 		removalMessage.setDenomination(DenominationDto.toEntity(removalMessageDto.getDenomination()));
 		

@@ -44,76 +44,75 @@ public class VerificationController {
 				
 //		 -- Check for verification message and verify Merchant Number -- contain just numbers with 15 in length.
 		Denomination denomination = new Denomination();	
+		if(messageArray[13].contains("=")) {
+			denomination.setDenomination1(Integer.parseInt(messageArray[13].split("=")[1]));
+		}
 		if(messageArray[14].contains("=")) {
 			denomination.setDenomination2(Integer.parseInt(messageArray[14].split("=")[1]));
 		}
 		if(messageArray[15].contains("=")) {
-			denomination.setDenomination2(Integer.parseInt(messageArray[15].split("=")[1]));
+			denomination.setDenomination3(Integer.parseInt(messageArray[15].split("=")[1]));
 		}
 		if(messageArray[16].contains("=")) {
-			denomination.setDenomination3(Integer.parseInt(messageArray[16].split("=")[1]));
+			denomination.setDenomination4(Integer.parseInt(messageArray[16].split("=")[1]));
 		}
 		if(messageArray[17].contains("=")) {
-			denomination.setDenomination4(Integer.parseInt(messageArray[17].split("=")[1]));
+			denomination.setDenomination5(Integer.parseInt(messageArray[17].split("=")[1]));
 		}
 		if(messageArray[18].contains("=")) {
-			denomination.setDenomination5(Integer.parseInt(messageArray[18].split("=")[1]));
+			denomination.setDenomination6(Integer.parseInt(messageArray[18].split("=")[1]));
 		}
 		if(messageArray[19].contains("=")) {
-			denomination.setDenomination6(Integer.parseInt(messageArray[19].split("=")[1]));
+			denomination.setDenomination7(Integer.parseInt(messageArray[19].split("=")[1]));
 		}
 		if(messageArray[20].contains("=")) {
-			denomination.setDenomination7(Integer.parseInt(messageArray[20].split("=")[1]));
+			denomination.setDenomination8(Integer.parseInt(messageArray[20].split("=")[1]));
 		}
 		if(messageArray[21].contains("=")) {
-			denomination.setDenomination8(Integer.parseInt(messageArray[21].split("=")[1]));
+			denomination.setDenomination9(Integer.parseInt(messageArray[21].split("=")[1]));
 		}
 		if(messageArray[22].contains("=")) {
-			denomination.setDenomination9(Integer.parseInt(messageArray[22].split("=")[1]));
+			denomination.setDenomination10(Integer.parseInt(messageArray[22].split("=")[1]));
 		}
 		if(messageArray[23].contains("=")) {
-			denomination.setDenomination10(Integer.parseInt(messageArray[23].split("=")[1]));
+			denomination.setDenomination11(Integer.parseInt(messageArray[23].split("=")[1]));
 		}
 		if(messageArray[24].contains("=")) {
-			denomination.setDenomination11(Integer.parseInt(messageArray[24].split("=")[1]));
+			denomination.setDenomination12(Integer.parseInt(messageArray[24].split("=")[1]));
 		}
 		if(messageArray[25].contains("=")) {
-			denomination.setDenomination12(Integer.parseInt(messageArray[25].split("=")[1]));
+			denomination.setDenomination13(Integer.parseInt(messageArray[25].split("=")[1]));
 		}
 		if(messageArray[26].contains("=")) {
-			denomination.setDenomination13(Integer.parseInt(messageArray[26].split("=")[1]));
+			denomination.setDenomination14(Integer.parseInt(messageArray[26].split("=")[1]));
 		}
 		if(messageArray[27].contains("=")) {
-			denomination.setDenomination14(Integer.parseInt(messageArray[27].split("=")[1]));
-		}
-		if(messageArray[28].contains("=")) {
-			denomination.setDenomination15(Integer.parseInt(messageArray[28].split("=")[1]));
+			denomination.setDenomination15(Integer.parseInt(messageArray[27].split("=")[1]));
 		}
 				
 		final DateTimeFormatter formatter = DateTimeFormatter
                 .ofPattern("yyyy-MM-ddHH:mm:ss:SSSSSS")
                 .withZone(ZoneId.systemDefault());
 		try {
-			transmitionDate = Instant.from(formatter.parse(messageArray[8]));
+			transmitionDate = Instant.from(formatter.parse(messageArray[5]));
 		} catch (Exception e) {
 //					throw new IntegrityException(MESSAGE_INVALID_CODE, "error date time");
 		} 
 				
 		VerificationMessageDto verificationMessageDto = VerificationMessageDto.builder()
 				.indicator(messageArray[0].charAt(0)) 
-				.merchantNumber(Long.parseLong(messageArray[1]))
-				.deviceNumber(messageArray[2])
-				.bagNumber(messageArray[3])
-				.containerType(messageArray[4].charAt(0)) 
-				.sequenceNumber(Integer.parseInt(messageArray[5]))
-				.transactionId(Integer.parseInt(messageArray[6]))
-				.depositReference(messageArray[7])
+				.deviceNumber(messageArray[1])
+				.bagNumber(messageArray[2])
+				.containerType(messageArray[3].charAt(0)) 
+				.transactionId(Integer.parseInt(messageArray[4]))
 				.transmitionDate(transmitionDate)
-				.canisterNumber(Integer.parseInt(messageArray[9]))
-				.currency(messageArray[10])
-				.totalAmount(new BigDecimal(messageArray[11]))
-				.totalNotes(Integer.parseInt(messageArray[12]))
-				.totalCoins(Integer.parseInt(messageArray[13]))
+				.canisterNumber(Integer.parseInt(messageArray[6]))
+				.currency(messageArray[7])
+				.cashCenterType(messageArray[8])
+				.cashCenterCode(messageArray[9])
+				.totalAmount(new BigDecimal(messageArray[10]))
+				.totalNotes(Integer.parseInt(messageArray[11]))
+				.totalCoins(Integer.parseInt(messageArray[12]))
 				.denomination(DenominationDto.fromEntity(denomination))
 				.build();
 				

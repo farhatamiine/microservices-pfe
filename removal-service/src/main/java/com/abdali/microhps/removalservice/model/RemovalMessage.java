@@ -6,8 +6,6 @@ import java.time.Instant;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -20,8 +18,8 @@ import lombok.Setter;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="SMB_DROP_MESSAGES")
-public class DropMessage extends AuditEntity {
+@Table(name="SMB_REMOVAL_MESSAGES")
+public class RemovalMessage extends AuditEntity {
 
 	@Column(columnDefinition = "char")
 	private Character indicator;
@@ -34,7 +32,8 @@ public class DropMessage extends AuditEntity {
 	@Column(columnDefinition = "char")
 	private Character containerType;
 	private Instant transmitionDate; 
-	private Long merchantNumber;
+	@Column(columnDefinition = "default 0")
+	private Character settlementFlag;
 	@Column(length=20)
 	private String depositReference;
 	@Column(columnDefinition = "smallint")

@@ -9,7 +9,6 @@ import com.abdali.microhps.verificationservice.exceptions.types.InvalidEntityExc
 import com.abdali.microhps.verificationservice.exceptions.types.NoDataFoundException;
 import com.abdali.microhps.verificationservice.exceptions.types.ResourceNotFoundException;
 
-
 @ControllerAdvice
 public class GlobalException {
 	

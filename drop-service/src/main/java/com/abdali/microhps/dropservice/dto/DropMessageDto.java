@@ -3,6 +3,8 @@ package com.abdali.microhps.dropservice.dto;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+import javax.persistence.Column;
+
 import com.abdali.microhps.dropservice.model.DropMessage;
 
 import lombok.Builder;
@@ -27,6 +29,7 @@ public class DropMessageDto {
 	private DenominationDto denomination;
 	private String depositReference;
 	private Integer sequenceNumber;
+	private Character settlementFlag;
 	
 	public static DropMessageDto fromEntity(DropMessage dropMessage) {
 		if(dropMessage == null)
@@ -47,6 +50,7 @@ public class DropMessageDto {
 				.totalNotes(dropMessage.getTotalNotes())
 				.totalAmount(dropMessage.getTotalAmount())
 				.currency(dropMessage.getCurrency())
+				.settlementFlag(dropMessage.getSettlementFlag())
 				.canisterNumber(dropMessage.getCanisterNumber())
 				.denomination(DenominationDto.fromEntity(dropMessage.getDenomination()))
 				.build();
@@ -70,6 +74,7 @@ public class DropMessageDto {
 		dropMessage.setTotalNotes(dropMessageDto.getTotalNotes());
 		dropMessage.setTotalAmount(dropMessageDto.getTotalAmount());
 		dropMessage.setCurrency(dropMessageDto.getCurrency());
+		dropMessage.setSettlementFlag(dropMessageDto.getSettlementFlag());
 		dropMessage.setCanisterNumber(dropMessageDto.getCanisterNumber());
 		dropMessage.setDenomination(DenominationDto.toEntity(dropMessageDto.getDenomination()));
 		

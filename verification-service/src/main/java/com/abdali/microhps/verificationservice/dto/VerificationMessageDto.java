@@ -26,7 +26,9 @@ public class VerificationMessageDto {
 	private Integer canisterNumber;
 	private DenominationDto denomination;
 	private String depositReference;
-	private Integer sequenceNumber;
+	private String cashCenterType; 
+	private String cashCenterCode;
+	private Character settlementFlag;
 	
 	public static VerificationMessageDto fromEntity(VerificationMessage verificationMessage) {
 		if(verificationMessage == null)
@@ -41,12 +43,13 @@ public class VerificationMessageDto {
 				.containerType(verificationMessage.getContainerType())
 				.transmitionDate(verificationMessage.getTransmitionDate())
 				.depositReference(verificationMessage.getDepositReference())
-				.sequenceNumber(verificationMessage.getSequenceNumber())
-				.merchantNumber(verificationMessage.getMerchantNumber())
+				.cashCenterCode(verificationMessage.getCashCenterCode())
+				.cashCenterType(verificationMessage.getCashCenterType())
 				.totalCoins(verificationMessage.getTotalCoins())
 				.totalNotes(verificationMessage.getTotalNotes())
 				.totalAmount(verificationMessage.getTotalAmount())
 				.currency(verificationMessage.getCurrency())
+				.settlementFlag(verificationMessage.getSettlementFlag())
 				.canisterNumber(verificationMessage.getCanisterNumber())
 				.denomination(DenominationDto.fromEntity(verificationMessage.getDenomination()))
 				.build();
@@ -64,11 +67,12 @@ public class VerificationMessageDto {
 		verificationMessage.setContainerType(verificationMessageDto.getContainerType());
 		verificationMessage.setTransmitionDate(verificationMessageDto.getTransmitionDate());
 		verificationMessage.setDepositReference(verificationMessageDto.getDepositReference());
-		verificationMessage.setSequenceNumber(verificationMessageDto.getSequenceNumber());
-		verificationMessage.setMerchantNumber(verificationMessageDto.getMerchantNumber());
+		verificationMessage.setCashCenterCode(verificationMessageDto.getCashCenterCode());
+		verificationMessage.setCashCenterType(verificationMessageDto.getCashCenterType());
 		verificationMessage.setTotalCoins(verificationMessageDto.getTotalCoins());
 		verificationMessage.setTotalNotes(verificationMessageDto.getTotalNotes());
 		verificationMessage.setTotalAmount(verificationMessageDto.getTotalAmount());
+		verificationMessage.setSettlementFlag(verificationMessageDto.getSettlementFlag());
 		verificationMessage.setCurrency(verificationMessageDto.getCurrency());
 		verificationMessage.setCanisterNumber(verificationMessageDto.getCanisterNumber());
 		verificationMessage.setDenomination(DenominationDto.toEntity(verificationMessageDto.getDenomination()));

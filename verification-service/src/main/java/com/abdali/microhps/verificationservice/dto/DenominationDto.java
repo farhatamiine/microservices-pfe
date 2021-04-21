@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder(builderClassName="Builder")
+@Builder
 public class DenominationDto {
 
 	private Integer denomination1; 
@@ -25,12 +25,6 @@ public class DenominationDto {
 	private Integer denomination13; 
 	private Integer denomination14; 
 	private Integer denomination15;
-	
-	public static class Builder{
-        //Set defaults here
-		private Integer denomination1 = 0;
-		private Integer denomination2 = 2;
-  }
 	
 	public static DenominationDto fromEntity(Denomination denomination) {
 		if(denomination == null) {

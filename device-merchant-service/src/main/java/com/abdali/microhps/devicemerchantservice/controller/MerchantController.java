@@ -62,7 +62,7 @@ public class MerchantController {
 	
 	@GetMapping("/merchant-device/status/{merchantNumber}")
 	public Boolean checkMerchantState(@PathVariable("merchantNumber") Long merchantNumber) {
-		return merchantService.merchantCheckStatus(merchantNumber, MerchantStatus.activated);
+		return merchantService.merchantCheckStatus(merchantNumber, MerchantStatus.normal);
 	}
 	
 	

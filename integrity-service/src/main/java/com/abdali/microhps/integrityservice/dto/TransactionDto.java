@@ -31,6 +31,7 @@ public class TransactionDto {
 	private BigDecimal totalAmount; 
 	private String currency; 
 	private Integer canisterNumber;
+	private Character settlementFlag;
 	private DenominationDto denomination; 
 	private DropTransactionDto dropTransaction; 
 	private RemovalDropTransactionDto removalDropTransaction; 
@@ -53,6 +54,7 @@ public class TransactionDto {
 				.totalAmount(transaction.getTotalAmount())
 				.currency(transaction.getCurrency())
 				.canisterNumber(transaction.getCanisterNumber())
+				.settlementFlag(transaction.getSettlementFlag())
 				.denomination(DenominationDto.fromEntity(transaction.getDenomination()))
 				.dropTransaction(DropTransactionDto.fromEntity(transaction.getDropTransaction()))
 				.removalDropTransaction(RemovalDropTransactionDto.fromEntity(transaction.getRemovalDropTransaction()))
@@ -77,6 +79,7 @@ public class TransactionDto {
 		transaction.setTotalAmount(transactionDto.getTotalAmount());
 		transaction.setCurrency(transactionDto.getCurrency());
 		transaction.setCanisterNumber(transactionDto.getCanisterNumber());
+		transaction.setSettlementFlag(transactionDto.getSettlementFlag());
 		transaction.setDenomination(DenominationDto.toEntity(transactionDto.getDenomination()));
 		transaction.setDropTransaction(DropTransactionDto.toEntity(transactionDto.getDropTransaction()));
 		transaction.setRemovalDropTransaction(RemovalDropTransactionDto.toEntity(transactionDto.getRemovalDropTransaction()));

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.abdali.microhps.dropservice.dto.DenominationDto;
 import com.abdali.microhps.dropservice.dto.DropMessageDto;
 import com.abdali.microhps.dropservice.model.Denomination;
-import com.abdali.microhps.dropservice.model.MessageRequest;
 import com.abdali.microhps.dropservice.service.DropMessageService;
 
 @RestController
@@ -34,18 +33,18 @@ public class DropController {
 	}
 
 	@PostMapping("/dropmessage/new")
-	public DropMessageDto addMessage(@RequestBody MessageRequest messageRequest) throws Exception {
+	public DropMessageDto addMessage(@RequestBody String messageRequest) {
 		
-		String message = URLDecoder.decode(messageRequest.getMessage(), StandardCharsets.UTF_8);
+		String message = URLDecoder.decode(messageRequest, StandardCharsets.UTF_8);
 		
 		String[] messageArray = message.split(",");
 		
 		Instant transmitionDate = null; 
-				
+
 //		 -- Check for drop message and verify Merchant Number -- contain just numbers with 15 in length.
 		Denomination denomination = new Denomination();	
 		if(messageArray[14].contains("=")) {
-			denomination.setDenomination2(Integer.parseInt(messageArray[14].split("=")[1]));
+			denomination.setDenomination1(Integer.parseInt(messageArray[14].split("=")[1]));
 		}
 		if(messageArray[15].contains("=")) {
 			denomination.setDenomination2(Integer.parseInt(messageArray[15].split("=")[1]));
@@ -117,9 +116,6 @@ public class DropController {
 				.denomination(DenominationDto.fromEntity(denomination))
 				.build();
 		
-//		if(true) {
-//			throw new Exception("-----------" + dropMessageDto + "______________" + Integer.parseInt(messageArray[5]) + "_____" + messageArray[7]);
-//		}
 		
 		return dropMessageService.save(dropMessageDto);
 	}

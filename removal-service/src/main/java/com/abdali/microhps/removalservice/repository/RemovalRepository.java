@@ -6,15 +6,15 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.abdali.microhps.removalservice.model.DropMessage;
+import com.abdali.microhps.removalservice.model.RemovalMessage;
 
-public interface DropRepository extends JpaRepository<DropMessage, Long> {
+public interface RemovalRepository extends JpaRepository<RemovalMessage, Long> {
 	
-	List<DropMessage> findByMerchantNumber(Long Id);
+	List<RemovalMessage> findByMerchantNumber(Long Id);
 	
-	List<DropMessage> findByBagNumber(String bagNumber);
+	List<RemovalMessage> findByBagNumber(String bagNumber);
 	
-	List<DropMessage> findByDeviceNumber(String deviceNumber);
+	List<RemovalMessage> findByDeviceNumber(String deviceNumber);
 	
-	List<DropMessage> findByMerchantNumberAndBagNumberAndTransactionIdAndTransmitionDate(Long Id, String bagNumber, Integer transactionId, Instant transmitionDate);
+	List<RemovalMessage> findByMerchantNumberAndBagNumberAndTransactionIdAndTransmitionDate(Long Id, String bagNumber, Integer transactionId, Instant transmitionDate);
 }

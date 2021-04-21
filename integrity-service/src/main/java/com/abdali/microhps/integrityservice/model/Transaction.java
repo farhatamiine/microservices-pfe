@@ -34,11 +34,9 @@ public class Transaction extends AuditEntity {
 	private String bagNumber; 
 	@Column(columnDefinition = "char")
 	private Character containerType;
-
-	private Instant transmitionDate; 
-	
-//	private Character settlementFlag;
-	
+	private Instant transmitionDate;
+	@Column(columnDefinition = "default 0")
+	private Character settlementFlag;
 	private Integer totalCoins;
 	private Integer totalNotes;
 	private BigDecimal totalAmount;

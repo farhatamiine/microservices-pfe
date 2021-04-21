@@ -6,15 +6,15 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.abdali.microhps.verificationservice.model.DropMessage;
+import com.abdali.microhps.verificationservice.model.VerificationMessage;
 
-public interface DropRepository extends JpaRepository<DropMessage, Long> {
+public interface VerificationRepository extends JpaRepository<VerificationMessage, Long> {
 	
-	List<DropMessage> findByMerchantNumber(Long Id);
+	List<VerificationMessage> findByMerchantNumber(Long Id);
 	
-	List<DropMessage> findByBagNumber(String bagNumber);
+	List<VerificationMessage> findByBagNumber(String bagNumber);
 	
-	List<DropMessage> findByDeviceNumber(String deviceNumber);
+	List<VerificationMessage> findByDeviceNumber(String deviceNumber);
 	
-	List<DropMessage> findByMerchantNumberAndBagNumberAndTransactionIdAndTransmitionDate(Long Id, String bagNumber, Integer transactionId, Instant transmitionDate);
+	List<VerificationMessage> findByMerchantNumberAndBagNumberAndTransactionIdAndTransmitionDate(Long Id, String bagNumber, Integer transactionId, Instant transmitionDate);
 }

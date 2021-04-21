@@ -1,7 +1,5 @@
 package com.abdali.microhps.integrityservice.dto;
 
-import javax.persistence.Column;
-
 import com.abdali.microhps.integrityservice.model.Denomination;
 
 import lombok.Builder;

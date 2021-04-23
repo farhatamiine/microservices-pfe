@@ -1,15 +1,24 @@
 package com.abdali.microhps.devicemerchantservice.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import com.abdali.microhps.devicemerchantservice.dto.DeviceDto;
 import com.abdali.microhps.devicemerchantservice.exceptions.types.InvalidEntityException;
 import com.abdali.microhps.devicemerchantservice.exceptions.types.NoDataFoundException;
+import com.abdali.microhps.devicemerchantservice.model.Device;
 import com.abdali.microhps.devicemerchantservice.repository.DeviceRepository;
 import com.abdali.microhps.devicemerchantservice.service.DeviceService;
 import com.abdali.microhps.devicemerchantservice.validation.DeviceValidation;
@@ -31,10 +40,43 @@ public class DeviceServiceImpl implements DeviceService {
 //	- findById;
 	
 	@Override
-	public List<DeviceDto> findAll() {
-		return deviceRepository.findAll().stream()
-				.map(DeviceDto::fromEntity)
-				.collect(Collectors.toList());
+	public Map<String, Object> findAll(String title, int page, int size, String[] sort) {
+		
+		List<Order> orders = new ArrayList<Order>();
+
+	      if (sort[0].contains(",")) {
+	        // will sort more than 2 fields
+	        // sortOrder="field, direction"
+	        for (String sortOrder : sort) {
+	          String[] _sort = sortOrder.split(",");
+	          orders.add(new Order(getSortDirection(_sort[1]), _sort[0]));
+	        }
+	      } else {
+	        // sort=[field, direction]
+	        orders.add(new Order(getSortDirection(sort[1]), sort[0]));
+	      }
+
+	      List<DeviceDto> devices = new ArrayList<DeviceDto>();
+	      
+	      Pageable pagingSort = PageRequest.of(page, size, Sort.by(orders));
+
+	      Page<Device> pageDevices = null;
+	      
+	      if (title == null)
+	        pageDevices = deviceRepository.findAll(pagingSort);
+
+	      List<DeviceDto> devicesDto = pageDevices.getContent().stream()
+					.map(DeviceDto::fromEntity)
+					.collect(Collectors.toList());
+
+	      Map<String, Object> response = new HashMap<>();
+	      
+	      response.put("devices", devicesDto);
+	      response.put("currentPage", pageDevices.getNumber());
+	      response.put("totalItems", pageDevices.getTotalElements());
+	      response.put("totalPages", pageDevices.getTotalPages());
+	      
+	      return response;
 	}
 	
 	@Override
@@ -78,5 +120,21 @@ public class DeviceServiceImpl implements DeviceService {
 		new NoDataFoundException("Aucune Device Found With Id = " + id)
 	        );
 	  }
+	
+
+    /***
+     * Sorting Devices.
+     * @param direction
+     * @return
+     */
+    private Sort.Direction getSortDirection(String direction) {
+        if (direction.equals("asc")) {
+          return Sort.Direction.ASC;
+        } else if (direction.equals("desc")) {
+          return Sort.Direction.DESC;
+        }
+
+        return Sort.Direction.ASC;
+      }
 
 }

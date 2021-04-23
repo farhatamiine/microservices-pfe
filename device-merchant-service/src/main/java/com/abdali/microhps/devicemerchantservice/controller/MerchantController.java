@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.abdali.microhps.devicemerchantservice.dto.DeviceDto;
 import com.abdali.microhps.devicemerchantservice.dto.MerchantDto;
 import com.abdali.microhps.devicemerchantservice.model.MerchantStatus;
 import com.abdali.microhps.devicemerchantservice.service.MerchantService;
@@ -24,44 +25,45 @@ public class MerchantController {
 		this.merchantService = merchantService;
 	}
 	
-	@PostMapping(value = "/merchants", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/merchant-device/merchants", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public MerchantDto addMerchant(@RequestBody MerchantDto merchantDto ) {
 		return merchantService.save(merchantDto);
 	}
 	
-	@GetMapping(value = "/merchants/merchant-id/{merchantId}")
+	@GetMapping(value = "/merchant-device/merchants/merchant-id/{merchantId}")
 	public MerchantDto getMerchantById(@PathVariable Integer merchantId) {
 		return merchantService.findById(merchantId);
 	}
 	
-	@GetMapping(value = "/merchants/merchant-number/{merchantNumber}")
+	@GetMapping(value = "/merchant-device/merchants/merchant-number/{merchantNumber}")
 	public MerchantDto getMerchantByNumber(@PathVariable Long merchantNumber) {
 		return merchantService.findByMerchantNumber(merchantNumber);
 	}
 	
-	@GetMapping(value = "/merchants/device/{device}")
-	public List<MerchantDto> getMerchantByDevice(@PathVariable Integer deviceNumber) {
-		return merchantService.findAllMerchantByIdDevice(deviceNumber);
-	}
-	
-	@GetMapping(value= "/merchants")
+	@GetMapping(value= "/merchant-device/merchants")
 	public List<MerchantDto> allMerchant() {
 		return merchantService.findAll();
 	}
 	
-
+	/*****************************************
+	 * 
+	 * @param merchantNumber
+	 * @param deviceNumber
+	 * @return Boolean : check if merchant has relation with device
+	 */
 	@GetMapping(value = "/merchant-device/merchant-number/{merchantNumber}/device-number/{deviceNumber}")
-	public Boolean relationDeviceMerchant(@PathVariable Long merchantNumber, @PathVariable String deviceNumber) {
+	public Boolean isDeviceRelatedToMerchant(@PathVariable Long merchantNumber, @PathVariable String deviceNumber) {
+		
 		MerchantDto merchant = merchantService.findByMerchantNumber(merchantNumber);
-
-		if(merchant != null && merchant.getDevice().getDeviceNumber().equals(deviceNumber)) {			
-			return true;
+		if(merchant.getDevices().isEmpty()) {
+			return false;
+		} else {		
+			return merchant.getDevices().stream().map(DeviceDto::getDeviceNumber).filter(deviceNumber::equals).findFirst().isPresent();
 		}
-		return false;
 	}
 	
 	@GetMapping("/merchant-device/status/{merchantNumber}")
-	public Boolean checkMerchantState(@PathVariable("merchantNumber") Long merchantNumber) {
+	public Boolean checkMerchantState(@PathVariable("merchantNumber") Long merchantNumber) throws Exception {
 		return merchantService.merchantCheckStatus(merchantNumber, MerchantStatus.normal);
 	}
 	

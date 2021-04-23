@@ -10,7 +10,7 @@ import com.abdali.microhps.integrityservice.config.feign.FeignSimpleEncoderConfi
 @FeignClient(name="verification-service", configuration = FeignSimpleEncoderConfig.class)
 public interface VerificationMessageProxy {
 
-	@PostMapping(value= "/verification-message/new")
+	@PostMapping(value= "/verification-transaction/new")
 	public String saveVerificationMessage(@RequestBody String message);
 	
 }

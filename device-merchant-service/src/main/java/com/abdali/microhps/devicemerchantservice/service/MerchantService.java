@@ -1,7 +1,6 @@
 package com.abdali.microhps.devicemerchantservice.service;
 
 import java.util.List;
-
 import com.abdali.microhps.devicemerchantservice.dto.MerchantDto;
 import com.abdali.microhps.devicemerchantservice.model.MerchantStatus;
 
@@ -14,8 +13,6 @@ public interface MerchantService {
 	MerchantDto findById(Integer merhantId);
 	
 	MerchantDto findByMerchantNumber(Long merhantNumber);
-	
-	List<MerchantDto> findAllMerchantByIdDevice(Integer idDevice);
 	
 	Boolean merchantCheckStatus(Long merchantNumber, MerchantStatus status);
 }

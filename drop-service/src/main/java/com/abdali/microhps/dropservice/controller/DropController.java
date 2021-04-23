@@ -35,7 +35,7 @@ public class DropController {
 		this.dropMessageService = dropMessageService;
 	}
 
-	@PostMapping("/dropmessage/new")
+	@PostMapping("/drop-message/new")
 	public DropMessageDto addMessage(@RequestBody String messageRequest) {
 		
 		String message = URLDecoder.decode(messageRequest, StandardCharsets.UTF_8);
@@ -136,46 +136,63 @@ public class DropController {
 		
 	}
 	
-	@GetMapping("/dropmessage")
+	@GetMapping("/drop-transaction")
 	public List<DropMessageDto> getMessages() {
 		return dropMessageService.findAll();
 	}
 	
-	@GetMapping("/dropmessage/{messageId}")
+	@GetMapping("/drop-transaction/{messageId}")
 	public DropMessageDto getMessageById(@PathVariable("messageId") Long Id) {
 		return dropMessageService.findById(Id);
 	}
 	
-	@GetMapping("/dropmessage/merchant/{merchantNumber}")
+	@GetMapping("/drop-transaction/merchant/{merchantNumber}")
 	public List<DropMessageDto> getMessageByMerchantNumber(@PathVariable("merchantNumber") Long merchantNumber) {
 		return dropMessageService.findByMerchantNumber(merchantNumber);
 	}
 	
-	@GetMapping("/dropmessage/device/{deviceNumber}")
+	@GetMapping("/drop-transaction/device/{deviceNumber}")
 	public List<DropMessageDto> getMessageByDeviceNumber(@PathVariable("deviceNumber") String deviceNumber) {
 		return dropMessageService.findByDeviceNumber(deviceNumber);
 	}
 
-	@GetMapping("/dropmessage/bag/{bagNumber}")
+	@GetMapping("/drop-transaction/bag/{bagNumber}")
 	public List<DropMessageDto> getMessageByBagNumber(@PathVariable("bagNumber") String bagNumber) {
 		return dropMessageService.findByBagNumber(bagNumber);
 	}
 	
-	@GetMapping("/dropmessage/verify/bag/{bagNumber}")
-	public Boolean verifyTransactionForIntegrityBagNumber(@PathVariable("bagNumber") String bagNumber) {
+	/******************************** Integrity Checks ********************************************/
+	
+	/**********************************************
+	 * @param bagNumber
+	 * @return Boolean if there is dropTransaction correspond to bag Number
+	 */
+	@GetMapping("/drop-transaction/verify/bag/{bagNumber}")
+	public Boolean isBagNumberHasDrops(@PathVariable("bagNumber") String bagNumber) {
 		if(dropMessageService.findByBagNumber(bagNumber).isEmpty()) {
 			return false;
 		}
 		return true;
 	}
 	
-	@GetMapping("dropmessage/merchant/{merchantNumber}/bag/{bagNumber}/tranasction/{transactionId}/date/{datetime}")
-	public Boolean verifyMessage(
+	/***********************************************
+	 * 
+	 * @param merchantNumber
+	 * @param bagNumber
+	 * @param transactionId
+	 * @param transmitionDate
+	 * @return Boolean if dropTransaction founded.
+	 * @throws Exception
+	 */
+	@GetMapping("drop-transaction/merchant/{merchantNumber}/bag/{bagNumber}/tranasction/{transactionId}/date/{datetime}")
+	public Boolean isMessageExist(
 			@PathVariable("merchantNumber") Long merchantNumber, 
 			@PathVariable("bagNumber") String bagNumber, 
 			@PathVariable("transactionId") Integer transactionId,
-			@PathVariable("datetime") String transmitionDate) {
+			@PathVariable("datetime") String transmitionDate) throws Exception {
 
+		transmitionDate = URLDecoder.decode(transmitionDate, StandardCharsets.UTF_8);
+		
 		final DateTimeFormatter formatter = DateTimeFormatter
                 .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
                 .withZone(ZoneId.systemDefault());

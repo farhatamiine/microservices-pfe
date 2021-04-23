@@ -15,10 +15,19 @@ public class ApiGatewayConfiguration {
 //						.filters(f -> f
 //								.addRequestHeader("MyHeader", "MyURI")
 //								.addRequestParameter("Param", "MyValue"))
-//						.uri("http://httpbin.org:80"))
+//						.uri("http://httpbin.org:80")) 
 				.route(p -> p
-						.path("/dropmessage/**")
-						.uri("lb://drop-service/"))
+						.path("/device-merchnat/**))")
+						.uri("lb:/device-merchant-service/"))
+				.route(p -> p
+						.path("/drop-transaction/**")
+						.uri("lb://removal-service/"))
+				.route(p -> p
+						.path("/removal-transaction/**")
+						.uri("lb://removal-service/"))
+				.route(p -> p
+						.path("/verification-transaction/**")
+						.uri("lb://verification-service/"))
 				.build();
 	}
 

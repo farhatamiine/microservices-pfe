@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.abdali.microhps.verificationservice.dto.DenominationDto;
 import com.abdali.microhps.verificationservice.dto.VerificationMessageDto;
 import com.abdali.microhps.verificationservice.model.Denomination;
-import com.abdali.microhps.verificationservice.model.MessageRequest;
 import com.abdali.microhps.verificationservice.service.VerificationMessageService;
 
 @RestController
@@ -36,7 +35,7 @@ public class VerificationController {
 		this.verificationMessageService = verificationMessageService;
 	}
 
-	@PostMapping("/verification-message/new")
+	@PostMapping("/verification-transaction/new")
 	public VerificationMessageDto addMessage(@RequestBody String messageRequest) {
 		
 		String message = URLDecoder.decode(messageRequest, StandardCharsets.UTF_8);
@@ -132,27 +131,27 @@ public class VerificationController {
 		return verificationMessageService.save(verificationMessageDto);
 	}
 	
-	@GetMapping("/verificationmessage")
+	@GetMapping("/verification-transaction")
 	public List<VerificationMessageDto> getMessages() {
 		return verificationMessageService.findAll();
 	}
 	
-	@GetMapping("/verificationmessage/{messageId}")
+	@GetMapping("/verification-transaction/{messageId}")
 	public VerificationMessageDto getMessageById(@PathVariable("messageId") Long Id) {
 		return verificationMessageService.findById(Id);
 	}
 
-	@GetMapping("/verificationmessage/device/{deviceNumber}")
+	@GetMapping("/verification-transaction/device/{deviceNumber}")
 	public List<VerificationMessageDto> getMessageByDeviceNumber(@PathVariable("deviceNumber") String deviceNumber) {
 		return verificationMessageService.findByDeviceNumber(deviceNumber);
 	}
 
-	@GetMapping("/verificationmessage/bag/{bagNumber}")
+	@GetMapping("/verification-transaction/bag/{bagNumber}")
 	public List<VerificationMessageDto> getMessageByBagNumber(@PathVariable("bagNumber") String bagNumber) {
 		return verificationMessageService.findByBagNumber(bagNumber);
 	}
 	
-	@GetMapping("/verificationmessage/verify/bag/{bagNumber}")
+	@GetMapping("/verification-transaction/verify/bag/{bagNumber}")
 	public Boolean verifyTransactionForIntegrityBagNumber(@PathVariable("bagNumber") String bagNumber) {
 		if(verificationMessageService.findByBagNumber(bagNumber).isEmpty()) {
 			return false;

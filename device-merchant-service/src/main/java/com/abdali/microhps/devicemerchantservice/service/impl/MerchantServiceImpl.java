@@ -1,7 +1,6 @@
 package com.abdali.microhps.devicemerchantservice.service.impl;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.List; 
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.abdali.microhps.devicemerchantservice.dto.MerchantDto;
 import com.abdali.microhps.devicemerchantservice.exceptions.types.InvalidEntityException;
-import com.abdali.microhps.devicemerchantservice.exceptions.types.NoDataFoundException;
-import com.abdali.microhps.devicemerchantservice.model.Device;
-import com.abdali.microhps.devicemerchantservice.model.Merchant;
+import com.abdali.microhps.devicemerchantservice.exceptions.types.NoDataFoundException; 
 import com.abdali.microhps.devicemerchantservice.model.MerchantStatus;
 import com.abdali.microhps.devicemerchantservice.repository.DeviceRepository;
 import com.abdali.microhps.devicemerchantservice.repository.MerchantRepository;
@@ -47,10 +44,10 @@ public class MerchantServiceImpl implements MerchantService {
 			throw new InvalidEntityException("errors code :", errors);
 		}
 		
-		Optional<Device> device = deviceRepository.findById(merchantDto.getDevice().getId());
-	    if (device.isEmpty()) {
-	      throw new NoDataFoundException("There is no Device with ID " + merchantDto.getDevice().getId() + " found in the Database");
-	    } 
+//		Optional<Device> device = deviceRepository.findById(merchantDto.getDevices().getId());
+//	    if (device.isEmpty()) {
+//	      throw new NoDataFoundException("There is no Device with ID " + merchantDto.getDevices().getId() + " found in the Database");
+//	    } 
 	    
 		// TODO Auto-generated method stub
 		return MerchantDto.fromEntity(merchantRepository.save(MerchantDto.toEntity(merchantDto)));
@@ -74,11 +71,6 @@ public class MerchantServiceImpl implements MerchantService {
 		return merchantRepository.findByMerchantNumber(merchantNumber).map(MerchantDto::fromEntity).orElse(null);
 	}
 	
-	@Override
-	public List<MerchantDto> findAllMerchantByIdDevice(Integer idDevice) {
-		return merchantRepository.findAllByDeviceId(idDevice).stream().map(MerchantDto::fromEntity).collect(Collectors.toList());
-	}
-	
 	public List<MerchantDto> findAll() {
 		return merchantRepository.findAll().stream().map(MerchantDto::fromEntity)
 				.collect(Collectors.toList());
@@ -89,8 +81,9 @@ public class MerchantServiceImpl implements MerchantService {
 		if (merchantNumber == null) {
 //			log.warn("ID merchant is NULL");
 //			return Integer.valueOf(1);
+			return false;
 		}
-		if(merchantRepository.merchantStatus(merchantNumber, status) == 0) {
+		if(merchantRepository.merchantStatus(merchantNumber, status).equals(0)) {
 			return false;
 		};
 		return true;

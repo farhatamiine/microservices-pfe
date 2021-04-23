@@ -1,16 +1,16 @@
-package com.abdali.microhps.integrityservice.dto;
+package com.abdali.microhps.othermessagesservice.dto;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
-import com.abdali.microhps.integrityservice.model.Transaction;
+import com.abdali.microhps.othermessagesservice.model.OtherTransaction;
 
 import lombok.Builder;
 import lombok.Data;
 
 @Builder
 @Data
-public class TransactionDto {
+public class OtherTransactionDto {
 	
 	private Long id;
 	private Character indicator; 
@@ -30,11 +30,11 @@ public class TransactionDto {
 	private RemovalDropTransactionDto removalDropTransaction; 
 	private VerificationTransactionDto verificationTransaction;
 	
-	public static TransactionDto fromEntity(Transaction transaction) {
+	public static OtherTransactionDto fromEntity(OtherTransaction transaction) {
 		if(transaction ==null) {
 			return null;
 		}
-		return TransactionDto.builder()
+		return OtherTransactionDto.builder()
 				.id(transaction.getId())
 				.indicator(transaction.getIndicator()) 
 				.transactionId(transaction.getTransactionId())
@@ -55,28 +55,28 @@ public class TransactionDto {
 				.build();
 	}
 	
-	public static Transaction toEntity(TransactionDto transactionDto) {
-		if(transactionDto == null) {
+	public static OtherTransaction toEntity(OtherTransactionDto otherTransactionDto) {
+		if(otherTransactionDto == null) {
 			return null;
 		}
 		
-		Transaction transaction = new Transaction();
-		transaction.setIndicator(transactionDto.getIndicator());
-		transaction.setTransactionId(transactionDto.getTransactionId()); 
-		transaction.setDeviceNumber(transactionDto.getDeviceNumber());
-		transaction.setBagNumber(transactionDto.getBagNumber());
-		transaction.setContainerType(transactionDto.getContainerType());	
-		transaction.setTransmitionDate(transactionDto.getTransmitionDate());
-		transaction.setTotalCoins(transactionDto.getTotalCoins());
-		transaction.setTotalNotes(transactionDto.getTotalNotes());
-		transaction.setTotalAmount(transactionDto.getTotalAmount());
-		transaction.setCurrency(transactionDto.getCurrency());
-		transaction.setCanisterNumber(transactionDto.getCanisterNumber());
-		transaction.setSettlementFlag(transactionDto.getSettlementFlag());
-		transaction.setDenomination(DenominationDto.toEntity(transactionDto.getDenomination()));
-		transaction.setDropTransaction(DropTransactionDto.toEntity(transactionDto.getDropTransaction()));
-		transaction.setRemovalDropTransaction(RemovalDropTransactionDto.toEntity(transactionDto.getRemovalDropTransaction()));
-		transaction.setVerificationTransaction(VerificationTransactionDto.toEntity(transactionDto.getVerificationTransaction()));
+		OtherTransaction transaction = new OtherTransaction();
+		transaction.setIndicator(otherTransactionDto.getIndicator());
+		transaction.setTransactionId(otherTransactionDto.getTransactionId()); 
+		transaction.setDeviceNumber(otherTransactionDto.getDeviceNumber());
+		transaction.setBagNumber(otherTransactionDto.getBagNumber());
+		transaction.setContainerType(otherTransactionDto.getContainerType());	
+		transaction.setTransmitionDate(otherTransactionDto.getTransmitionDate());
+		transaction.setTotalCoins(otherTransactionDto.getTotalCoins());
+		transaction.setTotalNotes(otherTransactionDto.getTotalNotes());
+		transaction.setTotalAmount(otherTransactionDto.getTotalAmount());
+		transaction.setCurrency(otherTransactionDto.getCurrency());
+		transaction.setCanisterNumber(otherTransactionDto.getCanisterNumber());
+		transaction.setSettlementFlag(otherTransactionDto.getSettlementFlag());
+		transaction.setDenomination(DenominationDto.toEntity(otherTransactionDto.getDenomination()));
+		transaction.setDropTransaction(DropTransactionDto.toEntity(otherTransactionDto.getDropTransaction()));
+		transaction.setRemovalDropTransaction(RemovalDropTransactionDto.toEntity(otherTransactionDto.getRemovalDropTransaction()));
+		transaction.setVerificationTransaction(VerificationTransactionDto.toEntity(otherTransactionDto.getVerificationTransaction()));
 		return transaction;
 		
  	}

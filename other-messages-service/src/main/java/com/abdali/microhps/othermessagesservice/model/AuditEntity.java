@@ -1,4 +1,4 @@
-package com.abdali.microhps.devicemerchantservice.model;
+package com.abdali.microhps.othermessagesservice.model;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -22,7 +22,7 @@ public class AuditEntity implements Serializable {
 	
 	@Id
     @GeneratedValue
-	private Integer id;
+	private Long id;
 
 	@CreatedDate
     @Column(name = "createdDate", nullable = false, updatable = false)

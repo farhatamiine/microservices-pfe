@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.abdali.microhps.integrityservice.exceptions.IntegrityException;
 import com.abdali.microhps.integrityservice.proxy.MerchantDeviceProxy;
+import com.abdali.microhps.integrityservice.service.TransactionService;
  
 // - NOTE:: AVAILABLE JUST FOR "DROPS" OTHERS DIDN'T HAVE MERCHANT NUMBER.
 // - Merchant not found: this validation fails when the merchant number meet any of the following conditions
@@ -20,19 +21,25 @@ import com.abdali.microhps.integrityservice.proxy.MerchantDeviceProxy;
 public class MerchantNotFound {
 	
 	private MerchantDeviceProxy merchantDeviceProxy;
+	private TransactionService transactionService;
 	
 	@Autowired
-	public MerchantNotFound(MerchantDeviceProxy merchantDeviceProxy) {
+	public MerchantNotFound(MerchantDeviceProxy merchantDeviceProxy, TransactionService transactionService) {
 		this.merchantDeviceProxy = merchantDeviceProxy;
+		this.transactionService = transactionService;
 	}
 
-	public Boolean checkMerchantNotFound(Long merchant) {
+	public Boolean checkMerchantNotFound(Long merchant, char containerType, String[] messageSplited, String message) {
+		
 		Boolean merchantStatus = merchantDeviceProxy.checkMerchantState(merchant);
 		
 		if(merchantStatus) {
 			return true;
+		} else {			
+			transactionService.transactionCreate(containerType, messageSplited, message);
+			throw new IntegrityException(MESSAGE_MERCHANT_NOT_FOUND_CODE, MESSAGE_MERCHANT_NOT_FOUND_DESCRIPTION);
 		}
-		throw new IntegrityException(MESSAGE_MERCHANT_NOT_FOUND_CODE, MESSAGE_MERCHANT_NOT_FOUND_DESCRIPTION);
+
 	}
 
 }

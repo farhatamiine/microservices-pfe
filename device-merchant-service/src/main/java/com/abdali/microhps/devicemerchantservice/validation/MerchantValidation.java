@@ -4,9 +4,7 @@ import static com.abdali.microhps.devicemerchantservice.utils.Constants.MERCHANT
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.abdali.microhps.devicemerchantservice.dto.MerchantDto;
-
 
 public class MerchantValidation {
 	

@@ -4,6 +4,7 @@ import static com.abdali.microhps.integrityservice.utils.Constants.BAG_NUMBER;
 import static com.abdali.microhps.integrityservice.utils.Constants.COINS_INDICATOR;
 import static com.abdali.microhps.integrityservice.utils.Constants.DEVICE_NUMBER;
 import static com.abdali.microhps.integrityservice.utils.Constants.DROP_INDICATOR;
+import static com.abdali.microhps.integrityservice.utils.Constants.MERCHANT_NUMBER_LENGTH;
 import static com.abdali.microhps.integrityservice.utils.Constants.MESSAGE_INVALID_CODE;
 import static com.abdali.microhps.integrityservice.utils.Constants.MESSAGE_INVALID_DESCRIPTION;
 import static com.abdali.microhps.integrityservice.utils.Constants.NOTES_INDICATOR;
@@ -14,12 +15,11 @@ import static com.abdali.microhps.integrityservice.utils.Constants.VERIFICATION_
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 
 import com.abdali.microhps.integrityservice.exceptions.IntegrityException;
+import com.abdali.microhps.integrityservice.service.TransactionService;
 
 
 //- step 1 : Message indicator is not recognised or not present. -- must equal D || R || V
@@ -34,42 +34,50 @@ import com.abdali.microhps.integrityservice.exceptions.IntegrityException;
 @Service
 public class MessageFormat {
 	
-//	private DateTimeFormatter dateFormatter;
+	private TransactionService transactionService;
+	
+	public MessageFormat(
+			TransactionService transactionService
+			) {
+		this.transactionService = transactionService;
+	}
 	
 	public Boolean checkMessageFormat(
 			char indicator, 
-			Long merchantNumber, 
+			String merchantNumber, 
 			String deviceNumber, 
 			String bagNumber, 
 			char containerType, 
 			int sequenceNumber, 
 			String transmitionDate, 
-			String transactionId) {
-		
-		// STEP 1 - check Indicator. -- it can be one of others status ...
-		if(indicator == DROP_INDICATOR || indicator == REMOVAL_INDICATOR || indicator == VERIFICATION_INDICATOR) {		
-			// STEP 3 && STEP 4 - check for Device Number and bag Number.
-			if(deviceNumber.length() == DEVICE_NUMBER && bagNumber.length() == BAG_NUMBER) {
-				// STEP 5 - check for container
-				if(containerType == NOTES_INDICATOR || containerType == COINS_INDICATOR) {	
-					final DateTimeFormatter formatter = DateTimeFormatter
-			                .ofPattern("yyyy-MM-ddHH:mm:ss:SSSSSS")
-			                .withZone(ZoneId.systemDefault());
-					try {
-						Instant.from(formatter.parse(transmitionDate));
-					} catch (Exception e) {
-						throw new IntegrityException(MESSAGE_INVALID_CODE, "error date time");
-					} 
-					// STEP 8 - check for transaction ID - we need to check just if its present.
-		        	if(transactionId.length() == TRANSACTION_ID_LENGTH) {
-		        		return true;
-		        	}
-					throw new IntegrityException(MESSAGE_INVALID_CODE, "error transaction id");
+			String transactionId,
+			String[] messageSplited,
+			String message) {
+			if(indicator == DROP_INDICATOR && messageSplited[1].length() == MERCHANT_NUMBER_LENGTH && messageSplited[1].matches("[0-9_]+")) {			
+				// STEP 1 - check Indicator. -- it can be one of others status ...
+				if(indicator == DROP_INDICATOR || indicator == REMOVAL_INDICATOR || indicator == VERIFICATION_INDICATOR) {		
+					// STEP 3 && STEP 4 - check for Device Number and bag Number.
+					if(deviceNumber.length() == DEVICE_NUMBER && bagNumber.length() == BAG_NUMBER) {
+						// STEP 5 - check for container
+						if(containerType == NOTES_INDICATOR || containerType == COINS_INDICATOR) {	
+							// STEP 8 - check for transaction ID - we need to check just if its present.
+							if(transactionId.length() == TRANSACTION_ID_LENGTH) {
+								final DateTimeFormatter formatter = DateTimeFormatter
+										.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
+										.withZone(ZoneId.systemDefault());
+								try {
+									Instant.from(formatter.parse(transmitionDate));
+								} catch (Exception e) {
+									transactionService.transactionCreate(containerType, messageSplited, message);
+									throw new IntegrityException(MESSAGE_INVALID_CODE, MESSAGE_INVALID_DESCRIPTION);
+								} 
+								return true;
+							}
+						}
+					}  
 				}
-				throw new IntegrityException(MESSAGE_INVALID_CODE, "error notes or coins");
-			}  
-			throw new IntegrityException(MESSAGE_INVALID_CODE, "error device or bag number");
-		}
-		return false;
+			}
+		transactionService.transactionCreate(containerType, messageSplited, message);
+		throw new IntegrityException(MESSAGE_INVALID_CODE, MESSAGE_INVALID_DESCRIPTION);
 	}
 }

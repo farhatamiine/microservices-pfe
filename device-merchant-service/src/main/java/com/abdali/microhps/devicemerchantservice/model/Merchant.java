@@ -1,19 +1,18 @@
 package com.abdali.microhps.devicemerchantservice.model;
 
-import javax.persistence.CascadeType;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.EqualsAndHashCode; 
+import lombok.NoArgsConstructor; 
 
 @Data
 @NoArgsConstructor
@@ -30,7 +29,10 @@ public class Merchant extends AuditEntity {
 	@Column(name="status")
 	private MerchantStatus status;
 
-	@ManyToOne
-	@JoinColumn(name = "iddevice")
-	private Device device;
+	@ManyToMany
+	@JoinTable(
+			  name = "mechant_device", 
+			  joinColumns = @JoinColumn(name = "merchant_id"), 
+			  inverseJoinColumns = @JoinColumn(name = "device_id"))
+	private List<Device> devices;
 }

@@ -25,7 +25,6 @@ public class DropMessage extends AuditEntity {
 
 	@Column(columnDefinition = "char")
 	private Character indicator;
-	@Column(unique=false)
 	private Integer transactionId;
 	@Column(columnDefinition = "varchar(15)")
 	private String deviceNumber;

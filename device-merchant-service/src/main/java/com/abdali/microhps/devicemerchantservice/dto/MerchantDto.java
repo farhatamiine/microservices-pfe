@@ -1,5 +1,8 @@
 package com.abdali.microhps.devicemerchantservice.dto;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.abdali.microhps.devicemerchantservice.model.Merchant;
 import com.abdali.microhps.devicemerchantservice.model.MerchantStatus;
 
@@ -14,7 +17,8 @@ public class MerchantDto {
 	private Long merchantNumber;
 	private String merchantName;
 	private MerchantStatus status;
-	private DeviceDto device;
+	
+	private List<DeviceDto> devices;
 	
 	public static MerchantDto fromEntity(Merchant merchant) {
 		if(merchant == null) {
@@ -26,11 +30,17 @@ public class MerchantDto {
 				.merchantNumber(merchant.getMerchantNumber())
 				.merchantName(merchant.getMerchantName())
 				.status(merchant.getStatus())
-				.device(DeviceDto.fromEntity(merchant.getDevice()))
+				.devices(
+			            merchant.getDevices() != null ?
+			            	merchant.getDevices().stream()
+			                    .map(DeviceDto::fromEntity)
+			                    .collect(Collectors.toList()) : null
+			        )
 				.build();
 	}
 	
 	public static Merchant toEntity(MerchantDto merchantDto) {
+		
 		if (merchantDto == null) {
 			return null;
 		}
@@ -39,7 +49,12 @@ public class MerchantDto {
 		merchant.setMerchantNumber(merchantDto.getMerchantNumber());
 		merchant.setMerchantName(merchantDto.getMerchantName());
 		merchant.setStatus(merchantDto.getStatus());
-		merchant.setDevice(DeviceDto.toEntity(merchantDto.getDevice()));
+		merchant.setDevices(
+				merchantDto.getDevices() != null ?
+		            	merchantDto.getDevices().stream()
+		            	.map(DeviceDto::toEntity)
+		            	.collect(Collectors.toList()) : null
+				);
 		return merchant;
 		
 	}

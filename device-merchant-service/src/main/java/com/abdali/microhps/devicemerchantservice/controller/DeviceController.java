@@ -25,17 +25,17 @@ public class DeviceController {
 	    this.deviceService = deviceService;
 	  }
 	
-	@GetMapping("/devices")
+	@GetMapping("/merchant-device/devices")
     public List<DeviceDto> getAllDevices() {
         return deviceService.findAll();
     }   
     
-    @PostMapping("/devices")
+    @PostMapping("/merchant-device/devices")
     public DeviceDto addDevice(@RequestBody DeviceDto deviceDto) {
         return deviceService.save(deviceDto);
     }
     
-    @GetMapping("/devices/{deviceId}")
+    @GetMapping("/merchant-device/devices/{deviceId}")
     public DeviceDto getDeviceById(@PathVariable("deviceId") String deviceNumber) {
         return deviceService.findByDeviceNumber(deviceNumber);
     }

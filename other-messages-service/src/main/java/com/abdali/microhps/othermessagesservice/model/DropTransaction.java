@@ -1,6 +1,7 @@
-package com.abdali.microhps.integrityservice.model;
+package com.abdali.microhps.othermessagesservice.model;
 
 import java.io.Serializable;
+
 import javax.persistence.Embeddable;
 
 import lombok.AllArgsConstructor;

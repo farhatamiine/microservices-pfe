@@ -1,7 +1,6 @@
 package com.abdali.microhps.integrityservice.controller;
 
 import static com.abdali.microhps.integrityservice.utils.Constants.DROP_INDICATOR;
-import static com.abdali.microhps.integrityservice.utils.Constants.MERCHANT_NUMBER_LENGTH;
 import static com.abdali.microhps.integrityservice.utils.Constants.REMOVAL_INDICATOR;
 import static com.abdali.microhps.integrityservice.utils.Constants.VERIFICATION_INDICATOR;
 
@@ -18,7 +17,6 @@ import com.abdali.microhps.integrityservice.model.TransactionRequest;
 import com.abdali.microhps.integrityservice.proxy.DropMessageProxy;
 import com.abdali.microhps.integrityservice.proxy.RemovalMessageProxy;
 import com.abdali.microhps.integrityservice.proxy.VerificationMessageProxy;
-import com.abdali.microhps.integrityservice.service.TransactionService;
 import com.abdali.microhps.integrityservice.validation.DuplicatedMessage;
 import com.abdali.microhps.integrityservice.validation.MerchantNotFound;
 import com.abdali.microhps.integrityservice.validation.MerchantNotMapped;
@@ -82,7 +80,7 @@ public class IntegrityController {
 		
 		indicator = messageSplited[0].charAt(0);
 		
-		if(indicator == DROP_INDICATOR && messageSplited[1].length() == MERCHANT_NUMBER_LENGTH && messageSplited[1].matches("[0-9_]+")) {  
+		if(indicator == DROP_INDICATOR) {  
 			
 			merchantNumber = Long.parseLong(messageSplited[1]); 
 			deviceNumber = messageSplited[2];
@@ -93,17 +91,21 @@ public class IntegrityController {
 			transmitionDate = messageSplited[8];
 			
 			// GLOBAL STEPS 1 : INVALID MESSAGE FORMAT .
-			if(messageFormat.checkMessageFormat(indicator, merchantNumber, deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId) && duplicatedMessage.checkForDuplicatedMessage(merchantNumber, bagNumber, transmitionDate, Integer.parseInt(transactionId)) && merchantNotFound.checkMerchantNotFound(merchantNumber) && merchantNotMapped.simpleMerchant(merchantNumber, deviceNumber)) {
+			if(messageFormat.checkMessageFormat(indicator, messageSplited[1], deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId, messageSplited, transactionRequest.getMessage()) 
+					&& duplicatedMessage.checkForDuplicatedMessage(merchantNumber, bagNumber, transmitionDate, Integer.parseInt(transactionId), containerType, messageSplited, transactionRequest.getMessage()) 
+					&& merchantNotFound.checkMerchantNotFound(merchantNumber, containerType, messageSplited, transactionRequest.getMessage()) 
+					&& merchantNotMapped.simpleMerchant(merchantNumber, deviceNumber, containerType, messageSplited, transactionRequest.getMessage())) {
 				// GLOBAL STEPS 2 & 3 & 4 : MERCHANT NOT FOUND - NOT MAPPED - TRANSACTION VERIFY.
 				// check for message code status -- DOC: TransactionControl_V1 PAGE 8/38.
 				String messageCodeStatus = messageSplited[(messageSplited.length - 1)];
 				if(StringUtils.hasLength(messageCodeStatus) && messageCodeStatus.contentEquals("000")) {						
 					dropMessageProxy.saveDropMessage(transactionRequest.getMessage());
 				} else {
-					/// send to others table.
+					// save Into OthersTable.
+					throw new NoDataFoundException("need to be saved into SMB_OTHERS_TABLE : not available for now");
 				}
 				// return message
-				return requestResponse("process completed" + messageCodeStatus, HttpStatus.OK);
+				return requestResponse("process completed", HttpStatus.OK);
 			} 
 			
 		} else if(indicator == REMOVAL_INDICATOR) { 
@@ -117,12 +119,10 @@ public class IntegrityController {
 			transmitionDate = messageSplited[7];
 			
 			// MERCHANT NOT EXIST FOR REMOVAL.
-			if(messageFormat.checkMessageFormat(indicator, merchantNumber, deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId)) {
-				// GLOBAL STEPS 4 : TRANSACTION VERIFY.
-				if(transactionVerify.transactionVerification(bagNumber)) {
+			if(messageFormat.checkMessageFormat(indicator, null, deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId, messageSplited, transactionRequest.getMessage())
+					&& transactionVerify.transactionVerification(bagNumber, containerType, messageSplited, transactionRequest.getMessage())) {
 					removalMessageProxy.saveRemovalMessage(transactionRequest.getMessage());
 					return requestResponse("process completed", HttpStatus.OK);
-				}
 			}
 		} else if(indicator == VERIFICATION_INDICATOR) {  
 			
@@ -135,16 +135,18 @@ public class IntegrityController {
 			transmitionDate = messageSplited[5];
 			
 			// MERCHANT AND SEQUENCE NOT EXIST FOR VERIFICATION.
-			if(messageFormat.checkMessageFormat(indicator, merchantNumber, deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId)) {
-				// GLOBAL STEPS 4 : TRANSACTION VERIFY.
-				if(transactionVerify.transactionVerification(bagNumber)) {
+			if(messageFormat.checkMessageFormat(indicator, null, deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId, messageSplited, transactionRequest.getMessage())
+					&& transactionVerify.transactionVerification(bagNumber, containerType, messageSplited, transactionRequest.getMessage())) {
 					verificationMessageProxy.saveVerificationMessage(transactionRequest.getMessage());
 					return requestResponse("process completed", HttpStatus.OK);
-				}
 			}
-		} else {		
+		} else {
+			/*
+			 * more check here to do 
+			 * if i didn't know the indicator i can't know the format
+			 */
 			// TODO :: there is other INDICATORS to handle.
-			throw new NoDataFoundException("the Indicator is not valid from Controller " + messageSplited[0].charAt(0) + " " + DROP_INDICATOR);
+			throw new NoDataFoundException("UNKNOW Indicator Another Type of message or invlaid");
 		}
 		return requestResponse("process not completed", HttpStatus.CONFLICT);
 	}

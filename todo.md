@@ -59,5 +59,7 @@
 
 - [x] Add Api Geteway Configuration.
 
-
+#### To Do
+- [x] Handle Exception when add new merchant with fault device Id.
+- [x] Handle Exception when try to comapre device with merchant (if merchant is not found).
 ### Done ✓

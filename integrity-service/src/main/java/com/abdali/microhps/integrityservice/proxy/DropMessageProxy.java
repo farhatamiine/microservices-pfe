@@ -12,17 +12,17 @@ import com.abdali.microhps.integrityservice.config.feign.FeignSimpleEncoderConfi
 @FeignClient(name="drop-service", configuration = FeignSimpleEncoderConfig.class)
 public interface DropMessageProxy {
 	
-	@GetMapping("/dropmessage/merchant/{merchantNumber}/bag/{bagNumber}/tranasction/{transactionId}/date/{datetime}")
-	public Boolean getListDropMessages(
+	@GetMapping("/drop-transaction/merchant/{merchantNumber}/bag/{bagNumber}/tranasction/{transactionId}/date/{datetime}")
+	public Boolean isMessageExist(
 			@PathVariable("merchantNumber") Long merchantNumber, 
 			@PathVariable("bagNumber") String bagNumber, 
 			@PathVariable("transactionId") Integer transactionId,
 			@PathVariable("datetime") String transmitionDate);
 	
 	
-	@GetMapping("/dropmessage/verify/bag/{bagNumber}")
-	public Boolean verifyTransactionForIntegrityBagNumber(@PathVariable("bagNumber") String bagNumber);
+	@GetMapping("/drop-transaction/verify/bag/{bagNumber}")
+	public Boolean isBagNumberHasDrops(@PathVariable("bagNumber") String bagNumber);
 	
-	@PostMapping(value= "/dropmessage/new")
+	@PostMapping(value= "/drop-transaction/new")
 	public String saveDropMessage(@RequestBody String message);
 }

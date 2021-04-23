@@ -3,6 +3,7 @@ package com.abdali.microhps.devicemerchantservice.model;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -22,6 +23,6 @@ public class Device extends AuditEntity {
 
 	private String deviceNumber;
 
-	@OneToMany(mappedBy = "device")
+	@ManyToMany(mappedBy = "devices")
 	private List<Merchant> merchants;
 }

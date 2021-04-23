@@ -4,7 +4,6 @@ import static com.abdali.microhps.integrityservice.utils.Constants.COINS_INDICAT
 import static com.abdali.microhps.integrityservice.utils.Constants.NOTES_INDICATOR;
 
 import static com.abdali.microhps.integrityservice.utils.Constants.DROP_INDICATOR;
-import static com.abdali.microhps.integrityservice.utils.Constants.MERCHANT_NUMBER_LENGTH;
 import static com.abdali.microhps.integrityservice.utils.Constants.REMOVAL_INDICATOR;
 import static com.abdali.microhps.integrityservice.utils.Constants.VERIFICATION_INDICATOR;
 
@@ -20,6 +19,7 @@ import com.abdali.microhps.integrityservice.model.Denomination;
 import com.abdali.microhps.integrityservice.model.DropTransaction;
 import com.abdali.microhps.integrityservice.model.RemovalDropTransaction;
 import com.abdali.microhps.integrityservice.model.Transaction;
+import com.abdali.microhps.integrityservice.model.VerificationTransaction;
 import com.abdali.microhps.integrityservice.repository.TransactionRepository;
 import com.abdali.microhps.integrityservice.service.TransactionService;
  
@@ -34,8 +34,10 @@ public class TransactionServiceImpl implements TransactionService {
 	}
     
     @Override
-    public Transaction transactionCreate(char indicator, char coinsIndicator, String[] messageArray) {
-
+    public Transaction transactionCreate(char coinsIndicator, String[] messageArray, String message) {
+    		
+    		char indicator = messageArray[0].charAt(0);
+    	
     		for(int i =0; i < messageArray.length; i++) {
     			messageArray[i] = messageArray[i].trim().replace("_+$", "");
     		}
@@ -96,7 +98,7 @@ public class TransactionServiceImpl implements TransactionService {
     		
 
 			final DateTimeFormatter formatter = DateTimeFormatter
-	                .ofPattern("yyyy-MM-ddHH:mm:ss:SSSSSS")
+	                .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
 	                .withZone(ZoneId.systemDefault());
 			Instant transmitionDate = null;
 
@@ -130,11 +132,59 @@ public class TransactionServiceImpl implements TransactionService {
 				transaction.setRemovalDropTransaction(removalDropTransaction);
     				
     		}
+    		
+    		if(indicator == REMOVAL_INDICATOR) {
+    			
+    			
+    			RemovalDropTransaction removalDropTransaction = new RemovalDropTransaction();
+    			removalDropTransaction.setDepositReference(messageArray[6]);
+    			removalDropTransaction.setSequenceNumber(Integer.parseInt(messageArray[4]));
+
+    			try {
+    				transmitionDate = Instant.from(formatter.parse(messageArray[7]));
+    			} catch (Exception e) {
+    				//	throw new IntegrityException(MESSAGE_INVALID_CODE, "error date time");
+    			} 
+    			
+				transaction.setDeviceNumber(messageArray[1].trim().replace("_+$", ""));
+				transaction.setBagNumber(messageArray[2].trim().replace("_+$", ""));
+				transaction.setContainerType( messageArray[3].charAt(0));
+				transaction.setTransactionId(Integer.parseInt(messageArray[5].trim().replace("_+$", "")));
+				transaction.setTransmitionDate(transmitionDate);
+				transaction.setCanisterNumber(Integer.parseInt(messageArray[8]));
+				transaction.setCurrency(messageArray[9]);
+				transaction.setRemovalDropTransaction(removalDropTransaction);
+    				
+    		}
+    		
+    		if(indicator == VERIFICATION_INDICATOR) {
+
+    			
+    			VerificationTransaction verificationTransaction = new VerificationTransaction();
+    			verificationTransaction.setCashCenterCode(messageArray[9]);
+    			verificationTransaction.setCashCenterType(messageArray[8]);
+    			try {
+    				transmitionDate = Instant.from(formatter.parse(messageArray[5]));
+    			} catch (Exception e) {
+    				//	throw new IntegrityException(MESSAGE_INVALID_CODE, "error date time");
+    			} 
+    			
+				transaction.setDeviceNumber(messageArray[1].trim().replace("_+$", ""));
+				transaction.setBagNumber(messageArray[2].trim().replace("_+$", ""));
+				transaction.setContainerType( messageArray[3].charAt(0));
+				transaction.setTransactionId(Integer.parseInt(messageArray[4].trim().replace("_+$", "")));
+				transaction.setTransmitionDate(transmitionDate);
+				transaction.setCanisterNumber(Integer.parseInt(messageArray[6]));
+				transaction.setCurrency(messageArray[7]);
+				transaction.setVerificationTransaction(verificationTransaction);
+    				
+    		}
 
     		transaction.setTotalAmount(new BigDecimal(messageArray[(messageArray.length - 19)]));
     		transaction.setTotalNotes(Integer.parseInt(messageArray[(messageArray.length - 18)]));
     		transaction.setTotalCoins(Integer.parseInt(messageArray[(messageArray.length - 17)]));
     		transaction.setDenomination(denomination);
+    		transaction.setMessage(message);
     		
         return transactionRepository.save(transaction);
     }

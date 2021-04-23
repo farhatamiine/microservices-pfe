@@ -1,6 +1,6 @@
-package com.abdali.microhps.integrityservice.dto;
+package com.abdali.microhps.othermessagesservice.dto;
 
-import com.abdali.microhps.integrityservice.model.VerificationTransaction;
+import com.abdali.microhps.othermessagesservice.model.VerificationTransaction;
 
 import lombok.Builder;
 import lombok.Data;

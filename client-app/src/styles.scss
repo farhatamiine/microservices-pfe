@@ -1,1 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+// #f64e60
+:root {
+--secondary-color: #1271fc;
+}
+
+
+.ant-menu-submenu-title .anticon + span{
+  font-weight: 600;
+  letter-spacing: .4px;
+  font-size: 15px;
+}

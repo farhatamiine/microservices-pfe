@@ -1,0 +1,46 @@
+<div>
+
+  <nz-card nzTitle="List of Devices" [nzExtra]="extraTemplate">
+    <nz-table #fixedTable [nzData]="listOfData" [nzScroll]="{ x: '100%', y: '100vh' }">
+      <thead>
+        <tr>
+          <th nzLeft>Full Name</th>
+          <th nzLeft>Age</th>
+          <th>Column 1</th>
+          <th>Column 2</th>
+          <th>Column 3</th>
+          <th>Column 4</th>
+          <th>Column 5</th>
+          <th>Column 6</th>
+          <th>Column 7</th>
+          <th>Column 8</th>
+          <th nzRight>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of fixedTable.data">
+          <td nzLeft>{{ data.name }}</td>
+          <td nzLeft>{{ data.age }}</td>
+          <td>{{ data.address }}</td>
+          <td>{{ data.address }}</td>
+          <td>{{ data.address }}</td>
+          <td>{{ data.address }}</td>
+          <td>{{ data.address }}</td>
+          <td>{{ data.address }}</td>
+          <td>{{ data.address }}</td>
+          <td>{{ data.address }}</td>
+          <td nzRight>
+            <a>action</a>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+  <ng-template #extraTemplate>
+    <button nz-button [nzType]="'primary'" (click)="showModal()"><span>Add New Device</span></button>
+    <nz-modal nzTitle="The first Modal" [(nzVisible)]="isVisible" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+      <CreateDeviceComponent></CreateDeviceComponent>
+    </nz-modal>
+  </ng-template>
+
+</div>

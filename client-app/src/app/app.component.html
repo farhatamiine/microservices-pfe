@@ -45,6 +45,17 @@
           </li>
         </ul>
       </li>
+      <li nz-submenu nzOpen [nzTitle]="audit">
+        <ng-template #audit>
+          <i nz-icon nzType="folder-open" nzTheme="twotone" style="font-size: 22px"></i>
+          <span>Audit Transactions</span>
+        </ng-template>
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a>List Audit Transactions</a>
+          </li>
+        </ul>
+      </li>
     </ul>
   </nz-sider>
   <nz-layout>
@@ -55,6 +66,9 @@
               nz-icon
               [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
             ></i>
+        </span>
+        <span>
+          Notification
         </span>
       </div>
     </nz-header>

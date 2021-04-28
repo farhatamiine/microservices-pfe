@@ -2,8 +2,11 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+const DEVICE_MERCHANT_API = 'http://localhost:8006/merchant-device';
+
 export const environment = {
-  production: false
+  production: false,
+  device_merchnat_api: DEVICE_MERCHANT_API
 };
 
 /*

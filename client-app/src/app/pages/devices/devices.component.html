@@ -1,46 +1,48 @@
 <div>
-
   <nz-card nzTitle="List of Devices" [nzExtra]="extraTemplate">
-    <nz-table #fixedTable [nzData]="listOfData" [nzScroll]="{ x: '100%', y: '100vh' }">
+    <nz-table #fixedTable [nzFrontPagination]="false" nzBordered>
       <thead>
         <tr>
-          <th nzLeft>Full Name</th>
-          <th nzLeft>Age</th>
-          <th>Column 1</th>
-          <th>Column 2</th>
-          <th>Column 3</th>
-          <th>Column 4</th>
-          <th>Column 5</th>
-          <th>Column 6</th>
-          <th>Column 7</th>
-          <th>Column 8</th>
+          <th nzLeft>Device Id</th>
+          <th nzLeft>Device Number</th>
           <th nzRight>Action</th>
         </tr>
       </thead>
+
       <tbody>
-        <tr *ngFor="let data of fixedTable.data">
-          <td nzLeft>{{ data.name }}</td>
-          <td nzLeft>{{ data.age }}</td>
-          <td>{{ data.address }}</td>
-          <td>{{ data.address }}</td>
-          <td>{{ data.address }}</td>
-          <td>{{ data.address }}</td>
-          <td>{{ data.address }}</td>
-          <td>{{ data.address }}</td>
-          <td>{{ data.address }}</td>
-          <td>{{ data.address }}</td>
+        <tr *ngFor="
+          let device of listOfDevices | paginate : {
+                itemsPerPage: pageSize,
+                currentPage: page,
+                totalItems: count
+              };
+        ">
+          <td nzLeft>{{ device.id }}</td>
+          <td nzLeft>{{ device.deviceNumber }}</td>
           <td nzRight>
-            <a>action</a>
+            <button nz-button [nzType]="'primary'" nzDanger>
+              <i nz-icon nzType="delete" nzTheme="outline"></i> Delete !!
+            </button>
           </td>
         </tr>
       </tbody>
     </nz-table>
+    <div class="direction-right">
+        <pagination-controls
+        previousLabel="Prev"
+        nextLabel="Next"
+        [responsive]="true"
+        (pageChange)="handlePageChange($event)"
+      ></pagination-controls>
+      <div class="page-size">
+        <span> Items per Page:</span>
+        <nz-select [(ngModel)]="selectedSize" (ngModelChange)="handlePageSizeChange($event)" nzAllowClear nzPlaceHolder="01 per page">
+          <nz-option *ngFor="let size of pageSizes" [nzValue]="size" [nzLabel]="size.label"></nz-option>
+        </nz-select>
+      </div>
+    </div>
   </nz-card>
   <ng-template #extraTemplate>
-    <button nz-button [nzType]="'primary'" (click)="showModal()"><span>Add New Device</span></button>
-    <nz-modal nzTitle="The first Modal" [(nzVisible)]="isVisible" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
-      <CreateDeviceComponent></CreateDeviceComponent>
-    </nz-modal>
+    <app-create-device></app-create-device>
   </ng-template>
-
 </div>

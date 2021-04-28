@@ -19,17 +19,15 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class DropTransactionProducer {
+public class TransactionProducer {
 
 	@Autowired
     KafkaTemplate<Long,String> kafkaTemplate;
-
-    String topic = "drop-transaction-events";
     
     @Autowired
     ObjectMapper objectMapper;
     
-    public ListenableFuture<SendResult<Long,String>> sendDropTransactionEvent(Transaction transaction) throws JsonProcessingException {
+    public ListenableFuture<SendResult<Long,String>> sendTransactionEvent(Transaction transaction, String topic) throws JsonProcessingException {
 
         Long key = transaction.getId();
         String value = objectMapper.writeValueAsString(transaction);

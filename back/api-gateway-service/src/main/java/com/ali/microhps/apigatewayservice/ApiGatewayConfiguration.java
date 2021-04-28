@@ -17,11 +17,11 @@ public class ApiGatewayConfiguration {
 //								.addRequestParameter("Param", "MyValue"))
 //						.uri("http://httpbin.org:80")) 
 				.route(p -> p
-						.path("/device-merchnat/**))")
+						.path("/merchant-device/**))")
 						.uri("lb:/device-merchant-service/"))
 				.route(p -> p
 						.path("/drop-transaction/**")
-						.uri("lb://removal-service/"))
+						.uri("lb://drop-service/"))
 				.route(p -> p
 						.path("/removal-transaction/**")
 						.uri("lb://removal-service/"))

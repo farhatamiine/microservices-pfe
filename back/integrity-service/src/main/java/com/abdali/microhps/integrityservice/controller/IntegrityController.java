@@ -15,7 +15,7 @@ import com.abdali.microhps.integrityservice.exceptions.NoDataFoundException;
 import com.abdali.microhps.integrityservice.model.ResponseRequest;
 import com.abdali.microhps.integrityservice.model.Transaction;
 import com.abdali.microhps.integrityservice.model.TransactionRequest;
-import com.abdali.microhps.integrityservice.producer.DropTransactionProducer;
+import com.abdali.microhps.integrityservice.producer.TransactionProducer;
 import com.abdali.microhps.integrityservice.proxy.RemovalMessageProxy;
 import com.abdali.microhps.integrityservice.proxy.VerificationMessageProxy;
 import com.abdali.microhps.integrityservice.service.TransactionBuilder;
@@ -39,7 +39,7 @@ public class IntegrityController {
 	private DuplicatedMessage duplicatedMessage;
 	private TransactionVerify transactionVerify;
 	private TransactionBuilder transactionBuilder;
-	private DropTransactionProducer dropTransactionProducer;
+	private TransactionProducer transactionProducer;
 	
 	@Autowired
 	public IntegrityController(
@@ -49,7 +49,7 @@ public class IntegrityController {
 			TransactionVerify transactionVerify,
 			DuplicatedMessage duplicatedMessage,
 			TransactionBuilder transactionBuilder,
-			DropTransactionProducer dropTransactionProducer
+			TransactionProducer transactionProducer
 			) {
 		// TODO Auto-generated constructor stub
 		this.messageFormat = messageFormat;
@@ -58,7 +58,7 @@ public class IntegrityController {
 		this.duplicatedMessage = duplicatedMessage;
 		this.transactionVerify = transactionVerify;
 		this.transactionBuilder = transactionBuilder;
-		this.dropTransactionProducer = dropTransactionProducer;
+		this.transactionProducer = transactionProducer;
 	}
 	
 	
@@ -102,7 +102,11 @@ public class IntegrityController {
 				if(StringUtils.hasLength(messageCodeStatus) && messageCodeStatus.contentEquals("000")) {						
 					// dropMessageProxy.saveDropMessage(transactionRequest.getMessage()); // old approach save into DB using micro-proxy-service.
 					Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, transactionRequest.getMessage());
-					dropTransactionProducer.sendDropTransactionEvent(transaction);
+
+				    String topic = "drop-transaction-events";
+				    
+					transactionProducer.sendTransactionEvent(transaction, topic);
+					
 				} else {
 					// save Into OthersTable.
 					throw new NoDataFoundException("need to be saved into SMB_OTHERS_TABLE : not available for now");
@@ -124,10 +128,14 @@ public class IntegrityController {
 			// MERCHANT NOT EXIST FOR REMOVAL.
 			if(messageFormat.checkMessageFormat(indicator, null, deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId, messageSplited, transactionRequest.getMessage())
 					&& transactionVerify.transactionVerification(bagNumber, containerType, messageSplited, transactionRequest.getMessage())) {
-//					removalMessageProxy.saveRemovalMessage(transactionRequest.getMessage());
+
 				Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, transactionRequest.getMessage());
-//				transactionService.transactionCreate(transaction);
-					return requestResponse("process completed", HttpStatus.OK);
+			    
+				String topic = "removal-transaction-events";
+			    
+				transactionProducer.sendTransactionEvent(transaction, topic);
+				
+				return requestResponse("process completed", HttpStatus.OK);
 			}
 		} else if(indicator == VERIFICATION_INDICATOR) {  
 			
@@ -142,10 +150,14 @@ public class IntegrityController {
 			// MERCHANT AND SEQUENCE NOT EXIST FOR VERIFICATION.
 			if(messageFormat.checkMessageFormat(indicator, null, deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId, messageSplited, transactionRequest.getMessage())
 					&& transactionVerify.transactionVerification(bagNumber, containerType, messageSplited, transactionRequest.getMessage())) {
-//					verificationMessageProxy.saveVerificationMessage(transactionRequest.getMessage());
+
 				Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, transactionRequest.getMessage());
-//				transactionService.transactionCreate(transaction);
-					return requestResponse("process completed", HttpStatus.OK);
+
+				String topic = "verification-transaction-events";
+			    
+				transactionProducer.sendTransactionEvent(transaction, topic);
+				
+				return requestResponse("process completed", HttpStatus.OK);
 			}
 		} else {
 			/*

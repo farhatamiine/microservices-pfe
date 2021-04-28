@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {ItemData} from '../../interfaces/devices';
-
+import { NzMessageService } from 'ng-zorro-antd/message';
+import {DeviceModel, ListDeviceModel} from '../../models/device-model';
+import { DeviceService } from '../../services/device.service'
 @Component({
   selector: 'app-devices',
   templateUrl: './devices.component.html',
@@ -8,33 +9,52 @@ import {ItemData} from '../../interfaces/devices';
 })
 export class DevicesComponent implements OnInit {
 
-  constructor() { }
+  // device data
+  listOfDevices: DeviceModel[] = [];
+  page = 1;
+  count = 0;
+  pageSize = 1;
 
-  isVisible = false;
-  listOfData: ItemData[] = [];
+  selectedSize = { label: '15 per page', value: 15 };
+  pageSizes = [
+    { label: '15 per page', value: 15 },
+    { label: '30 per page', value: 30 },
+    { label: '50 per page', value: 50 }
+  ];
+
+  constructor(
+    private deviceService: DeviceService,
+    private message: NzMessageService) { }
 
   ngOnInit(): void {
-    for (let i = 0; i < 100; i++) {
-      this.listOfData.push({
-        name: `Edward King ${i}`,
-        age: 32,
-        address: `London`
-      });
-    }
+    this.getDevices();
   }
 
-  showModal(): void {
-    this.isVisible = true;
+  getDevices():void {
+    this.deviceService.getAllDevices(this.page -1 +"", this.pageSize+"").subscribe(
+      async (response: any) => {
+        if(response != null) {
+          const {devices, totalItems} = response;
+          this.listOfDevices = devices;
+          this.listOfDevices = [...this.listOfDevices];
+          this.count = totalItems;
+        }
+      }, async(error) => {
+        this.message.create('error', `This is a message of <b>${error.statusText}</b>`);
+      }
+    )
   }
 
-  handleOk(): void {
-    console.log('Button ok clicked!');
-    this.isVisible = false;
+  handlePageChange(event: number): void {
+    this.page = event;
+    console.log(this.page, event);
+    this.getDevices();
   }
 
-  handleCancel(): void {
-    console.log('Button cancel clicked!');
-    this.isVisible = false;
+  handlePageSizeChange(event: any): void {
+    this.pageSize = event.value;
+    this.page = 1;
+    this.getDevices();
   }
 
 }

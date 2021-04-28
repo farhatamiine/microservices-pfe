@@ -7,10 +7,12 @@ import {
   CrownTwoTone,
   FolderOpenTwoTone,
   TeamOutline,
-  ShopOutline
+  ShopOutline,
+  EditOutline,
+  DeleteOutline
 } from '@ant-design/icons-angular/icons';
 
-const icons = [MenuFoldOutline, MenuUnfoldOutline, FolderOpenTwoTone, CrownTwoTone, TeamOutline, ShopOutline];
+const icons = [MenuFoldOutline, MenuUnfoldOutline, FolderOpenTwoTone, CrownTwoTone, TeamOutline, ShopOutline, EditOutline, DeleteOutline];
 
 @NgModule({
   imports: [NzIconModule],

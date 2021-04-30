@@ -32,13 +32,12 @@ public class DeviceController {
 	
 	@GetMapping("/merchant-device/devices")
     public ResponseEntity<Map<String, Object>> getAllDevices(
-    		@RequestParam(required = false) String title,
-    	      @RequestParam(defaultValue = "0") int page,
-    	      @RequestParam(defaultValue = "3") int size,
-    	      @RequestParam(defaultValue = "id,desc") String[] sort) throws Exception {
+    	  @RequestParam(required = false) String deviceNumber,
+	      @RequestParam(defaultValue = "0") int page,
+	      @RequestParam(defaultValue = "10") int size) {
 
-	    try {
-	      Map<String, Object> result = deviceService.findAll(title, page, size, sort);
+	   try {
+	      Map<String, Object> result = deviceService.findAll(deviceNumber, page, size);
 
 	      if(result.get("devices").toString() == "[]" ) {
 	    	  return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);  
@@ -46,7 +45,7 @@ public class DeviceController {
 	      return new ResponseEntity<>(result, HttpStatus.OK);
 	      
 	    } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+	    	return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 
     }   

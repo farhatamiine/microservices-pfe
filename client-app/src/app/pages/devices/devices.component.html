@@ -1,17 +1,17 @@
 <div>
   <nz-card nzTitle="List of Devices" [nzExtra]="extraTemplate">
-    <nz-table #fixedTable [nzFrontPagination]="false" nzBordered>
+    <nz-table #fixedTable [nzData]="listOfDevices" [nzFrontPagination]="false" nzBordered>
       <thead>
         <tr>
-          <th nzLeft>Device Id</th>
-          <th nzLeft>Device Number</th>
-          <th nzRight>Action</th>
+          <th nzLeft><b>Device Id</b></th>
+          <th nzLeft><b>Device Number</b></th>
+          <th nzRight><b>Action</b></th>
         </tr>
       </thead>
 
       <tbody>
         <tr *ngFor="
-          let device of listOfDevices | paginate : {
+          let device of fixedTable.data | paginate : {
                 itemsPerPage: pageSize,
                 currentPage: page,
                 totalItems: count
@@ -35,8 +35,8 @@
         (pageChange)="handlePageChange($event)"
       ></pagination-controls>
       <div class="page-size">
-        <span> Items per Page:</span>
-        <nz-select [(ngModel)]="selectedSize" (ngModelChange)="handlePageSizeChange($event)" nzAllowClear nzPlaceHolder="01 per page">
+        <span> Items per Page - total ({{count}}):</span>
+        <nz-select [(ngModel)]="selectedSize" (ngModelChange)="handlePageSizeChange($event)" nzAllowClear [nzPlaceHolder]="selectedSize.label">
           <nz-option *ngFor="let size of pageSizes" [nzValue]="size" [nzLabel]="size.label"></nz-option>
         </nz-select>
       </div>

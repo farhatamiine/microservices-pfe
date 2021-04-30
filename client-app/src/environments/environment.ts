@@ -3,10 +3,12 @@
 // The list of file replacements can be found in `angular.json`.
 
 const DEVICE_MERCHANT_API = 'http://localhost:8006/merchant-device';
+const TRANSACTION_DROP_API = 'http://localhost:8003/drop-transaction';
 
 export const environment = {
   production: false,
-  device_merchnat_api: DEVICE_MERCHANT_API
+  device_merchnat_api: DEVICE_MERCHANT_API,
+  drop_transaction_api: TRANSACTION_DROP_API,
 };
 
 /*

@@ -2,6 +2,7 @@ package com.abdali.microhps.dropservice.service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 import com.abdali.microhps.dropservice.dto.DropMessageDto;
 
@@ -18,7 +19,7 @@ public interface DropMessageService {
 	
 	List<DropMessageDto> findByBagNumber(String bagNumber);
 	
-	List<DropMessageDto> findAll();
+	Map<String, Object> findAll(int page, int size);
 	
 	List<DropMessageDto> findByMerchantNumberAndBagNumberAndTransactionIdAndTransmitionDate(Long merchantNumber, String bagNumber, Integer transactionId, Instant transmitionDate);
 }

@@ -40,29 +40,15 @@ public class DeviceServiceImpl implements DeviceService {
 //	- findById;
 	
 	@Override
-	public Map<String, Object> findAll(String title, int page, int size, String[] sort) {
-		
-		List<Order> orders = new ArrayList<Order>();
-
-	      if (sort[0].contains(",")) {
-	        // will sort more than 2 fields
-	        // sortOrder="field, direction"
-	        for (String sortOrder : sort) {
-	          String[] _sort = sortOrder.split(",");
-	          orders.add(new Order(getSortDirection(_sort[1]), _sort[0]));
-	        }
-	      } else {
-	        // sort=[field, direction]
-	        orders.add(new Order(getSortDirection(sort[1]), sort[0]));
-	      }
+	public Map<String, Object> findAll(String deviceNumber, int page, int size) {
 
 	      List<DeviceDto> devices = new ArrayList<DeviceDto>();
 	      
-	      Pageable pagingSort = PageRequest.of(page, size, Sort.by(orders));
+	      Pageable pagingSort = PageRequest.of(page, size);
 
 	      Page<Device> pageDevices = null;
 	      
-	      if (title == null)
+	      if (deviceNumber == null)
 	        pageDevices = deviceRepository.findAll(pagingSort);
 
 	      List<DeviceDto> devicesDto = pageDevices.getContent().stream()

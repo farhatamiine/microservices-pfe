@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import {DeviceModel, ListDeviceModel} from '../../models/device-model';
-import { DeviceService } from '../../services/device.service'
+import { Subscription } from 'rxjs';
+import {DeviceModel} from '../../models/device-model';
+import { DeviceService } from 'src/app/services/device/device.service';
+
 @Component({
   selector: 'app-devices',
   templateUrl: './devices.component.html',
@@ -9,18 +11,21 @@ import { DeviceService } from '../../services/device.service'
 })
 export class DevicesComponent implements OnInit {
 
+  public subscription: Subscription = new Subscription;
+
   // device data
   listOfDevices: DeviceModel[] = [];
   page = 1;
   count = 0;
-  pageSize = 1;
+  pageSize = 5;
 
-  selectedSize = { label: '15 per page', value: 15 };
+  selectedSize = { label: `${this.pageSize} per page`, value: this.pageSize };
   pageSizes = [
     { label: '15 per page', value: 15 },
     { label: '30 per page', value: 30 },
     { label: '50 per page', value: 50 }
   ];
+
 
   constructor(
     private deviceService: DeviceService,
@@ -28,7 +33,13 @@ export class DevicesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getDevices();
+    // set subscribe to message service
+    this.subscription = this.deviceService.checkDeviceAdded().subscribe(msg => this.getDevices());
   }
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe(); // onDestroy cancels the subscribe request
+  }
+
 
   getDevices():void {
     this.deviceService.getAllDevices(this.page -1 +"", this.pageSize+"").subscribe(

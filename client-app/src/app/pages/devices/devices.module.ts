@@ -15,7 +15,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
-import { CreateDeviceComponent } from '../../components/create/create-device/create-device.component';
+import { CreateDeviceComponent } from '../../components/device/create-device/create-device.component';
 
 @NgModule({
   imports: [

@@ -1,6 +1,7 @@
 package com.abdali.microhps.devicemerchantservice.service;
 
-import java.util.List;
+import java.util.Map;
+
 import com.abdali.microhps.devicemerchantservice.dto.MerchantDto;
 import com.abdali.microhps.devicemerchantservice.model.MerchantStatus;
 
@@ -8,7 +9,7 @@ public interface MerchantService {
 	
 	MerchantDto save(MerchantDto merchantDto);
 	
-	List<MerchantDto> findAll();
+	Map<String, Object> findAll(Long merchantNumber, int page, int size);
 	
 	MerchantDto findById(Integer merhantId);
 	

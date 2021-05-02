@@ -147,7 +147,6 @@ public class TransactionBuilder {
 		}
 		
 		if(indicator == VERIFICATION_INDICATOR) {
-
 			
 			VerificationTransaction verificationTransaction = new VerificationTransaction();
 			verificationTransaction.setCashCenterCode(messageArray[9]);

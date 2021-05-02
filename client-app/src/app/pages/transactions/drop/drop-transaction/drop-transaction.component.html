@@ -1,0 +1,108 @@
+<div>
+  <nz-card nzTitle="List of Merchants">
+    <nz-table #fixedTable [nzData]="listOfTransactions" [nzFrontPagination]="false" nzBordered [nzScroll]="{ x: '1000px'}">
+      <thead>
+        <tr>
+          <th></th>
+          <th><b>id</b></th>
+          <th><b>indicator</b></th>
+          <th><b>transactionId</b></th>
+          <th><b>deviceNumber</b></th>
+          <th><b>bagNumber</b></th>
+          <th><b>containerType</b></th>
+          <th><b>transmitionDate</b></th>
+          <th><b>merchantNumber</b></th>
+          <th><b>totalCoins</b></th>
+          <th><b>totalNotes</b></th>
+          <th><b>totalAmount</b></th>
+          <th><b> currency</b></th>
+          <!-- <th><b> canisterNumber</b></th>
+          <th><b> depositReference</b></th>
+          <th><b> sequenceNumber</b></th>
+          <th><b> denomination1</b></th>
+          <th><b> denomination2</b></th>
+          <th><b> denomination3</b></th>
+          <th><b> denomination4</b></th>
+          <th><b> denomination5</b></th>
+          <th><b> denomination6</b></th>
+          <th><b> denomination7</b></th>
+          <th><b> denomination8</b></th>
+          <th><b> denomination9</b></th>
+          <th><b> denomination10</b></th>
+          <th><b> denomination11</b></th>
+          <th><b> denomination12</b></th>
+          <th><b> denomination13</b></th>
+          <th><b> denomination14</b></th>
+          <th><b> denomination15</b></th>
+          <th><b> settlementFlag</b></th> -->
+        </tr>
+      </thead>
+
+      <tbody>
+        <ng-container *ngFor="
+          let transaction of fixedTable.data | paginate : {
+            itemsPerPage: pageSize,
+            currentPage: page,
+            totalItems: count
+          };">
+          <tr>
+            <td [nzExpand]="expandSet.has(transaction.id)" (nzExpandChange)="onExpandChange(transaction.id, $event)"></td>
+            <td> {{ transaction.id }} </td>
+            <td> {{ transaction.indicator }} </td>
+            <td> {{ transaction.transactionId }} </td>
+            <td> {{ transaction.deviceNumber }} </td>
+            <td> {{ transaction.bagNumber }} </td>
+            <td> {{ transaction.containerType }} </td>
+            <td> {{ transaction.transmitionDate }} </td>
+            <td> {{ transaction.merchantNumber }} </td>
+            <td> {{ transaction.totalCoins }} </td>
+            <td> {{ transaction.totalNotes }} </td>
+            <td> {{ transaction.totalAmount }} </td>
+            <td> {{ transaction.currency }} </td>
+          </tr>
+          <tr [nzExpand]="expandSet.has(transaction.id)">
+            <nz-card>
+              <div nz-card-grid><b>canisterNumber</b> {{ transaction.canisterNumber }}</div>
+              <div nz-card-grid><b>deposit reference</b> {{ transaction.depositReference }}</div>
+              <div nz-card-grid><b>sequence number</b> {{ transaction.sequenceNumber }}</div>
+              <div nz-card-grid>Content</div>
+              <div nz-card-grid>Content</div>
+              <div nz-card-grid>Content</div>
+              <div nz-card-grid>Content</div>
+            </nz-card>
+              <td> {{ transaction.denomination.denomination1 }} </td>
+              <td> {{ transaction.denomination.denomination2 }} </td>
+              <td> {{ transaction.denomination.denomination3 }} </td>
+              <td> {{ transaction.denomination.denomination4 }} </td>
+              <td> {{ transaction.denomination.denomination5 }} </td>
+              <td> {{ transaction.denomination.denomination6 }} </td>
+              <td> {{ transaction.denomination.denomination7 }} </td>
+              <td> {{ transaction.denomination.denomination8 }} </td>
+              <td> {{ transaction.denomination.denomination9 }} </td>
+              <td> {{ transaction.denomination.denomination10 }} </td>
+              <td> {{ transaction.denomination.denomination11 }} </td>
+              <td> {{ transaction.denomination.denomination12 }} </td>
+              <td> {{ transaction.denomination.denomination13 }} </td>
+              <td> {{ transaction.denomination.denomination14 }} </td>
+              <td> {{ transaction.denomination.denomination15 }} </td>
+              <td> {{ transaction.settlementFlag }} </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </nz-table>
+    <div class="direction-right">
+        <pagination-controls
+        previousLabel="Prev"
+        nextLabel="Next"
+        [responsive]="true"
+        (pageChange)="handlePageChange($event)"
+      ></pagination-controls>
+      <div class="page-size">
+        <span> Items per Page - total ({{count}}):</span>
+        <nz-select [(ngModel)]="selectedSize" (ngModelChange)="handlePageSizeChange($event)" nzAllowClear [nzPlaceHolder]="selectedSize.label">
+          <nz-option *ngFor="let size of pageSizes" [nzValue]="size" [nzLabel]="size.label"></nz-option>
+        </nz-select>
+      </div>
+    </div>
+  </nz-card>
+</div>

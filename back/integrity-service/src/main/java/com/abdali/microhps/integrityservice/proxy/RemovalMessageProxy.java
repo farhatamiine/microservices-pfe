@@ -9,7 +9,7 @@ import com.abdali.microhps.integrityservice.config.feign.FeignSimpleEncoderConfi
 @FeignClient(name="removal-service", configuration = FeignSimpleEncoderConfig.class)
 public interface RemovalMessageProxy {
 
-	@PostMapping(value= "/removal-transaction/new")
-	public String saveRemovalMessage(@RequestBody String message);
+//	@PostMapping(value= "/removal-transaction/new")
+//	public String saveRemovalMessage(@RequestBody String message);
 }
 

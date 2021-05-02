@@ -4,7 +4,6 @@ package com.abdali.microhps.dropservice.dto;
 import com.abdali.microhps.dropservice.model.Denomination;
 
 import lombok.Builder;
-import lombok.Builder.Default;
 import lombok.Data;
 
 @Data

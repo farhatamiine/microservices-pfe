@@ -1,0 +1,58 @@
+<div>
+  <button nz-button [nzType]="'primary'" (click)="showModal()"><span>Add New Merchant</span></button>
+  <nz-modal nzTitle="Create New Merchant Account" [(nzVisible)]="isVisible" [nzFooter]="modalFooter" (nzOnCancel)="handleCancel()" [nzOkLoading]="isOkLoading">
+    <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8" nzRequired nzFor="merchnatNumber">Merchant Number</nz-form-label>
+        <nz-form-control nzErrorTip="Merchant Number Required">
+          <input nz-input nzSize="large" formControlName="merchantNumber" id="merchantNumber" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8" nzRequired nzFor="merchantName">Merchant Name</nz-form-label>
+        <nz-form-control nzErrorTip="Merchant Name Required">
+          <input nz-input nzSize="large" formControlName="merchantName" id="merchantName"/>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8" nzFor="status" nzRequired>Merchant Status</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzErrorTip="Please select your status!">
+          <nz-select
+            id="status"
+            formControlName="status"
+            nzPlaceHolder="Select a status for merchant"
+          >
+            <nz-option nzValue="closed" nzLabel="closed"></nz-option>
+            <nz-option nzValue="suspended" nzLabel="suspended"></nz-option>
+            <nz-option nzValue="deactivated" nzLabel="deactivated"></nz-option>
+            <nz-option nzValue="activated" nzLabel="activated"></nz-option>
+            <nz-option nzValue="normal" nzLabel="normal"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8" nzFor="devices" nzRequired>Merchant Devices ({{totalDevices}})</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzErrorTip="Please select devices!">
+          <nz-select
+            formControlName="devices"
+            id="devices"
+            (nzScrollToBottom)="loadMore()"
+            nzMode="multiple"
+            nzPlaceHolder="Select devices"
+            nzAllowClear
+          >
+            <nz-option *ngFor="let device of listOfDevices" [nzValue]="device" [nzLabel]="device.deviceNumber"></nz-option>
+          </nz-select>
+          <ng-template #renderTemplate>
+            <nz-spin *ngIf="isLoading" [nzSize]="'small'"></nz-spin>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+    <ng-template #modalFooter>
+      <button nz-button nzType="default" (click)="handleCancel()">Cancel</button>
+      <button nz-button nzType="primary" nzDanger (click)="generateDeviceNumber()">Generate Merchant Number</button>
+      <button nz-button nzType="primary" [disabled]="!validateForm.valid" (click)="submitForm()">Add New</button>
+    </ng-template>
+  </nz-modal>
+</div>

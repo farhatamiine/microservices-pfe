@@ -2,19 +2,18 @@ package com.abdali.microhps.dropservice.repository;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.abdali.microhps.dropservice.model.DropMessage;
+import com.abdali.microhps.dropservice.model.DropCoreTransaction;
 
-public interface DropRepository extends JpaRepository<DropMessage, Long> {
+public interface DropRepository extends JpaRepository<DropCoreTransaction, Long> {
 	
-	List<DropMessage> findByMerchantNumber(Long Id);
+	List<DropCoreTransaction> findByDropTransactionMerchantNumber(Long Id);
 	
-	List<DropMessage> findByBagNumber(String bagNumber);
+	List<DropCoreTransaction> findByBagNumber(String bagNumber);
 	
-	List<DropMessage> findByDeviceNumber(String deviceNumber);
+	List<DropCoreTransaction> findByDeviceNumber(String deviceNumber);
 	
-	List<DropMessage> findByMerchantNumberAndBagNumberAndTransactionIdAndTransmitionDate(Long Id, String bagNumber, Integer transactionId, Instant transmitionDate);
+	List<DropCoreTransaction> findByDropTransactionMerchantNumberAndBagNumberAndTransactionIdAndTransmitionDate(Long Id, String bagNumber, Integer transactionId, Instant transmitionDate);
 }

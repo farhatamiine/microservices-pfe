@@ -23,6 +23,7 @@ public interface DropMessageProxy {
 	@GetMapping("/drop-transaction/verify/bag/{bagNumber}")
 	public Boolean isBagNumberHasDrops(@PathVariable("bagNumber") String bagNumber);
 	
-	@PostMapping(value= "/drop-transaction/new")
-	public String saveDropMessage(@RequestBody String message);
+//	@PostMapping(value= "/drop-transaction/new")
+//	public String saveDropMessage(@RequestBody String message);
+	
 }

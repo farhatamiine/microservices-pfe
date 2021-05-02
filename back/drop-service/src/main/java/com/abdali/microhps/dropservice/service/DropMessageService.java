@@ -4,22 +4,26 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-import com.abdali.microhps.dropservice.dto.DropMessageDto;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+
+import com.abdali.microhps.dropservice.dto.DropCoreTransactionDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 
 public interface DropMessageService {
 
-	DropMessageDto save(DropMessageDto dropMessageDto);
-
-	DropMessageDto findById(Long id);
-
-	List<DropMessageDto> findByMerchantNumber(Long merchantNumber);
+	void save(ConsumerRecord<Long,String> consumerRecord) throws JsonMappingException, JsonProcessingException;
 	
-	List<DropMessageDto> findByDeviceNumber(String deviceNumber);
+	DropCoreTransactionDto findById(Long id);
+
+	List<DropCoreTransactionDto> findByMerchantNumber(Long merchantNumber);
 	
-	List<DropMessageDto> findByBagNumber(String bagNumber);
+	List<DropCoreTransactionDto> findByDeviceNumber(String deviceNumber);
+	
+	List<DropCoreTransactionDto> findByBagNumber(String bagNumber);
 	
 	Map<String, Object> findAll(int page, int size);
 	
-	List<DropMessageDto> findByMerchantNumberAndBagNumberAndTransactionIdAndTransmitionDate(Long merchantNumber, String bagNumber, Integer transactionId, Instant transmitionDate);
+	List<DropCoreTransactionDto> findByMerchantNumberAndBagNumberAndTransactionIdAndTransmitionDate(Long merchantNumber, String bagNumber, Integer transactionId, Instant transmitionDate);
 }

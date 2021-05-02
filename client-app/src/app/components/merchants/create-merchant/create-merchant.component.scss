@@ -1,0 +1,11 @@
+[nz-button] {
+  margin-right: 8px;
+  margin-bottom: 12px;
+}
+
+::ng-deep .ant-form-item-label > label {
+  height: 100%;
+}
+::ng-deep .ant-form .ant-form-item:last-child {
+  margin-bottom: 0;
+}

@@ -63,7 +63,7 @@ public class IntegrityController {
 	
 	
 	@PostMapping("/check")
-	public ResponseEntity<ResponseRequest> testController(@RequestBody TransactionRequest transactionRequest) throws JsonProcessingException {
+	public ResponseEntity<ResponseRequest> checkMessage(@RequestBody TransactionRequest transactionRequest) throws JsonProcessingException {
 		
 		// variable.
 		Long merchantNumber; 
@@ -80,6 +80,8 @@ public class IntegrityController {
 		String[] messageSplited = transactionRequest.getMessage().split(",");
 		
 		indicator = messageSplited[0].charAt(0);
+
+		String messageCodeStatus = messageSplited[(messageSplited.length - 1)];
 		
 		if(indicator == DROP_INDICATOR) {  
 			
@@ -91,22 +93,19 @@ public class IntegrityController {
 			sequenceNumber = Integer.parseInt(messageSplited[5]);
 			transmitionDate = messageSplited[8];
 			
+			
 			// GLOBAL STEPS 1 : INVALID MESSAGE FORMAT .
 			if(messageFormat.checkMessageFormat(indicator, messageSplited[1], deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId, messageSplited, transactionRequest.getMessage()) 
 					&& duplicatedMessage.checkForDuplicatedMessage(merchantNumber, bagNumber, transmitionDate, Integer.parseInt(transactionId), containerType, messageSplited, transactionRequest.getMessage()) 
 					&& merchantNotFound.checkMerchantNotFound(merchantNumber, containerType, messageSplited, transactionRequest.getMessage()) 
 					&& merchantNotMapped.simpleMerchant(merchantNumber, deviceNumber, containerType, messageSplited, transactionRequest.getMessage())) {
 				// GLOBAL STEPS 2 & 3 & 4 : MERCHANT NOT FOUND - NOT MAPPED - TRANSACTION VERIFY.
-				// check for message code status -- DOC: TransactionControl_V1 PAGE 8/38.
-				String messageCodeStatus = messageSplited[(messageSplited.length - 1)];
+				// check for message code status -- DOC: TransactionControl_V1 PAGE 8/38. 
 				if(StringUtils.hasLength(messageCodeStatus) && messageCodeStatus.contentEquals("000")) {						
 					// dropMessageProxy.saveDropMessage(transactionRequest.getMessage()); // old approach save into DB using micro-proxy-service.
 					Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, transactionRequest.getMessage());
-
 				    String topic = "drop-transaction-events";
-				    
 					transactionProducer.sendTransactionEvent(transaction, topic);
-					
 				} else {
 					// save Into OthersTable.
 					throw new NoDataFoundException("need to be saved into SMB_OTHERS_TABLE : not available for now");
@@ -129,11 +128,14 @@ public class IntegrityController {
 			if(messageFormat.checkMessageFormat(indicator, null, deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId, messageSplited, transactionRequest.getMessage())
 					&& transactionVerify.transactionVerification(bagNumber, containerType, messageSplited, transactionRequest.getMessage())) {
 
-				Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, transactionRequest.getMessage());
-			    
-				String topic = "removal-transaction-events";
-			    
-				transactionProducer.sendTransactionEvent(transaction, topic);
+				if(StringUtils.hasLength(messageCodeStatus) && messageCodeStatus.contentEquals("000")) {	
+					Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, transactionRequest.getMessage());
+					String topic = "removal-transaction-events";
+					transactionProducer.sendTransactionEvent(transaction, topic);
+				} else {
+					// save Into OthersTable.
+					throw new NoDataFoundException("need to be saved into SMB_OTHERS_TABLE : not available for now");
+				}
 				
 				return requestResponse("process completed", HttpStatus.OK);
 			}
@@ -151,11 +153,14 @@ public class IntegrityController {
 			if(messageFormat.checkMessageFormat(indicator, null, deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId, messageSplited, transactionRequest.getMessage())
 					&& transactionVerify.transactionVerification(bagNumber, containerType, messageSplited, transactionRequest.getMessage())) {
 
-				Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, transactionRequest.getMessage());
-
-				String topic = "verification-transaction-events";
-			    
-				transactionProducer.sendTransactionEvent(transaction, topic);
+				if(StringUtils.hasLength(messageCodeStatus) && messageCodeStatus.contentEquals("000")) {	
+					Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, transactionRequest.getMessage());
+					String topic = "verification-transaction-events";
+					transactionProducer.sendTransactionEvent(transaction, topic);
+				} else {
+					// save Into OthersTable.
+					throw new NoDataFoundException("need to be saved into SMB_OTHERS_TABLE : not available for now");
+				}
 				
 				return requestResponse("process completed", HttpStatus.OK);
 			}

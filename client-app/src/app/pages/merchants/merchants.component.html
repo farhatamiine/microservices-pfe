@@ -1,0 +1,54 @@
+<div>
+  <nz-card nzTitle="List of Merchants" [nzExtra]="extraTemplate">
+    <nz-table #fixedTable [nzData]="listOfMerchants" [nzFrontPagination]="false" nzBordered>
+      <thead>
+        <tr>
+          <th nzLeft><b>Merchant Id</b></th>
+          <th nzLeft><b>Merchant Number</b></th>
+          <th nzLeft><b>Merchant Name</b></th>
+          <th nzLeft><b>Merchant Status</b></th>
+          <th nzLeft><b>Merchant Number Devices</b></th>
+          <th nzRight><b>Action</b></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="
+          let merchant of fixedTable.data | paginate : {
+                itemsPerPage: pageSize,
+                currentPage: page,
+                totalItems: count
+              };
+        ">
+          <td nzLeft>{{ merchant.id }}</td>
+          <td nzLeft>{{ merchant.merchantNumber }}</td>
+          <td nzLeft>{{ merchant.merchantName }}</td>
+          <td nzLeft>{{ merchant.status }}</td>
+          <td nzLeft>{{ merchant.devices.length }}</td>
+          <td nzRight>
+            <button nz-button [nzType]="'primary'" nzDanger>
+              <i nz-icon nzType="edit" nzTheme="outline"></i> edit status
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <div class="direction-right">
+        <pagination-controls
+        previousLabel="Prev"
+        nextLabel="Next"
+        [responsive]="true"
+        (pageChange)="handlePageChange($event)"
+      ></pagination-controls>
+      <div class="page-size">
+        <span> Items per Page - total ({{count}}):</span>
+        <nz-select [(ngModel)]="selectedSize" (ngModelChange)="handlePageSizeChange($event)" nzAllowClear [nzPlaceHolder]="selectedSize.label">
+          <nz-option *ngFor="let size of pageSizes" [nzValue]="size" [nzLabel]="size.label"></nz-option>
+        </nz-select>
+      </div>
+    </div>
+  </nz-card>
+  <ng-template #extraTemplate>
+    <app-create-merchant></app-create-merchant>
+  </ng-template>
+</div>

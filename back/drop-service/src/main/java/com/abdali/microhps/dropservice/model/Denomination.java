@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Embeddable
-@Builder
 public class Denomination implements Serializable {
 	
 	@Column(columnDefinition = "smallint default 0")

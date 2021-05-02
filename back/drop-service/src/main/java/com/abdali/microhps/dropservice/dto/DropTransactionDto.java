@@ -1,6 +1,8 @@
-package com.abdali.microhps.integrityservice.dto;
+package com.abdali.microhps.dropservice.dto;
 
-import com.abdali.microhps.integrityservice.model.DropTransaction;
+import javax.persistence.Transient;
+
+import com.abdali.microhps.dropservice.model.DropTransaction;
 
 import lombok.Builder;
 import lombok.Data;
@@ -9,15 +11,19 @@ import lombok.Data;
 @Builder
 public class DropTransactionDto {
 	
+	@Transient
+	private String dropMessage;
+	
 	private Long merchantNumber;
 	
 	public static DropTransactionDto fromEntity(DropTransaction dropTransaction) {
-		if(dropTransaction== null) {
+		if(dropTransaction == null) {
 			return null;
 		}
 		
 		return DropTransactionDto.builder()
 				.merchantNumber(dropTransaction.getMerchantNumber())
+				.dropMessage(dropTransaction.getDropMessage())
 				.build();
 	}
 	
@@ -27,6 +33,7 @@ public class DropTransactionDto {
 		}
 		DropTransaction dropTransaction = new DropTransaction();
 		dropTransaction.setMerchantNumber(dropTransactionDto.getMerchantNumber());
+		dropTransaction.setDropMessage(dropTransaction.getDropMessage());
 		return dropTransaction;
 	}
 }

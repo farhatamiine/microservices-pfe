@@ -19,7 +19,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name="SMB_VERIFICATION_MESSAGES")
-public class VerificationMessage extends AuditEntity {
+public class VerificationCoreTransaction extends AuditEntity {
 
 	@Column(columnDefinition = "char")
 	private Character indicator;
@@ -42,11 +42,9 @@ public class VerificationMessage extends AuditEntity {
 	@Column(columnDefinition = "int")
 	private Integer canisterNumber;
 	
-	@Column(columnDefinition = "varchar(4)")
-	private String cashCenterType;
-	@Column(columnDefinition = "varchar(4)")
-	private String cashCenterCode;
-	
 	@Embedded
 	private Denomination denomination;
+	
+	@Embedded
+	private VerificationTransaction verificationTransaction;
 }

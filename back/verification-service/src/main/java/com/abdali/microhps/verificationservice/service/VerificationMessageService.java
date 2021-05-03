@@ -1,20 +1,23 @@
 package com.abdali.microhps.verificationservice.service;
 
-import java.time.Instant;
 import java.util.List;
 
-import com.abdali.microhps.verificationservice.dto.VerificationMessageDto;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+
+import com.abdali.microhps.verificationservice.dto.VerificationCoreTransactionDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 
 public interface VerificationMessageService {
 
-	VerificationMessageDto save(VerificationMessageDto verificationMessageDto);
+	void save(ConsumerRecord<Long, String> consumerRecord) throws JsonMappingException, JsonProcessingException;;
 
-	VerificationMessageDto findById(Long id);
+	VerificationCoreTransactionDto findById(Long id);
 	
-	List<VerificationMessageDto> findByDeviceNumber(String deviceNumber);
+	List<VerificationCoreTransactionDto> findByDeviceNumber(String deviceNumber);
 	
-	List<VerificationMessageDto> findByBagNumber(String bagNumber);
+	List<VerificationCoreTransactionDto> findByBagNumber(String bagNumber);
 	
-	List<VerificationMessageDto> findAll();
+	List<VerificationCoreTransactionDto> findAll();
 }

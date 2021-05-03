@@ -39,7 +39,7 @@ public class MerchantNotFound {
 
 	public Boolean checkMerchantNotFound(Long merchant, char containerType, String[] messageSplited, String message) {
 		
-		Boolean merchantStatus = merchantDeviceProxy.checkMerchantState(merchant);
+		Boolean merchantStatus = merchantDeviceProxy.isMerchantStatusActive(merchant);
 		
 		if(merchantStatus) {
 			return true;

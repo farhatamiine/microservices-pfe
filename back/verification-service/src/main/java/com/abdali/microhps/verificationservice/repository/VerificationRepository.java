@@ -6,12 +6,12 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.abdali.microhps.verificationservice.model.VerificationMessage;
+import com.abdali.microhps.verificationservice.model.VerificationCoreTransaction;
 
-public interface VerificationRepository extends JpaRepository<VerificationMessage, Long> {
+public interface VerificationRepository extends JpaRepository<VerificationCoreTransaction, Long> {
 	
-	List<VerificationMessage> findByBagNumber(String bagNumber);
+	List<VerificationCoreTransaction> findByBagNumber(String bagNumber);
 	
-	List<VerificationMessage> findByDeviceNumber(String deviceNumber);
+	List<VerificationCoreTransaction> findByDeviceNumber(String deviceNumber);
 	
 }

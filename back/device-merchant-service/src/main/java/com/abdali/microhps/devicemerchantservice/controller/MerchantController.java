@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.abdali.microhps.devicemerchantservice.dto.DeviceDto;
 import com.abdali.microhps.devicemerchantservice.dto.MerchantDto;
 import com.abdali.microhps.devicemerchantservice.model.MerchantStatus;
+import com.abdali.microhps.devicemerchantservice.model.PowerCardNotification;
 import com.abdali.microhps.devicemerchantservice.service.MerchantService;
  
 @CrossOrigin("*")
@@ -67,14 +68,22 @@ public class MerchantController {
 	}
 	
 	/*****************************************
-	 * 
 	 * @param merchantNumber
 	 * @param deviceNumber
 	 * @return Boolean : check if merchant has relation with device
 	 */
 	@GetMapping(value = "/merchant-number/{merchantNumber}/device-number/{deviceNumber}")
 	public Boolean isDeviceRelatedToMerchant(@PathVariable Long merchantNumber, @PathVariable String deviceNumber) {
-		
+		// TODO : Exception to check if device Exist and MerchantNumber if Not Notify PowerCard.
+		// TODO : GENERATE EXception if DEVICE Not Related to MERCHANT.
+//		if(findByMerchantNumber(merchantNumber) == null) {
+//			PowerCardNotification powerCardNotification = new PowerCardNotification();
+//			powerCardNotification.setNotificationTitle("Merchant Number Didnt Found");
+//			powerCardNotification.setNotificationDescription("vendor with merchant Number : " + merchantNumber + "didnt found in our database");
+//			powerCardNotification.setMerchantNumber(merchantNumber);
+//			powerCardNotificationRepository.save(powerCardNotification);
+//			return false;
+//		}
 		MerchantDto merchant = merchantService.findByMerchantNumber(merchantNumber);
 		if(merchant.getDevices().isEmpty()) {
 			return false;
@@ -84,7 +93,8 @@ public class MerchantController {
 	}
 	
 	@GetMapping("/status/{merchantNumber}")
-	public Boolean checkMerchantState(@PathVariable("merchantNumber") Long merchantNumber) throws Exception {
+	public Boolean isMerchantStatusActive(@PathVariable("merchantNumber") Long merchantNumber) throws Exception {
+		// TODO : EXception to check if merchant Number exist if not Notify PowerCard.
 		return merchantService.merchantCheckStatus(merchantNumber, MerchantStatus.normal);
 	}
 	

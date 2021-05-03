@@ -1,60 +1,69 @@
 package com.abdali.microhps.removalservice.service.impl;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.abdali.microhps.removalservice.dto.RemovalMessageDto;
+import com.abdali.microhps.removalservice.dto.RemovalCoreMessageDto;
 import com.abdali.microhps.removalservice.exceptions.types.NoDataFoundException;
 import com.abdali.microhps.removalservice.repository.RemovalRepository;
 import com.abdali.microhps.removalservice.service.RemovalMessageService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 @Service
+@Slf4j
 public class RemovalMessageServiceImpl implements RemovalMessageService {
 
 	RemovalRepository removalMessageRepository;
+    ObjectMapper objectMapper;
 	
 	@Autowired
 	public RemovalMessageServiceImpl(
-			RemovalRepository removalMessageRepository
+			RemovalRepository removalMessageRepository,
+		    ObjectMapper objectMapper
 			) {
 		this.removalMessageRepository = removalMessageRepository;
+	    this.objectMapper = objectMapper;
 	}
 	
-	public RemovalMessageDto save(RemovalMessageDto removalMessageDto) {
-		return removalMessageDto.fromEntity(removalMessageRepository.save(removalMessageDto.toEntity(removalMessageDto)));
+	public void save(ConsumerRecord<Long,String> consumerRecord) throws JsonMappingException, JsonProcessingException {
+		RemovalCoreMessageDto removalMessageDto = objectMapper.readValue(consumerRecord.value(), RemovalCoreMessageDto.class);
+		log.info("dropMessage : {} ", removalMessageDto);
+		RemovalCoreMessageDto removalMessage = RemovalCoreMessageDto.fromEntity(removalMessageRepository.save(RemovalCoreMessageDto.toEntity(removalMessageDto)));
+		log.info("Successfully Persisted the Removal Message {} ", removalMessage);   
 	}
-	
 
-	public RemovalMessageDto findById(Long id) {
+	public RemovalCoreMessageDto findById(Long id) {
 		if (id == null) { 
 	      return null;
 	    }
-	    return removalMessageRepository.findById(id).map(RemovalMessageDto::fromEntity).orElseThrow(() -> 
+	    return removalMessageRepository.findById(id).map(RemovalCoreMessageDto::fromEntity).orElseThrow(() -> 
 			new NoDataFoundException("Aucune Removal Message Found With this Id = " + id)
 	        );
 	}
 	
-	public List<RemovalMessageDto> findByDeviceNumber(String deviceNumber) {
+	public List<RemovalCoreMessageDto> findByDeviceNumber(String deviceNumber) {
 		if(deviceNumber == null)
 			return null;
-		return removalMessageRepository.findByDeviceNumber(deviceNumber).stream().map(RemovalMessageDto::fromEntity).collect(Collectors.toList());
+		return removalMessageRepository.findByDeviceNumber(deviceNumber).stream().map(RemovalCoreMessageDto::fromEntity).collect(Collectors.toList());
 	}
 	
-	public List<RemovalMessageDto> findByBagNumber(String bagNumber) {
+	public List<RemovalCoreMessageDto> findByBagNumber(String bagNumber) {
 		if(bagNumber == null) 
 			return null;
-		return removalMessageRepository.findByBagNumber(bagNumber).stream().map(RemovalMessageDto::fromEntity).collect(Collectors.toList());
+		return removalMessageRepository.findByBagNumber(bagNumber).stream().map(RemovalCoreMessageDto::fromEntity).collect(Collectors.toList());
 	}
 
-	public List<RemovalMessageDto> findAll() {
-		return removalMessageRepository.findAll().stream().map(RemovalMessageDto::fromEntity).collect(Collectors.toList());
+	public List<RemovalCoreMessageDto> findAll() {
+		return removalMessageRepository.findAll().stream().map(RemovalCoreMessageDto::fromEntity).collect(Collectors.toList());
 	}
 	
 }

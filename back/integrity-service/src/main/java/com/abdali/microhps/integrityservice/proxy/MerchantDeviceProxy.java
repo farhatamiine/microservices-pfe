@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface MerchantDeviceProxy {
 	
 	@GetMapping("/merchant-device/status/{merchantNumber}")
-	public Boolean checkMerchantState(@PathVariable("merchantNumber") Long merchantNumber);
+	public Boolean isMerchantStatusActive(@PathVariable("merchantNumber") Long merchantNumber);
 	
 	@GetMapping("/merchant-device/merchant-number/{merchantNumber}/device-number/{deviceNumber}")
 	public Boolean isDeviceRelatedToMerchant(@PathVariable("merchantNumber") Long merchantNumber, @PathVariable("deviceNumber") String deviceNumber);
 	
-	@GetMapping("/merchant-device/{deviceNumber}")
-	public Boolean checkDeviceNumber(@PathVariable("deviceNumber") String deviceNumber);
+//	@GetMapping("/merchant-device/{deviceNumber}")
+//	public Boolean checkDeviceNumber(@PathVariable("deviceNumber") String deviceNumber);
 }

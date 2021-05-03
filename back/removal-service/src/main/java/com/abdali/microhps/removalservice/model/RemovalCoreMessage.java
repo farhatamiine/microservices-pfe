@@ -19,7 +19,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name="SMB_REMOVAL_MESSAGES")
-public class RemovalMessage extends AuditEntity {
+public class RemovalCoreMessage extends AuditEntity {
 
 	@Column(columnDefinition = "char")
 	private Character indicator;
@@ -33,10 +33,6 @@ public class RemovalMessage extends AuditEntity {
 	private Instant transmitionDate; 
 	@Column(columnDefinition = "varchar(3) default 0")
 	private String settlementFlag;
-	@Column(length=20)
-	private String depositReference;
-	@Column(columnDefinition = "smallint")
-	private Integer sequenceNumber;
 	private Integer totalCoins;
 	private Integer totalNotes;
 	private BigDecimal totalAmount;
@@ -47,4 +43,7 @@ public class RemovalMessage extends AuditEntity {
 	
 	@Embedded
 	private Denomination denomination;
+	
+	@Embedded
+	private RemovalDropTransaction removalDropTransaction;
 }

@@ -53,7 +53,7 @@ public class DropMessageServiceImpl implements DropMessageService {
 		log.info("dropMessage : {} ", dropMessageDto);
 		
 		DropCoreTransactionDto dropMessage = DropCoreTransactionDto.fromEntity(dropMessageRepository.save(DropCoreTransactionDto.toEntity(dropMessageDto)));
-		log.info("Successfully Persisted the libary Event {} ", dropMessage);   
+		log.info("Successfully Persisted the Drop Transaction {} ", dropMessage);   
 	}
 //	
 //	public void save2(DropCoreTransactionDto dropMessageDto) throws JsonMappingException, JsonProcessingException {

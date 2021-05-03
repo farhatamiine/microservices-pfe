@@ -57,36 +57,40 @@ public class MessageFormat {
 		String transmitionDate, 
 		String transactionId,
 		String[] messageSplited,
-		String message) {
-		if(indicator == DROP_INDICATOR && messageSplited[1].length() == MERCHANT_NUMBER_LENGTH && messageSplited[1].matches("[0-9_]+")) {			
-			// STEP 1 - check Indicator. -- it can be one of others status ...
-			if(indicator == DROP_INDICATOR || indicator == REMOVAL_INDICATOR || indicator == VERIFICATION_INDICATOR) {		
-				// STEP 3 && STEP 4 - check for Device Number and bag Number.
-				if(deviceNumber.length() == DEVICE_NUMBER && bagNumber.length() == BAG_NUMBER) {
-					// STEP 5 - check for container
-					if(containerType == NOTES_INDICATOR || containerType == COINS_INDICATOR) {	
-						// STEP 8 - check for transaction ID - we need to check just if its present.
-						if(transactionId.length() == TRANSACTION_ID_LENGTH) {
-							final DateTimeFormatter formatter = DateTimeFormatter
-									.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
-									.withZone(ZoneId.systemDefault());
-							try {
-								Instant.from(formatter.parse(transmitionDate));
-							} catch (Exception e) {
-								Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, message);
-								transactionService.transactionCreate(transaction);
-								throw new IntegrityException(MESSAGE_INVALID_CODE, MESSAGE_INVALID_DESCRIPTION);
-							} 
-							return true;
-						}
-//						throw new IntegrityException(MESSAGE_INVALID_CODE, "4444444444444444444");
-					}
-//					throw new IntegrityException(MESSAGE_INVALID_CODE, "333333333333");
-				}  
-//				throw new IntegrityException(MESSAGE_INVALID_CODE, "2222222222");
+		String message) {		
+		// STEP 1 - check Indicator. -- it can be one of others status ...
+		if(indicator == DROP_INDICATOR || indicator == REMOVAL_INDICATOR || indicator == VERIFICATION_INDICATOR) {	
+
+			if(indicator == DROP_INDICATOR && messageSplited[1].length() != MERCHANT_NUMBER_LENGTH && !messageSplited[1].matches("[0-9_]+")) {
+				Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, message);
+				transactionService.transactionCreate(transaction);
+				throw new IntegrityException(MESSAGE_INVALID_CODE, MESSAGE_INVALID_DESCRIPTION);
 			}
-//			throw new IntegrityException(MESSAGE_INVALID_CODE, "11111111");
+			// STEP 3 && STEP 4 - check for Device Number and bag Number.
+			if(deviceNumber.length() == DEVICE_NUMBER && bagNumber.length() == BAG_NUMBER) {
+				// STEP 5 - check for container
+				if(containerType == NOTES_INDICATOR || containerType == COINS_INDICATOR) {	
+					// STEP 8 - check for transaction ID - we need to check just if its present.
+					if(transactionId.length() == TRANSACTION_ID_LENGTH) {
+						final DateTimeFormatter formatter = DateTimeFormatter
+								.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
+								.withZone(ZoneId.systemDefault());
+						try {
+							Instant.from(formatter.parse(transmitionDate));
+						} catch (Exception e) {
+							Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, message);
+							transactionService.transactionCreate(transaction);
+							throw new IntegrityException(MESSAGE_INVALID_CODE, MESSAGE_INVALID_DESCRIPTION);
+						} 
+						return true;
+					}
+//						throw new IntegrityException(MESSAGE_INVALID_CODE, "4444444444444444444");
+				}
+//					throw new IntegrityException(MESSAGE_INVALID_CODE, "333333333333");
+			}  
+//				throw new IntegrityException(MESSAGE_INVALID_CODE, "2222222222");
 		}
+//			throw new IntegrityException(MESSAGE_INVALID_CODE, "11111111");
 //		throw new IntegrityException(MESSAGE_INVALID_CODE, "1111111100");
 		Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, message);
 		transactionService.transactionCreate(transaction);

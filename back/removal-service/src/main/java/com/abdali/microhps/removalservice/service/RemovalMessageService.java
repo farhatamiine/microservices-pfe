@@ -1,20 +1,23 @@
 package com.abdali.microhps.removalservice.service;
 
-import java.time.Instant;
 import java.util.List;
 
-import com.abdali.microhps.removalservice.dto.RemovalMessageDto;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+
+import com.abdali.microhps.removalservice.dto.RemovalCoreMessageDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 
 public interface RemovalMessageService {
 
-	RemovalMessageDto save(RemovalMessageDto removalMessageDto);
+	void save(ConsumerRecord<Long,String> consumerRecord) throws JsonMappingException, JsonProcessingException;
 
-	RemovalMessageDto findById(Long id);
+	RemovalCoreMessageDto findById(Long id);
 	
-	List<RemovalMessageDto> findByDeviceNumber(String deviceNumber);
+	List<RemovalCoreMessageDto> findByDeviceNumber(String deviceNumber);
 	
-	List<RemovalMessageDto> findByBagNumber(String bagNumber);
+	List<RemovalCoreMessageDto> findByBagNumber(String bagNumber);
 	
-	List<RemovalMessageDto> findAll();
+	List<RemovalCoreMessageDto> findAll();
 }

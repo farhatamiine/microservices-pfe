@@ -20,4 +20,6 @@ public interface VerificationMessageService {
 	List<VerificationCoreTransactionDto> findByBagNumber(String bagNumber);
 	
 	List<VerificationCoreTransactionDto> findAll();
+	
+	Boolean findByTransactionId(Integer transactionId);
 }

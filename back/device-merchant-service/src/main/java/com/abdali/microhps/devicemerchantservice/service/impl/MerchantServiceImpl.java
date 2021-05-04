@@ -17,6 +17,7 @@ import com.abdali.microhps.devicemerchantservice.dto.PowerCardNotificationDto;
 import com.abdali.microhps.devicemerchantservice.exceptions.types.InvalidEntityException;
 import com.abdali.microhps.devicemerchantservice.exceptions.types.NoDataFoundException;
 import com.abdali.microhps.devicemerchantservice.model.Merchant;
+import com.abdali.microhps.devicemerchantservice.model.MerchantAccount;
 import com.abdali.microhps.devicemerchantservice.model.MerchantStatus;
 import com.abdali.microhps.devicemerchantservice.model.PowerCardNotification;
 import com.abdali.microhps.devicemerchantservice.repository.DeviceRepository;
@@ -62,7 +63,9 @@ public class MerchantServiceImpl implements MerchantService {
 //	      throw new NoDataFoundException("There is no Device with ID " + merchantDto.getDevices().getId() + " found in the Database");
 //	    } 
 	    
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub 
+		
+//		throw new NoDataFoundException("errors code :" + merchantDto);
 		return MerchantDto.fromEntity(merchantRepository.save(MerchantDto.toEntity(merchantDto)));
 	}
 	

@@ -3,6 +3,8 @@ package com.abdali.microhps.removalservice.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.abdali.microhps.removalservice.model.RemovalCoreMessage;
 
@@ -11,5 +13,9 @@ public interface RemovalRepository extends JpaRepository<RemovalCoreMessage, Lon
 	List<RemovalCoreMessage> findByBagNumber(String bagNumber);
 	
 	List<RemovalCoreMessage> findByDeviceNumber(String deviceNumber);
+	
+	@Query("select count(m.id) FROM RemovalCoreMessage m where m.transactionId = :TransactionId")
+	Integer transactionId(@Param("TransactionId") Integer TransactionId);
+
 	
 }

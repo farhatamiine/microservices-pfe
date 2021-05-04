@@ -66,4 +66,14 @@ public class RemovalMessageServiceImpl implements RemovalMessageService {
 		return removalMessageRepository.findAll().stream().map(RemovalCoreMessageDto::fromEntity).collect(Collectors.toList());
 	}
 	
+
+	public Boolean findByTransactionId(Integer transactionId) {
+		
+		if(removalMessageRepository.transactionId(transactionId).equals(0)) {
+			return false;
+		}
+		return true;
+			
+	}
+	
 }

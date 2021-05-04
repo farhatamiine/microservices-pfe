@@ -67,4 +67,14 @@ public class VerificationMessageServiceImpl implements VerificationMessageServic
 		return verificationMessageRepository.findAll().stream().map(VerificationCoreTransactionDto::fromEntity).collect(Collectors.toList());
 	}
 	
+
+	public Boolean findByTransactionId(Integer transactionId) {
+		
+		if(verificationMessageRepository.transactionId(transactionId).equals(0)) {
+			return false;
+		}
+		return true;
+			
+	}
+	
 }

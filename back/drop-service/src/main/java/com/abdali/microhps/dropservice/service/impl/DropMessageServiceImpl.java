@@ -124,4 +124,13 @@ public class DropMessageServiceImpl implements DropMessageService {
 		return dropMessageRepository.findByDropTransactionMerchantNumberAndBagNumberAndTransactionIdAndTransmitionDate(merchantNumber, bagNumber, transactionId, transmitionDate).stream()
 				.map(DropCoreTransactionDto::fromEntity).collect(Collectors.toList());
 	}
+	
+	public Boolean findByTransactionId(Integer transactionId) {
+		
+		if(dropMessageRepository.transactionId(transactionId).equals(0)) {
+			return false;
+		}
+		return true;
+			
+	}
 }

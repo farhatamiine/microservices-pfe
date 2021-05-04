@@ -22,6 +22,7 @@ import com.abdali.microhps.integrityservice.validation.MerchantNotFound;
 import com.abdali.microhps.integrityservice.validation.MerchantNotMapped;
 import com.abdali.microhps.integrityservice.validation.MessageFormat;
 import com.abdali.microhps.integrityservice.validation.TransactionVerify;
+import com.abdali.microhps.integrityservice.validation.powerCard.PowerCardValidation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.springframework.util.StringUtils;
@@ -37,6 +38,7 @@ public class IntegrityController {
 	private TransactionVerify transactionVerify;
 	private TransactionBuilder transactionBuilder;
 	private TransactionProducer transactionProducer;
+	private PowerCardValidation powerCardValidation;
 	
 	@Autowired
 	public IntegrityController(
@@ -46,7 +48,8 @@ public class IntegrityController {
 			TransactionVerify transactionVerify,
 			DuplicatedMessage duplicatedMessage,
 			TransactionBuilder transactionBuilder,
-			TransactionProducer transactionProducer
+			TransactionProducer transactionProducer,
+			PowerCardValidation powerCardValidation
 			) {
 		// TODO Auto-generated constructor stub
 		this.messageFormat = messageFormat;
@@ -56,6 +59,7 @@ public class IntegrityController {
 		this.transactionVerify = transactionVerify;
 		this.transactionBuilder = transactionBuilder;
 		this.transactionProducer = transactionProducer;
+		this.powerCardValidation = powerCardValidation;
 	}
 	
 	
@@ -95,20 +99,21 @@ public class IntegrityController {
 			if(messageFormat.checkMessageFormat(indicator, messageSplited[1], deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId, messageSplited, transactionRequest.getMessage()) 
 					&& duplicatedMessage.checkForDuplicatedMessage(merchantNumber, bagNumber, transmitionDate, Integer.parseInt(transactionId), containerType, messageSplited, transactionRequest.getMessage()) 
 					&& merchantNotFound.checkMerchantNotFound(merchantNumber, containerType, messageSplited, transactionRequest.getMessage()) 
-					&& merchantNotMapped.simpleMerchant(merchantNumber, deviceNumber, containerType, messageSplited, transactionRequest.getMessage())) {
-				// GLOBAL STEPS 2 & 3 & 4 : MERCHANT NOT FOUND - NOT MAPPED - TRANSACTION VERIFY.
-				// check for message code status -- DOC: TransactionControl_V1 PAGE 8/38. 
-				if(StringUtils.hasLength(messageCodeStatus) && messageCodeStatus.contentEquals("000")) {						
-					// dropMessageProxy.saveDropMessage(transactionRequest.getMessage()); // old approach save into DB using micro-proxy-service.
-					Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, transactionRequest.getMessage());
-				    String topic = "drop-transaction-events";
-					transactionProducer.sendTransactionEvent(transaction, topic);
-				} else {
-					// save Into OthersTable.
-					throw new NoDataFoundException("need to be saved into SMB_OTHERS_TABLE : not available for now");
-				}
-				// return message
-				return requestResponse("process completed", HttpStatus.OK);
+					&& merchantNotMapped.simpleMerchant(merchantNumber, deviceNumber, containerType, messageSplited, transactionRequest.getMessage())
+					&& powerCardValidation.powerCardSimpleValidation(sequenceNumber, bagNumber, transactionId, deviceNumber, containerType, messageSplited, transactionRequest.getMessage())) {				
+					// GLOBAL STEPS 2 & 3 & 4 : MERCHANT NOT FOUND - NOT MAPPED - TRANSACTION VERIFY.
+					// check for message code status -- DOC: TransactionControl_V1 PAGE 8/38. 
+					if(StringUtils.hasLength(messageCodeStatus) && messageCodeStatus.contentEquals("000")) {						
+						// dropMessageProxy.saveDropMessage(transactionRequest.getMessage()); // old approach save into DB using micro-proxy-service.
+						Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, transactionRequest.getMessage());
+						String topic = "drop-transaction-events";
+						transactionProducer.sendTransactionEvent(transaction, topic);
+					} else {
+						// save Into OthersTable.
+						throw new NoDataFoundException("need to be saved into SMB_OTHERS_TABLE : not available for now");
+					}
+					// return message
+					return requestResponse("process completed", HttpStatus.OK);
 			} 
 			
 		} else if(indicator == REMOVAL_INDICATOR) { 

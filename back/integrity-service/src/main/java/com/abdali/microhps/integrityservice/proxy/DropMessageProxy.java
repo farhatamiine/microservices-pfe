@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.abdali.microhps.integrityservice.config.feign.FeignSimpleEncoderConfig;
 
-
 @FeignClient(name="drop-service", configuration = FeignSimpleEncoderConfig.class)
 public interface DropMessageProxy {
 	

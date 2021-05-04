@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @CrossOrigin("*")
 @RestController
 @Slf4j
+@RequestMapping("/drop-transaction")
 public class DropController {
 	
 	DropMessageService dropMessageService;
@@ -47,7 +49,7 @@ public class DropController {
 	 * @param size
 	 * @return
 	 */
-	@GetMapping("/drop-transaction")
+	@GetMapping("/")
 	public ResponseEntity<Map<String, Object>> getMessages(
 		      @RequestParam(defaultValue = "0") int page,
 		      @RequestParam(defaultValue = "10") int size
@@ -65,22 +67,22 @@ public class DropController {
 	    }
 	}
 	
-	@GetMapping("/drop-transaction/{messageId}")
+	@GetMapping("/{messageId}")
 	public DropCoreTransactionDto getMessageById(@PathVariable("messageId") Long Id) {
 		return dropMessageService.findById(Id);
 	}
 	
-	@GetMapping("/drop-transaction/merchant/{merchantNumber}")
+	@GetMapping("/merchant/{merchantNumber}")
 	public List<DropCoreTransactionDto> getMessageByMerchantNumber(@PathVariable("merchantNumber") Long merchantNumber) {
 		return dropMessageService.findByMerchantNumber(merchantNumber);
 	}
 	
-	@GetMapping("/drop-transaction/device/{deviceNumber}")
+	@GetMapping("/device/{deviceNumber}")
 	public List<DropCoreTransactionDto> getMessageByDeviceNumber(@PathVariable("deviceNumber") String deviceNumber) {
 		return dropMessageService.findByDeviceNumber(deviceNumber);
 	}
 
-	@GetMapping("/drop-transaction/bag/{bagNumber}")
+	@GetMapping("/bag/{bagNumber}")
 	public List<DropCoreTransactionDto> getMessageByBagNumber(@PathVariable("bagNumber") String bagNumber) {
 		return dropMessageService.findByBagNumber(bagNumber);
 	}
@@ -91,7 +93,7 @@ public class DropController {
 	 * @param bagNumber
 	 * @return Boolean if there is dropTransaction correspond to bag Number
 	 */
-	@GetMapping("/drop-transaction/verify/bag/{bagNumber}")
+	@GetMapping("/verify/bag/{bagNumber}")
 	public Boolean isBagNumberHasDrops(@PathVariable("bagNumber") String bagNumber) {
 		if(dropMessageService.findByBagNumber(bagNumber).isEmpty()) {
 			return false;
@@ -108,7 +110,7 @@ public class DropController {
 	 * @return Boolean if dropTransaction founded.
 	 * @throws Exception
 	 */
-	@GetMapping("drop-transaction/merchant/{merchantNumber}/bag/{bagNumber}/tranasction/{transactionId}/date/{datetime}")
+	@GetMapping("/merchant/{merchantNumber}/bag/{bagNumber}/tranasction/{transactionId}/date/{datetime}")
 	public Boolean isMessageExist(
 			@PathVariable("merchantNumber") Long merchantNumber, 
 			@PathVariable("bagNumber") String bagNumber, 
@@ -126,5 +128,15 @@ public class DropController {
 			return false;
 		}
 		return true;
+	}
+	
+	/*
+	 * Duplicated Transaction.
+	 * @param TransactionId
+	 * @return true if its depilcated, false if not.
+	 */
+	@PostMapping("/transactionId/{transactionId}")
+	public Boolean isTransactionIdDuplicated(@PathVariable Integer transactionId) {
+		return dropMessageService.findByTransactionId(transactionId);
 	}
 }

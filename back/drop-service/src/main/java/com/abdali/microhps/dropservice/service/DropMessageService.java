@@ -26,4 +26,6 @@ public interface DropMessageService {
 	Map<String, Object> findAll(int page, int size);
 	
 	List<DropCoreTransactionDto> findByMerchantNumberAndBagNumberAndTransactionIdAndTransmitionDate(Long merchantNumber, String bagNumber, Integer transactionId, Instant transmitionDate);
+	
+	Boolean findByTransactionId(Integer transactionId);
 }

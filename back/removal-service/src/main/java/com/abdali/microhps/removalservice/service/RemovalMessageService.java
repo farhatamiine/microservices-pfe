@@ -20,4 +20,6 @@ public interface RemovalMessageService {
 	List<RemovalCoreMessageDto> findByBagNumber(String bagNumber);
 	
 	List<RemovalCoreMessageDto> findAll();
+	
+	Boolean findByTransactionId(Integer transactionId);
 }

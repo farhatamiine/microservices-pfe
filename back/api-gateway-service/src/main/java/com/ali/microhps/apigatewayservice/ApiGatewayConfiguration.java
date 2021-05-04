@@ -28,6 +28,9 @@ public class ApiGatewayConfiguration {
 				.route(p -> p
 						.path("/verification-transaction/**")
 						.uri("lb://verification-service/"))
+				.route(p -> p
+						.path("/exception-validation/**")
+						.uri("lb://exception-validation-service"))
 				.build();
 	}
 

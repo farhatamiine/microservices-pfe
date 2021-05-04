@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.abdali.microhps.devicemerchantservice.dto.DeviceDto;
 import com.abdali.microhps.devicemerchantservice.dto.MerchantDto;
 import com.abdali.microhps.devicemerchantservice.model.MerchantStatus;
-import com.abdali.microhps.devicemerchantservice.model.PowerCardNotification;
 import com.abdali.microhps.devicemerchantservice.service.MerchantService;
  
 @CrossOrigin("*")

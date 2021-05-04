@@ -18,6 +18,7 @@ public class MerchantDto {
 	private String merchantName;
 	private MerchantStatus status;
 	
+	private MerchantAccountDto merchantAccount;
 	private List<DeviceDto> devices;
 	
 	public static MerchantDto fromEntity(Merchant merchant) {
@@ -36,6 +37,7 @@ public class MerchantDto {
 			                    .map(DeviceDto::fromEntity)
 			                    .collect(Collectors.toList()) : null
 			        )
+				.merchantAccount(MerchantAccountDto.fromEntity(merchant.getMerchantAccount()))
 				.build();
 	}
 	
@@ -55,6 +57,7 @@ public class MerchantDto {
 		            	.map(DeviceDto::toEntity)
 		            	.collect(Collectors.toList()) : null
 				);
+		merchant.setMerchantAccount(MerchantAccountDto.toEntity(merchantDto.getMerchantAccount()));
 		return merchant;
 		
 	}

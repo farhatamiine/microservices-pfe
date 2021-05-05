@@ -23,6 +23,7 @@ public class MerchantAccountDto {
 				.id(merchantAccount.getId())
 				.min_exchange(merchantAccount.getMin_exchange())
 				.max_exchange(merchantAccount.getMax_exchange()) 
+//				.merchant(MerchantDto.fromEntity(merchantAccount.getMerchant()))
 				.build();
 	}
 	
@@ -34,6 +35,7 @@ public class MerchantAccountDto {
 		merchantAccount.setId(merchantAccountDto.getId());
 		merchantAccount.setMin_exchange(merchantAccountDto.getMin_exchange());
 		merchantAccount.setMax_exchange(merchantAccountDto.getMax_exchange());	
+//		merchantAccount.setMerchant(MerchantDto.toEntity(merchantAccountDto.getMerchant()));
 		return merchantAccount;
 	}
 }

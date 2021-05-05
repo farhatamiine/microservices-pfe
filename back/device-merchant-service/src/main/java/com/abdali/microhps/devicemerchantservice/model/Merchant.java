@@ -11,6 +11,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -33,7 +34,8 @@ public class Merchant extends AuditEntity {
 	@Column(name="status")
 	private MerchantStatus status;
 
-	@OneToOne(mappedBy="merchant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "merchant_account_id", referencedColumnName = "id")
 	private MerchantAccount merchantAccount;
 	
 	@ManyToMany

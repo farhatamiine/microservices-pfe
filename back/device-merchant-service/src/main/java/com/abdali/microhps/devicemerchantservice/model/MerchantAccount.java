@@ -1,9 +1,9 @@
 package com.abdali.microhps.devicemerchantservice.model;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -19,12 +19,12 @@ import lombok.NoArgsConstructor;
 public class MerchantAccount {
 	
 	@Id
-	private int Id;
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int id;
 	private Double min_exchange;
 	private Double max_exchange;
 	
-	@OneToOne(fetch = FetchType.LAZY)
-	@MapsId
+	@OneToOne(mappedBy = "merchantAccount")
 	private Merchant merchant;
 	
 }

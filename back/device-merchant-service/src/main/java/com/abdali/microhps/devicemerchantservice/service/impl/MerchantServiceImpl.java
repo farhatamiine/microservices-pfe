@@ -12,17 +12,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.abdali.microhps.devicemerchantservice.dto.MerchantDto;
-import com.abdali.microhps.devicemerchantservice.dto.PowerCardNotificationDto;
+import com.abdali.microhps.devicemerchantservice.dto.MerchantDto; 
 import com.abdali.microhps.devicemerchantservice.exceptions.types.InvalidEntityException;
 import com.abdali.microhps.devicemerchantservice.exceptions.types.NoDataFoundException;
-import com.abdali.microhps.devicemerchantservice.model.Merchant;
-import com.abdali.microhps.devicemerchantservice.model.MerchantAccount;
-import com.abdali.microhps.devicemerchantservice.model.MerchantStatus;
-import com.abdali.microhps.devicemerchantservice.model.PowerCardNotification;
+import com.abdali.microhps.devicemerchantservice.model.Merchant; 
+import com.abdali.microhps.devicemerchantservice.model.MerchantStatus; 
 import com.abdali.microhps.devicemerchantservice.repository.DeviceRepository;
-import com.abdali.microhps.devicemerchantservice.repository.MerchantRepository;
-import com.abdali.microhps.devicemerchantservice.repository.PowerCardNotificationRepository;
+import com.abdali.microhps.devicemerchantservice.repository.MerchantRepository; 
 import com.abdali.microhps.devicemerchantservice.service.MerchantService;
 import com.abdali.microhps.devicemerchantservice.validation.MerchantValidation;
 
@@ -33,18 +29,15 @@ import lombok.extern.slf4j.Slf4j;
 public class MerchantServiceImpl implements MerchantService {
 
 	private MerchantRepository merchantRepository;
-	private PowerCardNotificationRepository powerCardNotificationRepository;
 	private DeviceRepository deviceRepository;
 	
 	@Autowired
 	public MerchantServiceImpl(
 			MerchantRepository merchantRepository,
-			DeviceRepository deviceRepository,
-			PowerCardNotificationRepository powerCardNotificationRepository
+			DeviceRepository deviceRepository
 			) {
 		this.merchantRepository = merchantRepository;
 		this.deviceRepository = deviceRepository;
-		this.powerCardNotificationRepository = powerCardNotificationRepository;
 	}
 
 	// - save 
@@ -116,14 +109,14 @@ public class MerchantServiceImpl implements MerchantService {
 	public Boolean merchantCheckStatus(Long merchantNumber, MerchantStatus status) {
 		
 		// TODO : EXception to check if merchant Number exist if not Notify PowerCard.
-		if(findByMerchantNumber(merchantNumber) == null) {
-			PowerCardNotification powerCardNotification = new PowerCardNotification();
-			powerCardNotification.setNotificationTitle("Merchant Number Didnt Found");
-			powerCardNotification.setNotificationDescription("vendor with merchant Number : " + merchantNumber + "didnt found in our database");
-			powerCardNotification.setMerchantNumber(merchantNumber);
-			powerCardNotificationRepository.save(powerCardNotification);
-			return false;
-		}
+//		if(findByMerchantNumber(merchantNumber) == null) {
+//			PowerCardNotification powerCardNotification = new PowerCardNotification();
+//			powerCardNotification.setNotificationTitle("Merchant Number Didnt Found");
+//			powerCardNotification.setNotificationDescription("vendor with merchant Number : " + merchantNumber + "didnt found in our database");
+//			powerCardNotification.setMerchantNumber(merchantNumber);
+//			powerCardNotificationRepository.save(powerCardNotification);
+//			return false;
+//		}
 		if (merchantNumber == null || merchantRepository.merchantStatus(merchantNumber, status).equals(0)) {
 //			log.warn("ID merchant is NULL");
 //			return Integer.valueOf(1);

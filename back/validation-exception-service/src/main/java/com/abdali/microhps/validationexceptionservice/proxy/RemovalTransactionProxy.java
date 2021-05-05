@@ -4,10 +4,10 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-@FeignClient(name="drop-service")
-public interface DropTransactionProxy {
-	
-	@PostMapping("/drop-transaction/transactionId/{transactionId}")
+@FeignClient(name="removal-service")
+public interface RemovalTransactionProxy {
+
+	@PostMapping("/transactionId/{transactionId}")
 	public Boolean isTransactionIdDuplicated(@PathVariable Integer transactionId);
 	
 }

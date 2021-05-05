@@ -60,4 +60,9 @@ public class DeviceController {
         return deviceService.findByDeviceNumber(deviceNumber);
     }
 
+	@GetMapping("/merchant-device/device-exist/{deviceNumber}")
+	public Boolean isDeviceNumberExist(@PathVariable("deviceNumber") String deviceNumber) throws Exception {
+		return deviceService.isDevicenNumberExist(deviceNumber);
+	}
+
 }

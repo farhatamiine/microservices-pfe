@@ -1,4 +1,4 @@
-package com.abdali.microhps.devicemerchantservice.model;
+package com.abdali.microhps.validationexceptionservice.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

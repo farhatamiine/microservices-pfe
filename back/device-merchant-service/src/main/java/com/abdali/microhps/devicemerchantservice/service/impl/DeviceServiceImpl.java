@@ -97,17 +97,16 @@ public class DeviceServiceImpl implements DeviceService {
 	}
 	
 	@Override
-	  public DeviceDto findById(Integer id) {
-	    if (id == null) {
-	      log.error("Device ID is null");
-	      return null;
-	    }
-	    return deviceRepository.findById(id).map(DeviceDto::fromEntity).orElseThrow(() -> 
-		new NoDataFoundException("Aucune Device Found With Id = " + id)
-	        );
-	  }
+	public DeviceDto findById(Integer id) {
+		if (id == null) {
+			log.error("Device ID is null");
+			return null;
+		}
+		return deviceRepository.findById(id).map(DeviceDto::fromEntity).orElseThrow(() -> 
+			new NoDataFoundException("Aucune Device Found With Id = " + id)
+		);
+	}
 	
-
     /***
      * Sorting Devices.
      * @param direction
@@ -123,4 +122,14 @@ public class DeviceServiceImpl implements DeviceService {
         return Sort.Direction.ASC;
       }
 
+    public Boolean isDevicenNumberExist(String deviceNumber) {
+    	if (deviceNumber == null) {
+  	      return false;
+  	    }
+    	DeviceDto device = deviceRepository.findDeviceByDeviceNumber(deviceNumber).map(DeviceDto::fromEntity).orElse(null);
+  		if(device == null) {
+  			return false;
+  		}
+  		return true;
+    }
 }

@@ -125,12 +125,10 @@ public class DropMessageServiceImpl implements DropMessageService {
 				.map(DropCoreTransactionDto::fromEntity).collect(Collectors.toList());
 	}
 	
-	public Boolean findByTransactionId(Integer transactionId) {
-		
+	public Boolean findByTransactionId(Integer transactionId) { 
 		if(dropMessageRepository.transactionId(transactionId).equals(0)) {
 			return false;
 		}
-		return true;
-			
+		return true; 
 	}
 }

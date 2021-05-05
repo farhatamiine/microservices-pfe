@@ -30,9 +30,9 @@ public class PowerCardValidation {
 	}
 	
 	
-	public Boolean powerCardSimpleValidation(int sequenceNumber, String bagNumber, String transactionId, String deviceNumber, char containerType, String[] messageSplited, String message) {
+	public Boolean powerCardSimpleValidation(char indicator, int sequenceNumber, String bagNumber, String transactionId, String deviceNumber, char containerType, String[] messageSplited, String message) {
 		
-		if(validationExceptionProxy.isPowerCardConditionValid(sequenceNumber, bagNumber, transactionId, deviceNumber)) {
+		if(validationExceptionProxy.isPowerCardConditionValid(indicator, sequenceNumber, bagNumber, transactionId, deviceNumber)) {
 			return true;
 		}
 		Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, message);

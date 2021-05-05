@@ -22,7 +22,6 @@ public class MerchantAccountController {
 	public MerchantAccountController(MerchantAccountService merchantAccountService) {
 		this.merchantAccountService = merchantAccountService;
 	}
-	
 
 	@PostMapping(value = "/merchants", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public MerchantAccountDto addMerchant(@RequestBody MerchantAccountDto merchantAccountDto ) {

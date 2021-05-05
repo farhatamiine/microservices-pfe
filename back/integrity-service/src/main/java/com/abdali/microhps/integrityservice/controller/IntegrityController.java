@@ -100,7 +100,7 @@ public class IntegrityController {
 					&& duplicatedMessage.checkForDuplicatedMessage(merchantNumber, bagNumber, transmitionDate, Integer.parseInt(transactionId), containerType, messageSplited, transactionRequest.getMessage()) 
 					&& merchantNotFound.checkMerchantNotFound(merchantNumber, containerType, messageSplited, transactionRequest.getMessage()) 
 					&& merchantNotMapped.simpleMerchant(merchantNumber, deviceNumber, containerType, messageSplited, transactionRequest.getMessage())
-					&& powerCardValidation.powerCardSimpleValidation(sequenceNumber, bagNumber, transactionId, deviceNumber, containerType, messageSplited, transactionRequest.getMessage())) {				
+					&& powerCardValidation.powerCardSimpleValidation(indicator, sequenceNumber, bagNumber, transactionId, deviceNumber, containerType, messageSplited, transactionRequest.getMessage())) {				
 					// GLOBAL STEPS 2 & 3 & 4 : MERCHANT NOT FOUND - NOT MAPPED - TRANSACTION VERIFY.
 					// check for message code status -- DOC: TransactionControl_V1 PAGE 8/38. 
 					if(StringUtils.hasLength(messageCodeStatus) && messageCodeStatus.contentEquals("000")) {						

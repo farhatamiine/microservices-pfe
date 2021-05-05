@@ -13,4 +13,6 @@ public interface DeviceService {
 	DeviceDto findByDeviceNumber(String deviceNumber);
 	
 	DeviceDto findById(Integer id);
+	
+	Boolean isDevicenNumberExist(String deviceNumber);
 }

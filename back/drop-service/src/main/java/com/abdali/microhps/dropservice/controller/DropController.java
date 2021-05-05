@@ -15,17 +15,13 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abdali.microhps.dropservice.dto.DropCoreTransactionDto;
 import com.abdali.microhps.dropservice.service.DropMessageService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
-import ch.qos.logback.classic.Logger;
 import lombok.extern.slf4j.Slf4j;
 
 @CrossOrigin("*")
@@ -133,7 +129,7 @@ public class DropController {
 	/*
 	 * Duplicated Transaction.
 	 * @param TransactionId
-	 * @return true if its depilcated, false if not.
+	 * @return true if its Duplicated, false if not.
 	 */
 	@PostMapping("/transactionId/{transactionId}")
 	public Boolean isTransactionIdDuplicated(@PathVariable Integer transactionId) {

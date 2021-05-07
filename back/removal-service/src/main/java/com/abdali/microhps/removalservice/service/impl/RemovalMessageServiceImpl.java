@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.abdali.microhps.removalservice.dto.RemovalCoreMessageDto;
 import com.abdali.microhps.removalservice.exceptions.types.NoDataFoundException;
+import com.abdali.microhps.removalservice.model.RemovalCoreMessage;
 import com.abdali.microhps.removalservice.repository.RemovalRepository;
 import com.abdali.microhps.removalservice.service.RemovalMessageService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -68,12 +69,14 @@ public class RemovalMessageServiceImpl implements RemovalMessageService {
 	
 
 	public Boolean findByTransactionId(Integer transactionId) {
-		
 		if(removalMessageRepository.transactionId(transactionId).equals(0)) {
 			return false;
 		}
 		return true;
-			
+	}
+	
+	public RemovalCoreMessage findRemovalTransaction(String deviceNumber, String bagNumber, Integer transactionId) {
+		return removalMessageRepository.findFirstByDeviceNumberAndBagNumberAndTransactionIdNotOrderByIdDesc(deviceNumber, bagNumber, transactionId);
 	}
 	
 }

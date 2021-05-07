@@ -17,5 +17,5 @@ public interface RemovalRepository extends JpaRepository<RemovalCoreMessage, Lon
 	@Query("select count(m.id) FROM RemovalCoreMessage m where m.transactionId = :TransactionId")
 	Integer transactionId(@Param("TransactionId") Integer TransactionId);
 
-	
+	RemovalCoreMessage findFirstByDeviceNumberAndBagNumberAndTransactionIdNotOrderByIdDesc(String deviceNumber, String bagNumber, Integer transactionId);
 }

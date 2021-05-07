@@ -4,7 +4,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatter; 
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abdali.microhps.dropservice.dto.DropCoreTransactionDto;
+import com.abdali.microhps.dropservice.model.DropCoreTransaction;
 import com.abdali.microhps.dropservice.service.DropMessageService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -134,5 +135,25 @@ public class DropController {
 	@PostMapping("/transactionId/{transactionId}")
 	public Boolean isTransactionIdDuplicated(@PathVariable Integer transactionId) {
 		return dropMessageService.findByTransactionId(transactionId);
+	}
+	
+	@GetMapping("/device/{deviceNumber}/bag/{bagNumber}/startDate/{startDate}/endDate/{endDate}")
+	public List<DropCoreTransactionDto> listDropsBetwwenDates(
+			@PathVariable("deviceNumber") String deviceNumber, 
+			@PathVariable("bagNumber") String bagNumber,
+			@PathVariable("startDate") String startDate,
+			@PathVariable("endDate") String endDate) throws Exception {
+		startDate = URLDecoder.decode(startDate, StandardCharsets.UTF_8);
+		endDate = URLDecoder.decode(endDate, StandardCharsets.UTF_8);
+		
+		final DateTimeFormatter formatter = DateTimeFormatter
+                .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
+                .withZone(ZoneId.systemDefault());
+		
+		Instant startDateInstant = Instant.from(formatter.parse(startDate));
+		Instant endDateInstant = Instant.from(formatter.parse(endDate));
+//		throw new Exception(startDateInstant +"______________________________" + endDateInstant );
+//		
+		return dropMessageService.listDropsBetwwenDates(deviceNumber, bagNumber, startDateInstant, endDateInstant);
 	}
 }

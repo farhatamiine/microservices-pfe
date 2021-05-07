@@ -3,6 +3,9 @@ package com.abdali.microhps.integrityservice.controller;
 import static com.abdali.microhps.integrityservice.utils.Constants.DROP_INDICATOR;
 import static com.abdali.microhps.integrityservice.utils.Constants.REMOVAL_INDICATOR;
 import static com.abdali.microhps.integrityservice.utils.Constants.VERIFICATION_INDICATOR;
+import static com.abdali.microhps.integrityservice.utils.Constants.TOPIC_DROP_NAME;
+import static com.abdali.microhps.integrityservice.utils.Constants.TOPIC_REMOVAL_NAME;
+import static com.abdali.microhps.integrityservice.utils.Constants.TOPIC_VERIFICATION_NAME;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -106,7 +109,7 @@ public class IntegrityController {
 					if(StringUtils.hasLength(messageCodeStatus) && messageCodeStatus.contentEquals("000")) {						
 						// dropMessageProxy.saveDropMessage(transactionRequest.getMessage()); // old approach save into DB using micro-proxy-service.
 						Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, transactionRequest.getMessage());
-						String topic = "drop-transaction-events";
+						String topic = TOPIC_DROP_NAME;
 						transactionProducer.sendTransactionEvent(transaction, topic);
 					} else {
 						// save Into OthersTable.
@@ -116,8 +119,7 @@ public class IntegrityController {
 					return requestResponse("process completed", HttpStatus.OK);
 			} 
 			
-		} else if(indicator == REMOVAL_INDICATOR) { 
-			
+		} else if(indicator == REMOVAL_INDICATOR) {  
 			merchantNumber = null; 
 			deviceNumber = messageSplited[1];
 			bagNumber = messageSplited[2]; 
@@ -132,7 +134,7 @@ public class IntegrityController {
 
 				if(StringUtils.hasLength(messageCodeStatus) && messageCodeStatus.contentEquals("000")) {	
 					Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, transactionRequest.getMessage());
-					String topic = "removal-transaction-events";
+					String topic = TOPIC_REMOVAL_NAME;
 					transactionProducer.sendTransactionEvent(transaction, topic);
 				} else {
 					// save Into OthersTable.
@@ -157,7 +159,7 @@ public class IntegrityController {
 
 				if(StringUtils.hasLength(messageCodeStatus) && messageCodeStatus.contentEquals("000")) {	
 					Transaction transaction = transactionBuilder.transactionBuild(containerType, messageSplited, transactionRequest.getMessage());
-					String topic = "verification-transaction-events";
+					String topic = TOPIC_VERIFICATION_NAME;
 					transactionProducer.sendTransactionEvent(transaction, topic);
 				} else {
 					// save Into OthersTable.

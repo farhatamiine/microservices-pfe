@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abdali.microhps.removalservice.dto.RemovalCoreMessageDto;
+import com.abdali.microhps.removalservice.model.RemovalCoreMessage;
 import com.abdali.microhps.removalservice.service.RemovalMessageService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -59,5 +60,13 @@ public class RemovalController {
 	@PostMapping("/transactionId/{transactionId}")
 	public Boolean isTransactionIdDuplicated(@PathVariable Integer transactionId) {
 		return removalMessageService.findByTransactionId(transactionId);
+	}
+	
+	@GetMapping("/device/{deviceNumber}/bag/{bagNumber}/transaction/{transactionId}")
+	public RemovalCoreMessage findRemovalTransaction(
+			@PathVariable("deviceNumber") String deviceNumber, 
+			@PathVariable("bagNumber") String bagNumber,
+			@PathVariable("transactionId") Integer transactionId) {
+		return removalMessageService.findRemovalTransaction(deviceNumber, bagNumber, transactionId);
 	}
 }

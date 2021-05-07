@@ -39,4 +39,11 @@ public interface Constants {
 		// POWERCARD EXCEPTION
 		String POWERCARD_VALIDATION_CODE = "PWC";
 		String POWERCARD_VALIDATION_DESCRIPTION = "CHECK POWERCARD NOTIFICATION FOR MORE DETAILS";
+		
+		//Topics Names
+		String TOPIC_DROP_NAME = "drop-transaction-events";
+		String TOPIC_REMOVAL_NAME = "removal-transaction-events";
+		String TOPIC_REMOVAL_VALIDATION_NAME = "removal-validation-events";
+		String TOPIC_VERIFICATION_NAME = "verification-transaction-events";
+		String TOPIC_VERIFICATION_VALIDATION_NAME = "verification-validation-events";
 }

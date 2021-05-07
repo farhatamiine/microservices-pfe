@@ -20,6 +20,7 @@ public class MerchantDto {
 	
 	private MerchantAccountDto merchantAccount;
 	private List<DeviceDto> devices;
+	private SettlementTypeDto settlementType;
 	
 	public static MerchantDto fromEntity(Merchant merchant) {
 		if(merchant == null) {
@@ -37,6 +38,7 @@ public class MerchantDto {
 			                    .map(DeviceDto::fromEntity)
 			                    .collect(Collectors.toList()) : null
 			        )
+				.settlementType(SettlementTypeDto.fromEntity(merchant.getSettlementType()))
 				.merchantAccount(MerchantAccountDto.fromEntity(merchant.getMerchantAccount()))
 				.build();
 	}
@@ -57,6 +59,7 @@ public class MerchantDto {
 		            	.map(DeviceDto::toEntity)
 		            	.collect(Collectors.toList()) : null
 				);
+		merchant.setSettlementType(SettlementTypeDto.toEntity(merchantDto.getSettlementType()));
 		merchant.setMerchantAccount(MerchantAccountDto.toEntity(merchantDto.getMerchantAccount()));
 		return merchant;
 		

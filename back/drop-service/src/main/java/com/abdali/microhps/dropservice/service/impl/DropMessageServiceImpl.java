@@ -1,7 +1,9 @@
 package com.abdali.microhps.dropservice.service.impl;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -130,5 +132,12 @@ public class DropMessageServiceImpl implements DropMessageService {
 			return false;
 		}
 		return true; 
+	}
+	
+	public List<DropCoreTransactionDto> listDropsBetwwenDates(String deviceNumber, String bagNumber, Instant startDate, Instant endDate) {
+		Timestamp endTime = Timestamp.from(endDate);
+		Timestamp startTime = Timestamp.from(startDate);
+	   return dropMessageRepository.findByDeviceNumberAndBagNumberAndTransmitionDateBetween(deviceNumber, bagNumber, startTime, endTime).stream()
+				.map(DropCoreTransactionDto::fromEntity).collect(Collectors.toList());
 	}
 }

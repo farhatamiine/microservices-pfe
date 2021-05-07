@@ -1,5 +1,10 @@
 package com.abdali.microhps.integrityservice.producer;
 
+import static com.abdali.microhps.integrityservice.utils.Constants.TOPIC_REMOVAL_NAME;
+import static com.abdali.microhps.integrityservice.utils.Constants.TOPIC_VERIFICATION_NAME;
+import static com.abdali.microhps.integrityservice.utils.Constants.TOPIC_REMOVAL_VALIDATION_NAME;
+import static com.abdali.microhps.integrityservice.utils.Constants.TOPIC_VERIFICATION_VALIDATION_NAME;
+
 import java.util.List;
 
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -31,7 +36,17 @@ public class TransactionProducer {
 
         Long key = transaction.getId();
         String value = objectMapper.writeValueAsString(transaction);
-
+        
+        if(topic == TOPIC_REMOVAL_NAME) {
+        	 ProducerRecord<Long,String> producerRecord2 = buildProducerRecord(key, value, TOPIC_REMOVAL_VALIDATION_NAME);
+             ListenableFuture<SendResult<Long,String>> listenableFuture =  kafkaTemplate.send(producerRecord2);
+        }
+        
+        if(topic == TOPIC_VERIFICATION_NAME) {
+       	 ProducerRecord<Long,String> producerRecord3 = buildProducerRecord(key, value, TOPIC_VERIFICATION_VALIDATION_NAME);
+            ListenableFuture<SendResult<Long,String>> listenableFuture =  kafkaTemplate.send(producerRecord3);
+       }
+        
         ProducerRecord<Long,String> producerRecord = buildProducerRecord(key, value, topic);
 
         ListenableFuture<SendResult<Long,String>> listenableFuture =  kafkaTemplate.send(producerRecord);

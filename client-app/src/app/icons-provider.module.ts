@@ -9,10 +9,12 @@ import {
   TeamOutline,
   ShopOutline,
   EditOutline,
-  DeleteOutline
+  DeleteOutline,
+  EllipsisOutline,
+  BellTwoTone
 } from '@ant-design/icons-angular/icons';
 
-const icons = [MenuFoldOutline, MenuUnfoldOutline, FolderOpenTwoTone, CrownTwoTone, TeamOutline, ShopOutline, EditOutline, DeleteOutline];
+const icons = [MenuFoldOutline, MenuUnfoldOutline, FolderOpenTwoTone, CrownTwoTone, TeamOutline, ShopOutline, EditOutline, DeleteOutline, EllipsisOutline,BellTwoTone];
 
 @NgModule({
   imports: [NzIconModule],

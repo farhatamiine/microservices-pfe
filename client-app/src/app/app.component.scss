@@ -85,3 +85,16 @@ nz-content {
   background: #fff;
   height: 100%;
 }
+.app-header-navigation {
+  display: flex;
+  padding: 0 1rem;
+  > div {
+    margin: 0 .5rem;
+    align-items: center;
+    >.ant-btn-icon-only > i {
+      font-size: 22px;
+      vertical-align: middle;
+    }
+  }
+
+}

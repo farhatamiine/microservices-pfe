@@ -61,15 +61,40 @@
   <nz-layout>
     <nz-header>
       <div class="app-header">
-        <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
-            <i class="trigger"
-              nz-icon
-              [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
-            ></i>
-        </span>
-        <span>
-          Notification
-        </span>
+        <div nz-row nzJustify="space-between">
+          <div nz-col>
+            <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
+              <i class="trigger"
+                nz-icon
+                [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+              ></i>
+            </span>
+          </div>
+          <div nz-col class="app-header-navigation">
+            <div>
+              <button nz-button nzType="default">
+                <i nz-icon [nzType]="'bell'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"></i>
+              </button>
+            </div>
+            <!-- Drop Down -->
+            <div>
+              <nz-button-group>
+                <button nz-button nzType="primary">Create Transactions</button>
+                <button nz-button nz-dropdown [nzDropdownMenu]="menu1" nzPlacement="bottomRight">
+                  <i nz-icon nzType="ellipsis"></i>
+                </button>
+              </nz-button-group>
+              <nz-dropdown-menu #menu1="nzDropdownMenu">
+                <ul nz-menu>
+                  <li nz-menu-item>Create Drop Transaction</li>
+                  <li nz-menu-item>Create Removal Transaction</li>
+                  <li nz-menu-item>Create Verification Transaction</li>
+                </ul>
+              </nz-dropdown-menu>
+            </div>
+            <!-- ./END Drop Down -->
+          </div>
+        </div>
       </div>
     </nz-header>
     <nz-content>

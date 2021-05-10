@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "settlement_type")
 public class SettlementType extends AuditEntity {
 	
-	private String transactionType;
+	private String settlementTypeName;
 	
 	@OneToMany(mappedBy ="settlementType")
 	private List<Merchant> merchants;

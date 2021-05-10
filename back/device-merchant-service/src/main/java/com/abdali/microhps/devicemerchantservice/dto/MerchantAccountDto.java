@@ -1,5 +1,6 @@
 package com.abdali.microhps.devicemerchantservice.dto;
-
+ 
+import com.abdali.microhps.devicemerchantservice.model.AccountTypeEnum;
 import com.abdali.microhps.devicemerchantservice.model.MerchantAccount;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -11,19 +12,20 @@ import lombok.Data;
 public class MerchantAccountDto {
 	
 	private int id;
-	private Double min_exchange;
-	private Double max_exchange;
+	private String accountNumber;
+	private AccountTypeEnum accountType;
+	private AccountLimitsDto accountLimits;
 	@JsonIgnore
-	private MerchantDto merchant;
+	private MerchantDto merchants;
 	
 	public static MerchantAccountDto fromEntity(MerchantAccount merchantAccount) {
 		if(merchantAccount == null)
 			return null;
 		return MerchantAccountDto.builder()
 				.id(merchantAccount.getId())
-				.min_exchange(merchantAccount.getMin_exchange())
-				.max_exchange(merchantAccount.getMax_exchange()) 
-//				.merchant(MerchantDto.fromEntity(merchantAccount.getMerchant()))
+				.accountNumber(merchantAccount.getAccountNumber())
+				.accountType(merchantAccount.getAccountType()) 
+				.accountLimits(AccountLimitsDto.fromEntity(merchantAccount.getAccountLimits()))
 				.build();
 	}
 	
@@ -31,11 +33,11 @@ public class MerchantAccountDto {
 		if(merchantAccountDto == null) {
 			return null;
 		}
-		MerchantAccount merchantAccount = new MerchantAccount();
+		MerchantAccount merchantAccount = new MerchantAccount(); 
 		merchantAccount.setId(merchantAccountDto.getId());
-		merchantAccount.setMin_exchange(merchantAccountDto.getMin_exchange());
-		merchantAccount.setMax_exchange(merchantAccountDto.getMax_exchange());	
-//		merchantAccount.setMerchant(MerchantDto.toEntity(merchantAccountDto.getMerchant()));
+		merchantAccount.setAccountNumber(merchantAccountDto.getAccountNumber());
+		merchantAccount.setAccountType(merchantAccountDto.getAccountType());	
+		merchantAccount.setAccountLimits(AccountLimitsDto.toEntity(merchantAccountDto.getAccountLimits()));
 		return merchantAccount;
 	}
 }

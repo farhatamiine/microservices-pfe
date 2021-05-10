@@ -18,7 +18,7 @@ public class MerchantDto {
 	private String merchantName;
 	private MerchantStatus status;
 	
-	private MerchantAccountDto merchantAccount;
+	private List<MerchantAccountDto> merchantAccounts;
 	private List<DeviceDto> devices;
 	private SettlementTypeDto settlementType;
 	
@@ -39,7 +39,12 @@ public class MerchantDto {
 			                    .collect(Collectors.toList()) : null
 			        )
 				.settlementType(SettlementTypeDto.fromEntity(merchant.getSettlementType()))
-				.merchantAccount(MerchantAccountDto.fromEntity(merchant.getMerchantAccount()))
+				.merchantAccounts(
+						merchant.getMerchantAccounts() != null ?
+								merchant.getMerchantAccounts().stream()
+								.map(MerchantAccountDto::fromEntity)
+								.collect(Collectors.toList()) : null
+						)
 				.build();
 	}
 	
@@ -60,7 +65,12 @@ public class MerchantDto {
 		            	.collect(Collectors.toList()) : null
 				);
 		merchant.setSettlementType(SettlementTypeDto.toEntity(merchantDto.getSettlementType()));
-		merchant.setMerchantAccount(MerchantAccountDto.toEntity(merchantDto.getMerchantAccount()));
+		merchant.setMerchantAccounts(
+				merchantDto.getMerchantAccounts() != null ?
+						merchantDto.getMerchantAccounts().stream()
+						.map(MerchantAccountDto::toEntity)
+						.collect(Collectors.toList()) : null
+				);
 		return merchant;
 		
 	}

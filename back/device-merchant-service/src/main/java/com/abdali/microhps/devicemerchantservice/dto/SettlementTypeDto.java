@@ -13,7 +13,7 @@ import lombok.Data;
 public class SettlementTypeDto {
 
 	private Integer id;
-	private String transactionType;
+	private String settlementTypeName;
 
 	@JsonIgnore
 	private List<MerchantDto> merchants;
@@ -25,7 +25,7 @@ public class SettlementTypeDto {
 		
 		return SettlementTypeDto.builder()
 				.id(settlementType.getId())
-				.transactionType(settlementType.getTransactionType())
+				.settlementTypeName(settlementType.getSettlementTypeName())
 				.build();
 	}
 	
@@ -36,7 +36,7 @@ public class SettlementTypeDto {
 		
 		SettlementType merchantTransactionType = new SettlementType();
 		merchantTransactionType.setId(settlementTypeDto.getId());
-		merchantTransactionType.setTransactionType(settlementTypeDto.getTransactionType());
+		merchantTransactionType.setSettlementTypeName(settlementTypeDto.getSettlementTypeName());
 		return merchantTransactionType;
 	}
 }

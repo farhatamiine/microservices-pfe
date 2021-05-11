@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.abdali.microhps.devicemerchantservice.model.Merchant;
-import com.abdali.microhps.devicemerchantservice.model.MerchantStatus;
+import com.abdali.microhps.devicemerchantservice.model.enumeration.MerchantStatus;
 
 import lombok.Builder;
 import lombok.Data;

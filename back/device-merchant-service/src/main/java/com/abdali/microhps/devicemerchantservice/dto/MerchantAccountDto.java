@@ -1,7 +1,7 @@
 package com.abdali.microhps.devicemerchantservice.dto;
  
-import com.abdali.microhps.devicemerchantservice.model.AccountTypeEnum;
 import com.abdali.microhps.devicemerchantservice.model.MerchantAccount;
+import com.abdali.microhps.devicemerchantservice.model.enumeration.AccountTypeEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Builder;

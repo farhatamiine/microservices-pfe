@@ -43,7 +43,6 @@ public interface Constants {
 		//Topics Names
 		String TOPIC_DROP_NAME = "drop-transaction-events";
 		String TOPIC_REMOVAL_NAME = "removal-transaction-events";
-		String TOPIC_REMOVAL_VALIDATION_NAME = "removal-validation-events";
 		String TOPIC_VERIFICATION_NAME = "verification-transaction-events";
-		String TOPIC_VERIFICATION_VALIDATION_NAME = "verification-validation-events";
+		String GLOBAL_TOPIC_NAME = "global-adjustement-events";
 }

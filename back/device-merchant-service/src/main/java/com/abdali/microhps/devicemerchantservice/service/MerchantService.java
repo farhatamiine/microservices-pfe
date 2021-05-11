@@ -3,7 +3,7 @@ package com.abdali.microhps.devicemerchantservice.service;
 import java.util.Map;
 
 import com.abdali.microhps.devicemerchantservice.dto.MerchantDto;
-import com.abdali.microhps.devicemerchantservice.model.MerchantStatus;
+import com.abdali.microhps.devicemerchantservice.model.enumeration.MerchantStatus;
 
 public interface MerchantService {
 	

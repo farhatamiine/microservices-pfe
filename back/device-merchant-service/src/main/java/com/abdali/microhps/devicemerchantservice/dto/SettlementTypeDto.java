@@ -2,7 +2,7 @@ package com.abdali.microhps.devicemerchantservice.dto;
 
 import java.util.List;
 
-import com.abdali.microhps.devicemerchantservice.model.SettlementType;
+import com.abdali.microhps.devicemerchantservice.model.SettlementType; 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Builder;

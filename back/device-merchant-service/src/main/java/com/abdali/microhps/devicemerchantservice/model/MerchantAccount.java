@@ -8,6 +8,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.abdali.microhps.devicemerchantservice.model.enumeration.AccountTypeEnum;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,15 +20,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "merchant_account")
 public class MerchantAccount extends AuditEntity {
-	
-//	@Id
-//	@GeneratedValue(strategy=GenerationType.IDENTITY)
-//	private int id;
-//	private Double min_exchange;
-//	private Double max_exchange;
-//	
-//	@OneToOne(mappedBy = "merchantAccount")
-//	private Merchant merchant;
 	
 	private String accountNumber;
 	

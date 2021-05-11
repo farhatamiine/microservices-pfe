@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.abdali.microhps.devicemerchantservice.model.Merchant;
-import com.abdali.microhps.devicemerchantservice.model.MerchantStatus;
+import com.abdali.microhps.devicemerchantservice.model.enumeration.MerchantStatus;
 
 public interface MerchantRepository extends JpaRepository<Merchant, Integer> {
 	

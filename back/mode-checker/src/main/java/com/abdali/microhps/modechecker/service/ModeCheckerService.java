@@ -19,7 +19,8 @@ import org.springframework.stereotype.Service;
 import com.abdali.microhps.modechecker.model.Transaction;
 import com.abdali.microhps.modechecker.model.TransactionModel;
 import com.abdali.microhps.modechecker.producer.SettlementTransactionProducer;
-import com.abdali.microhps.modechecker.proxy.DeviceMerchantProxy; 
+import com.abdali.microhps.modechecker.proxy.DeviceMerchantProxy;
+import com.abdali.microhps.modechecker.proxy.DropTransactionProxy;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,17 +29,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ModeCheckerService {
 
 	DeviceMerchantProxy deviceMerchantProxy;
+	DropTransactionProxy dropTransactionProxy;
 	SettlementTransactionProducer settlementTransactionProducer;
     ObjectMapper objectMapper; 
 	
 	@Autowired
 	public ModeCheckerService(
 			DeviceMerchantProxy deviceMerchantProxy,
+			DropTransactionProxy dropTransactionProxy,
 			SettlementTransactionProducer settlementTransactionProducer,
 		    ObjectMapper objectMapper
 			) {
 		this.deviceMerchantProxy = deviceMerchantProxy;
 		this.settlementTransactionProducer = settlementTransactionProducer;
+		this.dropTransactionProxy = dropTransactionProxy;ge
 	    this.objectMapper = objectMapper;
 	} 
 	
@@ -46,11 +50,15 @@ public class ModeCheckerService {
 		
 		// Sauvegarde into topic depend on merchant mode
 		Transaction transactionCore = objectMapper.readValue(consumerRecord.value(), Transaction.class);
+		Long merchantNumber;
+		String merchantSettlementMode;
+		String deviceNumber;
+		String bagNumber;
 		
 		switch (transactionCore.getIndicator()) {
 			case DROP_INDICATOR:
-				Long merchantNumber = transactionCore.getDropTransaction().getMerchantNumber(); 
-				String merchantSettlementMode = deviceMerchantProxy.returnMerchantSettlementMode(merchantNumber);
+				merchantNumber = transactionCore.getDropTransaction().getMerchantNumber(); 
+				merchantSettlementMode = deviceMerchantProxy.returnMerchantSettlementMode(merchantNumber);
 				if(merchantSettlementMode == DROP_SETTLEMENT_MODE) {
 					TransactionModel transactionSettlement = objectMapper.convertValue(transactionCore, TransactionModel.class);
 					transactionSettlement.setMerchantNumber(merchantNumber);
@@ -58,9 +66,28 @@ public class ModeCheckerService {
 				}
 				break;
 			case REMOVAL_INDICATOR:
-				//get merchant number from drops correspond to this removal.
+				//get merchant number from last drops correspond to this removal.
+				deviceNumber = transactionCore.getDeviceNumber();
+				bagNumber = transactionCore.getBagNumber();
+				// get last drop message for this removal.
+				merchantNumber = dropTransactionProxy.getMerchantNumber(deviceNumber, bagNumber);
+				merchantSettlementMode = deviceMerchantProxy.returnMerchantSettlementMode(merchantNumber);
+				if(merchantSettlementMode == REMOVAL_SETTLEMENT_MODE) {
+					TransactionModel transactionSettlement = objectMapper.convertValue(transactionCore, TransactionModel.class);
+					transactionSettlement.setMerchantNumber(merchantNumber);
+					settlementTransactionProducer.sendTransactionEvent(transactionSettlement, TOPIC_REMOVAL_SETTLEMENT_EVENTS);
+				}
 				break;
-			case VERIFICATION_INDICATOR:
+			case VERIFICATION_INDICATOR: 
+				deviceNumber = transactionCore.getDeviceNumber();
+				bagNumber = transactionCore.getBagNumber(); 
+				merchantNumber = dropTransactionProxy.getMerchantNumber(deviceNumber, bagNumber);
+				merchantSettlementMode = deviceMerchantProxy.returnMerchantSettlementMode(merchantNumber);
+				if(merchantSettlementMode == VERIFICATION_SETTLEMENT_MODE) {
+					TransactionModel transactionSettlement = objectMapper.convertValue(transactionCore, TransactionModel.class);
+					transactionSettlement.setMerchantNumber(merchantNumber);
+					settlementTransactionProducer.sendTransactionEvent(transactionSettlement, TOPIC_VERIFICATION_SETTLEMENT_EVENTS);
+				}
 				break;
 		}
 		

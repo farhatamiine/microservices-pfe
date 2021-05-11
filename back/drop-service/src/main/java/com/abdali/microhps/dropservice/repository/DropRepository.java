@@ -24,4 +24,6 @@ public interface DropRepository extends JpaRepository<DropCoreTransaction, Long>
 	Integer transactionId(@Param("TransactionId") Integer TransactionId);
 	
 	List<DropCoreTransaction> findByDeviceNumberAndBagNumberAndTransmitionDateBetween(String deviceNumber, String bagNumber, Timestamp startDate, Timestamp endDate);
+	
+	DropCoreTransaction findTopByDeviceNumberAndBagNumberOrderByIdDesc(String deviceNumber,String bagNumber);
 }

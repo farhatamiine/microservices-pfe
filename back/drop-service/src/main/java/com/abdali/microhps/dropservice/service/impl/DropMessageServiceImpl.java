@@ -140,4 +140,9 @@ public class DropMessageServiceImpl implements DropMessageService {
 	   return dropMessageRepository.findByDeviceNumberAndBagNumberAndTransmitionDateBetween(deviceNumber, bagNumber, startTime, endTime).stream()
 				.map(DropCoreTransactionDto::fromEntity).collect(Collectors.toList());
 	}
+	
+	public Long getMerchantNumber(String deviceNumber, String bagNumber) {
+		DropCoreTransaction lastDrop = dropMessageRepository.findTopByDeviceNumberAndBagNumberOrderByIdDesc(deviceNumber, bagNumber);
+		return lastDrop.getDropTransaction().getMerchantNumber();
+	}
 }

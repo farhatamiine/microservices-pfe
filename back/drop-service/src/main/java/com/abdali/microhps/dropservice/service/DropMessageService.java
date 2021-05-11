@@ -30,4 +30,6 @@ public interface DropMessageService {
 	Boolean findByTransactionId(Integer transactionId);
 	
 	List<DropCoreTransactionDto> listDropsBetwwenDates(String deviceNumber, String bagNumber, Instant startDate, Instant endDate);
+	
+	Long getMerchantNumber(String deviceNumber, String bagNumber);
 }

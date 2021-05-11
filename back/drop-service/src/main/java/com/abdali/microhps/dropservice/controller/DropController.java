@@ -156,4 +156,12 @@ public class DropController {
 //		
 		return dropMessageService.listDropsBetwwenDates(deviceNumber, bagNumber, startDateInstant, endDateInstant);
 	}
+	
+	@GetMapping("/device/{deviceNumber}/bag/{bagNumber}")
+	public Long getMerchantNumber(
+			@PathVariable("deviceNumber") String deviceNumber,
+			@PathVariable("bagNumber") String bagNumber
+			) {
+		return dropMessageService.getMerchantNumber(deviceNumber, bagNumber);
+	}
 }

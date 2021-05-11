@@ -42,7 +42,7 @@ public class ModeCheckerService {
 			) {
 		this.deviceMerchantProxy = deviceMerchantProxy;
 		this.settlementTransactionProducer = settlementTransactionProducer;
-		this.dropTransactionProxy = dropTransactionProxy;ge
+		this.dropTransactionProxy = dropTransactionProxy;
 	    this.objectMapper = objectMapper;
 	} 
 	

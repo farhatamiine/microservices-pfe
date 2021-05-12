@@ -12,11 +12,13 @@ import com.abdali.microhps.devicemerchantservice.model.enumeration.AccountTypeEn
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "merchant_account")
 public class MerchantAccount extends AuditEntity {

@@ -1,20 +1,12 @@
 package com.abdali.microhps.dropservice.config.kafka;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.ConcurrentKafkaListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.dao.RecoverableDataAccessException;
+import org.springframework.context.annotation.Configuration; 
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.retry.RetryPolicy;
-import org.springframework.retry.backoff.FixedBackOffPolicy;
-import org.springframework.retry.policy.SimpleRetryPolicy;
-import org.springframework.retry.support.RetryTemplate;
+import org.springframework.kafka.core.ConsumerFactory; 
 
 import com.abdali.microhps.dropservice.service.DropMessageService;
 

@@ -1,6 +1,10 @@
 package com.abdali.microhps.devicemerchantservice.controller;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,13 +20,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abdali.microhps.devicemerchantservice.dto.DeviceDto;
+import com.abdali.microhps.devicemerchantservice.dto.MerchantAccountDto;
 import com.abdali.microhps.devicemerchantservice.dto.MerchantDto;
+import com.abdali.microhps.devicemerchantservice.model.MerchantAccount;
+import com.abdali.microhps.devicemerchantservice.model.enumeration.AccountTypeEnum;
 import com.abdali.microhps.devicemerchantservice.model.enumeration.MerchantStatus; 
 import com.abdali.microhps.devicemerchantservice.service.MerchantService;
+
+import lombok.extern.slf4j.Slf4j;
  
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/merchant-device")
+@Slf4j
 public class MerchantController {
 	
 	private MerchantService merchantService;
@@ -93,6 +103,21 @@ public class MerchantController {
 		return merchant.getSettlementType().getSettlementTypeName();
 	}
 	
+	@GetMapping("/merchant-account-credited/{merchantNumber}")
+	public String getMerchantCreditedAccount(@PathVariable("merchantNumber") Long merchantNumber) throws Exception {
+		MerchantDto merchant = merchantService.findByMerchantNumber(merchantNumber);
+		AccountTypeEnum accountType = AccountTypeEnum.credited;
+		
+		String creditedAccountNumber; 
+		
+		creditedAccountNumber = merchant.getMerchantAccounts().stream().filter(m -> {
+			if(m.getAccountType() == accountType)
+				return true;
+			return false;
+		}).map(m -> m.getAccountNumber()).collect(Collectors.joining(","));
+		
+		return creditedAccountNumber;
+	}
 	
 	
 }

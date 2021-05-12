@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

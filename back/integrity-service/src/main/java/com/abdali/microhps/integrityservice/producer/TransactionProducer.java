@@ -1,7 +1,5 @@
 package com.abdali.microhps.integrityservice.producer;
 
-import static com.abdali.microhps.integrityservice.utils.Constants.TOPIC_REMOVAL_NAME;
-import static com.abdali.microhps.integrityservice.utils.Constants.TOPIC_VERIFICATION_NAME;
 import static com.abdali.microhps.integrityservice.utils.Constants.GLOBAL_TOPIC_NAME;
 
 import java.util.List;

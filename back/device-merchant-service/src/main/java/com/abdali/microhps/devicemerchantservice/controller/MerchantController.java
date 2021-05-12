@@ -112,7 +112,7 @@ public class MerchantController {
 		if(type == "credited") {			
 			accountType = AccountTypeEnum.credited;
 		} else if(type == "debited") {
-			accountType = AccountTypeEnum.credited;
+			accountType = AccountTypeEnum.debited;
 		} else {
 			return "not exist";
 		}

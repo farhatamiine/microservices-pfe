@@ -103,18 +103,27 @@ public class MerchantController {
 		return merchant.getSettlementType().getSettlementTypeName();
 	}
 	
-	@GetMapping("/merchant-account-credited/{merchantNumber}")
-	public String getMerchantCreditedAccount(@PathVariable("merchantNumber") Long merchantNumber) throws Exception {
-		MerchantDto merchant = merchantService.findByMerchantNumber(merchantNumber);
-		AccountTypeEnum accountType = AccountTypeEnum.credited;
+	@GetMapping("/merchant-account/{merchantNumber}/account-type/{type}")
+	public String getMerchantCreditedAccount(@PathVariable("merchantNumber") Long merchantNumber,@PathVariable("type") String type) throws Exception {
 		
+		MerchantDto merchant = merchantService.findByMerchantNumber(merchantNumber);
+		
+		AccountTypeEnum accountType;
+		if(type == "credited") {			
+			accountType = AccountTypeEnum.credited;
+		} else if(type == "debited") {
+			accountType = AccountTypeEnum.credited;
+		} else {
+			return "not exist";
+		}
+		 
 		String creditedAccountNumber; 
 		
 		creditedAccountNumber = merchant.getMerchantAccounts().stream().filter(m -> {
 			if(m.getAccountType() == accountType)
 				return true;
 			return false;
-		}).map(m -> m.getAccountNumber()).collect(Collectors.joining(","));
+		}).map(m -> m.getAccountNumber()).collect(Collectors.joining());
 		
 		return creditedAccountNumber;
 	}

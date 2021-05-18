@@ -1,8 +1,7 @@
 package com.abdali.microhps.verificationadjustmentservice.service.impl;
  
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.List;
+import java.time.Instant; 
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;

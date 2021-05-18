@@ -107,8 +107,10 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 				 * an adjustment event is generated indicating the merchant number, 
 				 * the amount to be credited or debited and the account concerned with the adjustment operation. 
 				*/
-				
-				referenceNumber = 1L;
+
+		        Long leftLimit = (long) Math.pow(10, 11);
+		        Long rightLimit = (long) Math.pow(10, 11);
+		        referenceNumber = leftLimit + (long) (Math.random() * (9*rightLimit - leftLimit));
 				eventIndicator = RandomStringUtils.randomAlphanumeric(15); 
 				
 				AdjustmentEvent removalEvents = objectMapper.convertValue(removalMessage, AdjustmentEvent.class);

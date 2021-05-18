@@ -3,8 +3,8 @@ package com.abdali.microhps.verificationservice.service;
 import java.util.List;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-
 import com.abdali.microhps.verificationservice.dto.VerificationCoreTransactionDto;
+import com.abdali.microhps.verificationservice.model.VerificationCoreTransaction;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -22,4 +22,8 @@ public interface VerificationMessageService {
 	List<VerificationCoreTransactionDto> findAll();
 	
 	Boolean findByTransactionId(Integer transactionId);
+	
+
+	VerificationCoreTransaction findVerificationTransaction(String deviceNumber, String bagNumber, Integer transactionId);
+
 }

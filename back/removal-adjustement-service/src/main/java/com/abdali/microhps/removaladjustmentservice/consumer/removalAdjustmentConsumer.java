@@ -21,7 +21,7 @@ public class removalAdjustmentConsumer {
 		// TODO Auto-generated constructor stub
 	}
 	 
-	@KafkaListener(topics = {"removal-validation-events"})
+	@KafkaListener(topics = {"removal-transaction-settlement-events"})
     public void onMessage(ConsumerRecord<Long, String> consumerRecord) throws JsonProcessingException {
         log.info("from consumer ConsumerRecord : {} ", consumerRecord );
         removalValidationService.validateTransaction(consumerRecord);

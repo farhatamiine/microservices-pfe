@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+ 
 import com.abdali.microhps.verificationservice.dto.VerificationCoreTransactionDto;
+import com.abdali.microhps.verificationservice.model.VerificationCoreTransaction;
 import com.abdali.microhps.verificationservice.service.VerificationMessageService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -66,5 +67,13 @@ public class VerificationController {
 	@PostMapping("/transactionId/{transactionId}")
 	public Boolean isTransactionIdDuplicated(@PathVariable Integer transactionId) {
 		return verificationMessageService.findByTransactionId(transactionId);
+	}
+	
+	@GetMapping("/device/{deviceNumber}/bag/{bagNumber}/transaction/{transactionId}")
+	public VerificationCoreTransaction findVerificationTransaction(
+			@PathVariable("deviceNumber") String deviceNumber, 
+			@PathVariable("bagNumber") String bagNumber,
+			@PathVariable("transactionId") Integer transactionId) {
+		return verificationMessageService.findVerificationTransaction(deviceNumber, bagNumber, transactionId);
 	}
 }

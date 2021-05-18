@@ -6,9 +6,10 @@ import java.util.stream.Collectors;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+ 
 import com.abdali.microhps.verificationservice.dto.VerificationCoreTransactionDto;
 import com.abdali.microhps.verificationservice.exceptions.types.NoDataFoundException;
+import com.abdali.microhps.verificationservice.model.VerificationCoreTransaction;
 import com.abdali.microhps.verificationservice.repository.VerificationRepository;
 import com.abdali.microhps.verificationservice.service.VerificationMessageService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -73,8 +74,11 @@ public class VerificationMessageServiceImpl implements VerificationMessageServic
 		if(verificationMessageRepository.transactionId(transactionId).equals(0)) {
 			return false;
 		}
-		return true;
-			
+		return true; 	
+	}
+	
+	public VerificationCoreTransaction findVerificationTransaction(String deviceNumber, String bagNumber, Integer transactionId) {
+		return verificationMessageRepository.findFirstByDeviceNumberAndBagNumberAndTransactionIdNotOrderByIdDesc(deviceNumber, bagNumber, transactionId);
 	}
 	
 }

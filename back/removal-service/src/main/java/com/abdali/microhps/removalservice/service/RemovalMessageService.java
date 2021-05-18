@@ -1,10 +1,10 @@
 package com.abdali.microhps.removalservice.service;
 
+import java.time.Instant;
 import java.util.List;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.springframework.web.bind.annotation.PathVariable;
-
+import org.apache.kafka.clients.consumer.ConsumerRecord; 
+ 
 import com.abdali.microhps.removalservice.dto.RemovalCoreMessageDto;
 import com.abdali.microhps.removalservice.model.RemovalCoreMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,4 +26,7 @@ public interface RemovalMessageService {
 	Boolean findByTransactionId(Integer transactionId);
 	
 	RemovalCoreMessage findRemovalTransaction(String deviceNumber, String bagNumber, Integer transactionId);
+
+	RemovalCoreMessage removalBetwwenDates(String deviceNumber, String bagNumber, Instant startDate, Instant endDate);
+	
 }

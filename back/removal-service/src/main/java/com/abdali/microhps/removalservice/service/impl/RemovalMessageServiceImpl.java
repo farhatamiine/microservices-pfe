@@ -1,12 +1,14 @@
 package com.abdali.microhps.removalservice.service.impl;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+ 
 import com.abdali.microhps.removalservice.dto.RemovalCoreMessageDto;
 import com.abdali.microhps.removalservice.exceptions.types.NoDataFoundException;
 import com.abdali.microhps.removalservice.model.RemovalCoreMessage;
@@ -77,6 +79,13 @@ public class RemovalMessageServiceImpl implements RemovalMessageService {
 	
 	public RemovalCoreMessage findRemovalTransaction(String deviceNumber, String bagNumber, Integer transactionId) {
 		return removalMessageRepository.findFirstByDeviceNumberAndBagNumberAndTransactionIdNotOrderByIdDesc(deviceNumber, bagNumber, transactionId);
+	}
+	
+	public RemovalCoreMessage removalBetwwenDates(String deviceNumber, String bagNumber, Instant startDate, Instant endDate) {
+		Timestamp endTime = Timestamp.from(endDate);
+		Timestamp startTime = Timestamp.from(startDate);
+		
+	   return removalMessageRepository.findByDeviceNumberAndBagNumberAndTransmitionDateBetween(deviceNumber, bagNumber, startTime, endTime);
 	}
 	
 }

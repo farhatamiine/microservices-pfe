@@ -76,13 +76,13 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 		String bagNumber = removalMessage.getBagNumber();
 		Integer transactionId = removalMessage.getTransactionId();
 		
-		CoreTransactionModel lastMessage = removalTransactionProxy.findRemovalTransaction(deviceNumber, bagNumber, transactionId);
+		CoreTransactionModel lastRemovalMessage = removalTransactionProxy.findRemovalTransaction(deviceNumber, bagNumber, transactionId);
 		
-		if(lastMessage != null) {
+		if(lastRemovalMessage != null) {
 			
-			Instant lastRemovalTransactionDate = lastMessage.getTransmitionDate();
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");  
+			Instant lastRemovalTransactionDate = lastRemovalMessage.getTransmitionDate();
 			Instant currentRemovalTransactionDate = removalMessage.getTransmitionDate();	
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");  
 			
 			List<CoreTransactionModel> listDrops = dropTransactionService.listDropsBetwwenDates(deviceNumber, bagNumber, formatter.format(lastRemovalTransactionDate), formatter.format(currentRemovalTransactionDate));
 			BigDecimal sumDrops = new BigDecimal(0);
@@ -94,12 +94,6 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 					preClearedTransaction.sendTransactionEvent(transactionSettlement, TOPIC_DROP_SETTLEMENT_EVENTS);
 				}
 			}
-			// add value to merchant Number - we suppose that removal transaction correspond to one merchant.
-			//removalMessage.setMerchantNumber(listDrops.get(0).getMerchantNumber());
-			
-			// In Both cases we need to save into pre-cleared Table. 
-			//preClearedTransaction.sendTransactionEvent(removalMessage, "pre-cleared-transaction-topic");
-			
 			if(removalMessage.getTotalAmount().equals(sumDrops) ) {
 				
 				log.info("removal Amount is equal sum(Drops) __________________________________________ " + sumDrops + " = " + removalMessage.getTotalAmount());

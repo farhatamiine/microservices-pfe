@@ -23,7 +23,7 @@ public class CoreTransactionModel extends AuditEntity {
 	private BigDecimal totalAmount;
 	@Column(columnDefinition = "varchar(3)")
 	private String currency;
-	@Setter
+	private String merchantSettlementMode;
 	private Long merchantNumber;
 	
 }

@@ -1,4 +1,4 @@
-package com.abdali.microhps.dropsadjustmentservice.proxy;
+package com.abdali.microhps.removaladjustmentservice.proxy;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface MerchantDeviceProxy {
 	
 	@GetMapping("/merchant-account/{merchantNumber}/account-type/{type}")
-	public String getMerchantCreditedAccount(@PathVariable("merchantNumber") Long merchantNumber,@PathVariable("type") String type);
+	public String getMerchantAccount(@PathVariable("merchantNumber") Long merchantNumber,@PathVariable("type") String type);
 	
 }

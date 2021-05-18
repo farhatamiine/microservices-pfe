@@ -1,5 +1,7 @@
 package com.abdali.microhps.devicemerchantservice.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,6 +29,8 @@ public class MerchantAccount extends AuditEntity {
 	
 	@Column(name="account_type")
 	private AccountTypeEnum accountType;
+
+	private BigDecimal virtualAmount;
 	
 	@ManyToOne
 	@JoinColumn(name="idmerchant")

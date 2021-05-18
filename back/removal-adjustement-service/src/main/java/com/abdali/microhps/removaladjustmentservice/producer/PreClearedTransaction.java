@@ -10,8 +10,7 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
-
-import com.abdali.microhps.removaladjustmentservice.model.AdjustementEvent;
+ 
 import com.abdali.microhps.removaladjustmentservice.model.CoreTransactionModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

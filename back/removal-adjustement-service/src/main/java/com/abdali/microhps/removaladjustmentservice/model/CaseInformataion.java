@@ -1,4 +1,4 @@
-package com.abdali.microhps.verificationadjustmentservice.model;
+package com.abdali.microhps.removaladjustmentservice.model;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -17,22 +17,20 @@ import lombok.Setter;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="REMOVAL_ADJUSTEMENT_EVENTS")
-public class AdjustementEvent extends AuditEntity {
-	
-	private Long merchantNumber;
+@Table(name="REMOVAL_ADJUSTMENT_CASE_INFORMATION")
+public class CaseInformataion extends AuditEntity {
+	 
 	private Integer transactionId;
 	@Column(columnDefinition = "varchar(15)")
 	private String deviceNumber;
 	@Column(columnDefinition = "varchar(14)")
 	private String bagNumber; 
-	private Instant transmitionDate; 
+	private Instant transmitionDate;
 	private BigDecimal totalAmount;
 	@Column(columnDefinition = "varchar(3)")
 	private String currency;
-	private String description;
-	private BigDecimal creaditedAmount;
-	private BigDecimal debitedAmount;
-	private String AcountNumber;
+	private String merchantSettlementMode;
+	private Long merchantNumber;
+	private String message;
 	
 }

@@ -17,12 +17,11 @@ public class CoreTransactionModel extends AuditEntity {
 	private String deviceNumber;
 	@Column(columnDefinition = "varchar(14)")
 	private String bagNumber; 
-	private Instant transmitionDate; 
-	private Integer totalCoins;
-	private Integer totalNotes;
+	private Instant transmitionDate;  
 	private BigDecimal totalAmount;
 	@Column(columnDefinition = "varchar(3)")
 	private String currency;
-	private String description;
+	private String merchantSettlementMode;
+	private Long merchantNumber;
 	
 }

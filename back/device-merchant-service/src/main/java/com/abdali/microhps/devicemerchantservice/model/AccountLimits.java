@@ -1,5 +1,7 @@
 package com.abdali.microhps.devicemerchantservice.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "merchant_account")
+@Table(name = "account_limits")
 public class AccountLimits {
 	
 	@Id

@@ -22,7 +22,7 @@ public class AuditEntity implements Serializable {
 	
 	@Id
     @GeneratedValue
-	private Integer id;
+	private int id;
 
 	@CreatedDate
     @Column(name = "createdDate", nullable = false, updatable = false)

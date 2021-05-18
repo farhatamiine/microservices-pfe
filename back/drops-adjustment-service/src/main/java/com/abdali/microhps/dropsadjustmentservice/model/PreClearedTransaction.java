@@ -12,18 +12,17 @@ import lombok.Setter;
 
 @Setter
 @Getter
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Table(name="pre_cleared_transaction")
 public class PreClearedTransaction extends AuditEntity {
 	
 	private String deviceNumber;
-	private String bagNumber; 
-//	private BigDecimal totalAmount;
+	private String bagNumber;  
 	private Long merchantNumber;
 	private BigDecimal creaditedAmount;
 	private BigDecimal debitedAmount;
-	private String AcountNumber;
+	private String accountNumber;
 	
 }

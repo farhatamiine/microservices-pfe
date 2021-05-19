@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
-import com.abdali.microhps.verificationadjustmentservice.model.CoreTransactionModel;
+import com.abdali.microhps.verificationadjustmentservice.model.RemovalTransaction;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -20,14 +20,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class PreClearedTransaction {
+public class TransactionProducer {
 	@Autowired
     KafkaTemplate<Long,String> kafkaTemplate;
     
     @Autowired
     ObjectMapper objectMapper;
     
-    public ListenableFuture<SendResult<Long,String>> sendTransactionEvent(CoreTransactionModel coreTransactionModel, String topic) throws JsonProcessingException {
+    public ListenableFuture<SendResult<Long,String>> sendTransactionEvent(RemovalTransaction coreTransactionModel, String topic) throws JsonProcessingException {
 
         Long key = coreTransactionModel.getId();
         String value = objectMapper.writeValueAsString(coreTransactionModel);

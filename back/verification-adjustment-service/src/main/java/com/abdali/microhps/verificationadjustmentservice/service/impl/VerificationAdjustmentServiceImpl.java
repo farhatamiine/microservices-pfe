@@ -1,5 +1,8 @@
 package com.abdali.microhps.verificationadjustmentservice.service.impl;
- 
+
+import static com.abdali.microhps.verificationadjustmentservice.utils.Constants.REMOVAL_INDICATOR;
+import static com.abdali.microhps.verificationadjustmentservice.utils.Constants.TOPIC_REMOVAL_NAME;
+
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.abdali.microhps.verificationadjustmentservice.model.CoreTransactionModel;
 import com.abdali.microhps.verificationadjustmentservice.model.RemovalDropTransaction;
 import com.abdali.microhps.verificationadjustmentservice.model.RemovalTransaction;
+import com.abdali.microhps.verificationadjustmentservice.producer.TransactionProducer;
 import com.abdali.microhps.verificationadjustmentservice.proxy.DropTransactionProxy;
 import com.abdali.microhps.verificationadjustmentservice.proxy.RemovalTransactionProxy;
 import com.abdali.microhps.verificationadjustmentservice.proxy.VerificationTransactionProxy;
@@ -34,6 +38,7 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 	RemovalTransactionProxy removalTransactionProxy; 
 	VerificationTransactionProxy verificationTransactionProxy;
 	DropTransactionProxy dropTransactionProxy;
+	TransactionProducer transactionProducer;
     ObjectMapper objectMapper; 
 	
 	@Autowired
@@ -41,11 +46,13 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 			RemovalTransactionProxy removalTransactionProxy,
 			DropTransactionProxy dropTransactionProxy,
 			VerificationTransactionProxy verificationTransactionProxy, 
+			TransactionProducer transactionProducer,
 		    ObjectMapper objectMapper
 			) { 
 		this.removalTransactionProxy = removalTransactionProxy;
 		this.dropTransactionProxy = dropTransactionProxy;
 		this.verificationTransactionProxy = verificationTransactionProxy; 
+		this.transactionProducer = transactionProducer;
 	    this.objectMapper = objectMapper; 
 	} 
 	
@@ -84,18 +91,19 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 				Instant firstDropTransactionDate = dropTransactionProxy.getDatefromFirstDrop(deviceNumber, bagNumber, formatter.format(lastRemovalDate), formatter.format(currentVerificationTransactionDate));
 				
 				// generate removal transaction.
-				RemovalTransaction removalTransaction = objectMapper.readValue(consumerRecord.value(), RemovalTransaction.class);
+				RemovalTransaction generatedRemovalTransaction = objectMapper.readValue(consumerRecord.value(), RemovalTransaction.class);
 				
-				removalTransaction.setTransmitionDate(firstDropTransactionDate.minus(1, ChronoUnit.SECONDS));
-				removalTransaction.setIndicator('R');
+				generatedRemovalTransaction.setTransmitionDate(firstDropTransactionDate.minus(1, ChronoUnit.SECONDS));
+				generatedRemovalTransaction.setIndicator(REMOVAL_INDICATOR);
 				//add drop attribute into it.
 				RemovalDropTransaction removalDropTransaction = new RemovalDropTransaction();
 				removalDropTransaction.setDepositReference("automatic");
 				removalDropTransaction.setSequenceNumber(1);
 				
-				removalTransaction.setRemovalDropTransaction(removalDropTransaction);
+				generatedRemovalTransaction.setRemovalDropTransaction(removalDropTransaction);
 				
-				// add to removal topic
+				// add to removal topic to save into db.
+				transactionProducer.sendTransactionEvent(generatedRemovalTransaction, TOPIC_REMOVAL_NAME);
 			}
 		} 
 	}

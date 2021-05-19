@@ -1,4 +1,4 @@
-package com.abdali.microhps.dropsadjustmentservice.service;
+package com.abdali.microhps.preclearedadjustmentservice.service;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 

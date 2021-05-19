@@ -1,4 +1,4 @@
-package com.abdali.microhps.dropsadjustmentservice.model;
+package com.abdali.microhps.preclearedadjustmentservice.model;
 
 import java.math.BigDecimal; 
 
@@ -15,5 +15,6 @@ public class CoreTransactionModel {
 	private String bagNumber; 
 	private BigDecimal totalAmount;
 	private Long merchantNumber;
-	
+	// credited/debited.
+	private String typeCD;
 }

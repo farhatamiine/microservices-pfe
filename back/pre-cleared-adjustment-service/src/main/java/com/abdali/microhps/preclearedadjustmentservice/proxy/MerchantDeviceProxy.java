@@ -1,4 +1,4 @@
-package com.abdali.microhps.dropsadjustmentservice.proxy;
+package com.abdali.microhps.preclearedadjustmentservice.proxy;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

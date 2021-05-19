@@ -1,6 +1,7 @@
 package com.abdali.microhps.removaladjustmentservice.serivce.impl;
 
-import static com.abdali.microhps.removaladjustmentservice.utils.Constants.TOPIC_DROP_SETTLEMENT_EVENTS;
+import static com.abdali.microhps.removaladjustmentservice.utils.Constants.TOPIC_PRECLEARED_SETTLEMENT_EVENTS;
+import static com.abdali.microhps.removaladjustmentservice.utils.Constants.CREDITED_TYPE; 
 import static com.abdali.microhps.removaladjustmentservice.utils.Constants.REMOVAL_SETTLEMENT_MODE;
 
 import java.math.BigDecimal;
@@ -25,6 +26,7 @@ import com.abdali.microhps.removaladjustmentservice.proxy.DropTransactionProxy;
 import com.abdali.microhps.removaladjustmentservice.proxy.MerchantDeviceProxy;
 import com.abdali.microhps.removaladjustmentservice.proxy.RemovalTransactionProxy;
 import com.abdali.microhps.removaladjustmentservice.repository.AdjustmentEventRepository;
+import com.abdali.microhps.removaladjustmentservice.repository.CaseInformationRepository;
 import com.abdali.microhps.removaladjustmentservice.serivce.RemovalAdjustmentService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -37,20 +39,22 @@ import lombok.extern.slf4j.Slf4j;
 public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 	
 	MerchantDeviceProxy merchantDeviceProxy;
-	AdjustmentEventRepository adjustementEventRepository;
 	RemovalTransactionProxy removalTransactionProxy;
 	DropTransactionProxy dropTransactionService;
+	PreClearedTransaction preClearedTransaction;
     ObjectMapper objectMapper;
-    PreClearedTransaction preClearedTransaction;
+    AdjustmentEventRepository adjustementEventRepository;
+    CaseInformationRepository caseInformationRepository;
 	
 	@Autowired
 	public RemovalAdjustmentServiceImpl(
 			MerchantDeviceProxy merchantDeviceProxy,
-			AdjustmentEventRepository adjustementEventRepository,
 			RemovalTransactionProxy removalTransactionProxy,
 			DropTransactionProxy dropTransactionProxy,
+			PreClearedTransaction preClearedTransaction,
 		    ObjectMapper objectMapper,
-		    PreClearedTransaction preClearedTransaction
+		    AdjustmentEventRepository adjustementEventRepository,
+		    CaseInformationRepository caseInformationRepository
 			) {
 		this.merchantDeviceProxy = merchantDeviceProxy;
 		this.adjustementEventRepository = adjustementEventRepository;
@@ -58,6 +62,7 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 		this.dropTransactionService = dropTransactionProxy;
 	    this.objectMapper = objectMapper;
 	    this.preClearedTransaction = preClearedTransaction;
+	    this.caseInformationRepository = caseInformationRepository;
 	} 
 	
 	/*
@@ -91,7 +96,8 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 				// add to drop adjustment topic. just if mode is removal or it will be duplicated.
 				if(removalMessage.getMerchantSettlementMode() == REMOVAL_SETTLEMENT_MODE) {
 					CoreTransactionModel transactionSettlement = objectMapper.convertValue(dropTransaction, CoreTransactionModel.class);
-					preClearedTransaction.sendTransactionEvent(transactionSettlement, TOPIC_DROP_SETTLEMENT_EVENTS);
+					transactionSettlement.setTypeCD(CREDITED_TYPE);
+					preClearedTransaction.sendTransactionEvent(transactionSettlement, TOPIC_PRECLEARED_SETTLEMENT_EVENTS);
 				}
 			}
 			if(removalMessage.getTotalAmount().equals(sumDrops) ) {
@@ -127,10 +133,10 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 				if(removalMessage.getTotalAmount().compareTo(sumDrops) == 1) {
 					removalEvents.setTransferAmount(removalMessage.getTotalAmount().subtract(sumDrops));
 					removalEvents.setTransferSign(TransferSign.C);
-					String accountNumber = merchantDeviceProxy.getMerchantAccount(removalMessage.getMerchantNumber(), "credited");
+					String accountNumber = merchantDeviceProxy.getMerchantAccount(removalMessage.getMerchantNumber(), CREDITED_TYPE);
 					removalEvents.setAccountNumber(accountNumber);
-					caseMessage = "account credited";
-					
+					caseMessage = "account credited"; 
+					// TODO :: add into pre cleared topic.
 				} else if (removalMessage.getTotalAmount().compareTo(sumDrops) == -1) {
 					// PowerCARD will create a case with no financial for a user consultation/investigation purposes.
 //					removalEvents.setTransferAmount(sumDrops.subtract(removalMessage.getTotalAmount()));
@@ -146,6 +152,9 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 				// case information.
 				CaseInformataion generatedCase = objectMapper.convertValue(removalMessage, CaseInformataion.class);
 				generatedCase.setMessage(caseMessage);
+				
+				caseInformationRepository.save(generatedCase);
+				
 			}
 		} 
 	}

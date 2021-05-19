@@ -6,9 +6,11 @@ import java.time.Instant;
 import javax.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor; 
+import lombok.NoArgsConstructor;
+import lombok.Setter; 
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CoreTransactionModel extends AuditEntity {
@@ -25,4 +27,6 @@ public class CoreTransactionModel extends AuditEntity {
 	private String merchantSettlementMode;
 	private Long merchantNumber;
 	
+	// credited/debited.
+	private String typeCD; 
 }

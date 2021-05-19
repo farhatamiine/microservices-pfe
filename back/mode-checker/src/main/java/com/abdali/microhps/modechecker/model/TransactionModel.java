@@ -13,6 +13,8 @@ public class TransactionModel {
 	private String bagNumber; 
 	private BigDecimal totalAmount;
 	private Long merchantNumber;
+	// credited/debited.
+	private String typeCD;
 	private Instant transmitionDate;
 	private String merchantSettlementMode;
 }

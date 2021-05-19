@@ -1,4 +1,4 @@
-package com.abdali.microhps.dropsadjustmentservice.model;
+package com.abdali.microhps.preclearedadjustmentservice.model;
 
 import java.math.BigDecimal; 
 

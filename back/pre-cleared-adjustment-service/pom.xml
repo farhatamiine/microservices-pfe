@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.abdali.micro-hps</groupId>
-	<artifactId>drops-adjustment-service</artifactId>
+	<artifactId>pre-cleared-adjustment-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>drops-adjustment-service</name>
-	<description>Save &quot;drops transactions&quot; for merchants that have mode onDrop in &quot;precleared&quot; table</description>
+	<name>pre-cleared-adjustment-service</name>
+	<description>Save &quot;cleared transactions&quot; for merchants that have mode onDrop in &quot;precleared&quot; table</description>
 	<properties>
 		<java.version>11</java.version>
 		<spring-cloud.version>2020.0.2</spring-cloud.version>

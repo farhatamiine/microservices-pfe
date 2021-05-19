@@ -1,4 +1,4 @@
-package com.abdali.microhps.dropsadjustmentservice.config.kafka;
+package com.abdali.microhps.preclearedadjustmentservice.config.kafka;
 
 import org.springframework.boot.autoconfigure.kafka.ConcurrentKafkaListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;

@@ -8,9 +8,11 @@ import static com.abdali.microhps.modechecker.utils.Constants.DROP_SETTLEMENT_MO
 import static com.abdali.microhps.modechecker.utils.Constants.REMOVAL_SETTLEMENT_MODE;
 import static com.abdali.microhps.modechecker.utils.Constants.VERIFICATION_SETTLEMENT_MODE;
 
-import static com.abdali.microhps.modechecker.utils.Constants.TOPIC_DROP_SETTLEMENT_EVENTS;
+import static com.abdali.microhps.modechecker.utils.Constants.TOPIC_PRECLEARED_SETTLEMENT_EVENTS;
 import static com.abdali.microhps.modechecker.utils.Constants.TOPIC_REMOVAL_SETTLEMENT_EVENTS;
 import static com.abdali.microhps.modechecker.utils.Constants.TOPIC_VERIFICATION_SETTLEMENT_EVENTS;
+
+import static com.abdali.microhps.modechecker.utils.Constants.CREDITED_TYPE;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +64,8 @@ public class ModeCheckerService {
 				if(merchantSettlementMode == DROP_SETTLEMENT_MODE) {
 					TransactionModel transactionSettlement = objectMapper.convertValue(transactionCore, TransactionModel.class);
 					transactionSettlement.setMerchantNumber(merchantNumber);
-					settlementTransactionProducer.sendTransactionEvent(transactionSettlement, TOPIC_DROP_SETTLEMENT_EVENTS);
+					transactionSettlement.setTypeCD(CREDITED_TYPE);
+					settlementTransactionProducer.sendTransactionEvent(transactionSettlement, TOPIC_PRECLEARED_SETTLEMENT_EVENTS);
 				}
 				break;
 			case REMOVAL_INDICATOR:

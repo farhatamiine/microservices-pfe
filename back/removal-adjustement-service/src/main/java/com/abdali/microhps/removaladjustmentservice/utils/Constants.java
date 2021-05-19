@@ -13,6 +13,8 @@ public interface Constants {
 	String VERIFICATION_SETTLEMENT_MODE = "onCount";
 	
 	//Topics Names
-	String TOPIC_DROP_SETTLEMENT_EVENTS = "drop-transaction-settlement-events";
-	
+	String TOPIC_PRECLEARED_SETTLEMENT_EVENTS = "pre-cleared-settlement-events";
+
+	// type of cleared transaction
+	String CREDITED_TYPE = "credited";
 }

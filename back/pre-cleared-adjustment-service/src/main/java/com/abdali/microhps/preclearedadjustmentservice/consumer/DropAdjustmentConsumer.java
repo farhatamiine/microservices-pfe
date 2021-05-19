@@ -1,10 +1,10 @@
-package com.abdali.microhps.dropsadjustmentservice.consumer;
+package com.abdali.microhps.preclearedadjustmentservice.consumer;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import com.abdali.microhps.dropsadjustmentservice.service.DropAdjustmentService;
+import com.abdali.microhps.preclearedadjustmentservice.service.DropAdjustmentService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.extern.slf4j.Slf4j;

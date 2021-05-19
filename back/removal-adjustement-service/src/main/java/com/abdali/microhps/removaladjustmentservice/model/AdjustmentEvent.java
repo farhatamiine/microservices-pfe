@@ -43,4 +43,5 @@ public class AdjustmentEvent {
 	private String merchantNumberB;
 	private String acronym;
 	private Instant settlementDate;
+	
 }

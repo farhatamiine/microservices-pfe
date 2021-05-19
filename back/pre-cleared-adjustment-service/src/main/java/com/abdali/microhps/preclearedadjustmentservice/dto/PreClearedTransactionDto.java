@@ -1,8 +1,8 @@
-package com.abdali.microhps.dropsadjustmentservice.dto;
+package com.abdali.microhps.preclearedadjustmentservice.dto;
 
 import java.math.BigDecimal;
 
-import com.abdali.microhps.dropsadjustmentservice.model.PreClearedTransaction;
+import com.abdali.microhps.preclearedadjustmentservice.model.PreClearedTransaction;
 
 import lombok.Builder;
 import lombok.Data;

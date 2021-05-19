@@ -2,8 +2,7 @@ package com.abdali.microhps.dropservice.service.impl;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.ArrayList; 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +25,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
-
 
 @Service
 @Slf4j
@@ -144,5 +142,19 @@ public class DropMessageServiceImpl implements DropMessageService {
 	public Long getMerchantNumber(String deviceNumber, String bagNumber) {
 		DropCoreTransaction lastDrop = dropMessageRepository.findTopByDeviceNumberAndBagNumberOrderByIdDesc(deviceNumber, bagNumber);
 		return lastDrop.getDropTransaction().getMerchantNumber();
+	}
+	
+	public Instant getFirstDropMessageDate(String deviceNumber, String bagNumber, Instant startDateInstant, Instant endDateInstant) {
+		int sequenceNumber = 1;
+		List<DropCoreTransaction> listMessages = dropMessageRepository.findByDeviceNumberAndBagNumberAndTransmitionDateBetweenAndRemovalDropTransactionSequenceNumberIs(deviceNumber, bagNumber, startDateInstant, endDateInstant, sequenceNumber);
+		DropCoreTransaction targetTransaction = null;
+		try { 
+			targetTransaction = listMessages.get(1);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return targetTransaction.getTransmitionDate();
 	}
 }

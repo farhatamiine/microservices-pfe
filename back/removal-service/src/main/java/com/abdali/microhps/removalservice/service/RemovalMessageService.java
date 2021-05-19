@@ -29,4 +29,5 @@ public interface RemovalMessageService {
 
 	RemovalCoreMessage removalBetwwenDates(String deviceNumber, String bagNumber, Instant startDate, Instant endDate);
 	
+	Instant findLastOneBydeviceAndBag(String deviceNumber, String bagNumber);
 }

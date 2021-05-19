@@ -1,5 +1,7 @@
 package com.abdali.microhps.verificationadjustmentservice.proxy;
  
+import java.time.Instant;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,4 +16,9 @@ public interface RemovalTransactionProxy {
 			@PathVariable("bagNumber") String bagNumber,
 			@PathVariable("startDate") String startDate,
 			@PathVariable("endDate") String endDate);
+	
+	@GetMapping("/removal-transaction/last-removal-date/device/{deviceNumber}/bag/{bagNumber}")
+	public Instant getDatefromLastRemoval(
+			@PathVariable("deviceNumber") String deviceNumber, 
+			@PathVariable("bagNumber") String bagNumber);
 }

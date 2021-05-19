@@ -1,13 +1,17 @@
 package com.abdali.microhps.verificationadjustmentservice.service.impl;
  
 import java.text.SimpleDateFormat;
-import java.time.Instant; 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.abdali.microhps.verificationadjustmentservice.model.CoreTransactionModel;
+import com.abdali.microhps.verificationadjustmentservice.model.RemovalDropTransaction;
+import com.abdali.microhps.verificationadjustmentservice.model.RemovalTransaction;
+import com.abdali.microhps.verificationadjustmentservice.proxy.DropTransactionProxy;
 import com.abdali.microhps.verificationadjustmentservice.proxy.RemovalTransactionProxy;
 import com.abdali.microhps.verificationadjustmentservice.proxy.VerificationTransactionProxy;
 import com.abdali.microhps.verificationadjustmentservice.service.VerificationAdjustmentService;
@@ -29,15 +33,18 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 	 
 	RemovalTransactionProxy removalTransactionProxy; 
 	VerificationTransactionProxy verificationTransactionProxy;
+	DropTransactionProxy dropTransactionProxy;
     ObjectMapper objectMapper; 
 	
 	@Autowired
 	public VerificationAdjustmentServiceImpl( 
 			RemovalTransactionProxy removalTransactionProxy,
+			DropTransactionProxy dropTransactionProxy,
 			VerificationTransactionProxy verificationTransactionProxy, 
 		    ObjectMapper objectMapper
 			) { 
 		this.removalTransactionProxy = removalTransactionProxy;
+		this.dropTransactionProxy = dropTransactionProxy;
 		this.verificationTransactionProxy = verificationTransactionProxy; 
 	    this.objectMapper = objectMapper; 
 	} 
@@ -61,6 +68,35 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 			 // find removal message.
 			CoreTransactionModel removalMessage = removalTransactionProxy.removalMessageBetwwenDates(deviceNumber, bagNumber, formatter.format(lastVerificationTransactionDate), formatter.format(currentVerificationTransactionDate));
 			
+			if(removalMessage != null) {
+				// start verification processing -- using SUM DROPS.
+				
+			} else {
+				// generate removal message based on verification transaction. i will added to topic directly.
+				/**
+				 * we need to get date for this removal message.
+				 * PROCESS:
+				 * get date for last removal message.
+				 * find second drop message with sequence number equal 1 between removal date and verification date.
+				 */
+				Instant lastRemovalDate = removalTransactionProxy.getDatefromLastRemoval(deviceNumber, bagNumber);  
+				
+				Instant firstDropTransactionDate = dropTransactionProxy.getDatefromFirstDrop(deviceNumber, bagNumber, formatter.format(lastRemovalDate), formatter.format(currentVerificationTransactionDate));
+				
+				// generate removal transaction.
+				RemovalTransaction removalTransaction = objectMapper.readValue(consumerRecord.value(), RemovalTransaction.class);
+				
+				removalTransaction.setTransmitionDate(firstDropTransactionDate.minus(1, ChronoUnit.SECONDS));
+				removalTransaction.setIndicator('R');
+				//add drop attribute into it.
+				RemovalDropTransaction removalDropTransaction = new RemovalDropTransaction();
+				removalDropTransaction.setDepositReference("automatic");
+				removalDropTransaction.setSequenceNumber(1);
+				
+				removalTransaction.setRemovalDropTransaction(removalDropTransaction);
+				
+				// add to removal topic
+			}
 		} 
 	}
 }

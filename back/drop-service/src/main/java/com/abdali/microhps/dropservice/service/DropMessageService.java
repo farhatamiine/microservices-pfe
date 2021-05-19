@@ -32,4 +32,6 @@ public interface DropMessageService {
 	List<DropCoreTransactionDto> listDropsBetwwenDates(String deviceNumber, String bagNumber, Instant startDate, Instant endDate);
 	
 	Long getMerchantNumber(String deviceNumber, String bagNumber);
+	
+	Instant getFirstDropMessageDate(String deviceNumber, String bagNumber, Instant startDateInstant, Instant endDateInstant);
 }

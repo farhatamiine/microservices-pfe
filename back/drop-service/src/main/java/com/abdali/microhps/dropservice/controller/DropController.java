@@ -141,7 +141,7 @@ public class DropController {
 			@PathVariable("deviceNumber") String deviceNumber, 
 			@PathVariable("bagNumber") String bagNumber,
 			@PathVariable("startDate") String startDate,
-			@PathVariable("endDate") String endDate) throws Exception {
+			@PathVariable("endDate") String endDate) {
 		startDate = URLDecoder.decode(startDate, StandardCharsets.UTF_8);
 		endDate = URLDecoder.decode(endDate, StandardCharsets.UTF_8);
 		
@@ -150,9 +150,8 @@ public class DropController {
                 .withZone(ZoneId.systemDefault());
 		
 		Instant startDateInstant = Instant.from(formatter.parse(startDate));
-		Instant endDateInstant = Instant.from(formatter.parse(endDate));
-//		throw new Exception(startDateInstant +"______________________________" + endDateInstant );
-//		
+		Instant endDateInstant = Instant.from(formatter.parse(endDate));  
+		
 		return dropMessageService.listDropsBetwwenDates(deviceNumber, bagNumber, startDateInstant, endDateInstant);
 	}
 	
@@ -162,5 +161,25 @@ public class DropController {
 			@PathVariable("bagNumber") String bagNumber
 			) {
 		return dropMessageService.getMerchantNumber(deviceNumber, bagNumber);
+	}
+	
+	@GetMapping("/last-drop-date/device/{deviceNumber}/bag/{bagNumber}/startDate/{startDate}/endDate/{endDate}")
+	public Instant getDatefromFirstDrop( 
+			@PathVariable("deviceNumber") String deviceNumber, 
+			@PathVariable("bagNumber") String bagNumber,
+			@PathVariable("startDate") String startDate,
+			@PathVariable("endDate") String endDate) {
+		
+		startDate = URLDecoder.decode(startDate, StandardCharsets.UTF_8);
+		endDate = URLDecoder.decode(endDate, StandardCharsets.UTF_8);
+		
+		final DateTimeFormatter formatter = DateTimeFormatter
+                .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
+                .withZone(ZoneId.systemDefault());
+		
+		Instant startDateInstant = Instant.from(formatter.parse(startDate));
+		Instant endDateInstant = Instant.from(formatter.parse(endDate));  
+		
+		return dropMessageService.getFirstDropMessageDate(deviceNumber, bagNumber, startDateInstant, endDateInstant);
 	}
 }

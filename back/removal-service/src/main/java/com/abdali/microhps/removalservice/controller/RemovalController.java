@@ -94,4 +94,11 @@ public class RemovalController {
 //		
 		return removalMessageService.removalBetwwenDates(deviceNumber, bagNumber, startDateInstant, endDateInstant);
 	}
+	
+	@GetMapping("/last-removal-date/device/{deviceNumber}/bag/{bagNumber}")
+	public Instant getDatefromLastRemoval(
+			@PathVariable("deviceNumber") String deviceNumber, 
+			@PathVariable("bagNumber") String bagNumber) {
+		return removalMessageService.findLastOneBydeviceAndBag(deviceNumber, bagNumber);
+	}
 }

@@ -22,4 +22,5 @@ public interface RemovalRepository extends JpaRepository<RemovalCoreMessage, Lon
 	
 	RemovalCoreMessage findByDeviceNumberAndBagNumberAndTransmitionDateBetween(String deviceNumber, String bagNumber, Timestamp startDate, Timestamp endDate);
 	
+	RemovalCoreMessage findFirstByDeviceNumberAndBagNumberAndOrderByIdDesc(String deviceNumber, String bagNumber);
 }

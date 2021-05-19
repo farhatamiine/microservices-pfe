@@ -88,4 +88,8 @@ public class RemovalMessageServiceImpl implements RemovalMessageService {
 	   return removalMessageRepository.findByDeviceNumberAndBagNumberAndTransmitionDateBetween(deviceNumber, bagNumber, startTime, endTime);
 	}
 	
+	public Instant findLastOneBydeviceAndBag(String deviceNumber, String bagNumber) {
+		RemovalCoreMessage lastMessage = removalMessageRepository.findFirstByDeviceNumberAndBagNumberAndOrderByIdDesc(deviceNumber, bagNumber);
+		return lastMessage.getTransmitionDate();
+	}
 }

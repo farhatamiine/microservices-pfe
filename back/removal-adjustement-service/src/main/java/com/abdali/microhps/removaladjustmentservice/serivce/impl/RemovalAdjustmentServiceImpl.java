@@ -3,6 +3,7 @@ package com.abdali.microhps.removaladjustmentservice.serivce.impl;
 import static com.abdali.microhps.removaladjustmentservice.utils.Constants.PRODUCER_TOPIC_PRE_CLEARED;
 import static com.abdali.microhps.removaladjustmentservice.utils.Constants.CREDITED_TYPE; 
 import static com.abdali.microhps.removaladjustmentservice.utils.Constants.REMOVAL_SETTLEMENT_MODE;
+import static com.abdali.microhps.removaladjustmentservice.utils.Constants.DROP_SETTLEMENT_MODE;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -78,6 +79,12 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 		String bagNumber = removalMessage.getBagNumber();
 		Integer transactionId = removalMessage.getTransactionId();
 		
+		// add to drop adjustment topic. just if mode is removal or it will be duplicated.
+		if(removalMessage.getMerchantSettlementMode() == REMOVAL_SETTLEMENT_MODE) { 
+			removalMessage.setTypeCD(CREDITED_TYPE);
+			preClearedTransaction.sendTransactionEvent(removalMessage, PRODUCER_TOPIC_PRE_CLEARED);
+		}
+		
 		CoreTransactionModel lastRemovalMessage = removalTransactionProxy.findRemovalTransaction(deviceNumber, bagNumber, transactionId);
 		
 		if(lastRemovalMessage != null) {
@@ -89,13 +96,7 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 			List<CoreTransactionModel> listDrops = dropTransactionService.listDropsBetwwenDates(deviceNumber, bagNumber, formatter.format(lastRemovalTransactionDate), formatter.format(currentRemovalTransactionDate));
 			BigDecimal sumDrops = new BigDecimal(0);
 			for (CoreTransactionModel dropTransaction : listDrops) { 
-				sumDrops = sumDrops.add(dropTransaction.getTotalAmount()); 
-				// add to drop adjustment topic. just if mode is removal or it will be duplicated.
-				if(removalMessage.getMerchantSettlementMode() == REMOVAL_SETTLEMENT_MODE) {
-					CoreTransactionModel transactionSettlement = objectMapper.convertValue(dropTransaction, CoreTransactionModel.class);
-					transactionSettlement.setTypeCD(CREDITED_TYPE);
-					preClearedTransaction.sendTransactionEvent(transactionSettlement, PRODUCER_TOPIC_PRE_CLEARED);
-				}
+				sumDrops = sumDrops.add(dropTransaction.getTotalAmount());  
 			}
 			if(removalMessage.getTotalAmount().equals(sumDrops) ) {
 				
@@ -133,19 +134,23 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 					removalEvents.setTransferSign(TransferSign.C);
 					String accountNumber = merchantDeviceProxy.getMerchantAccount(removalMessage.getMerchantNumber(), CREDITED_TYPE);
 					removalEvents.setAccountNumber(accountNumber);
-					caseMessage = "account credited"; 
+					caseMessage = "sum of the drops is smaller than the removal value. Means the customer has been short credited."; 
 					
-					// TODO :: add into pre-cleared topic.
-					CoreTransactionModel transactionPreCleared = new CoreTransactionModel();
-					transactionPreCleared.setBagNumber(bagNumber);
-					transactionPreCleared.setDeviceNumber(deviceNumber);
-					transactionPreCleared.setTransactionId(transactionId);
-					transactionPreCleared.setMerchantNumber(removalMessage.getMerchantNumber());
-					transactionPreCleared.setTransmitionDate(currentRemovalTransactionDate);
-					transactionPreCleared.setCurrency(removalMessage.getCurrency());
-					transactionPreCleared.setTotalAmount(removalMessage.getTotalAmount().subtract(sumDrops));
-					transactionPreCleared.setTypeCD(CREDITED_TYPE);
-					preClearedTransaction.sendTransactionEvent(transactionPreCleared, PRODUCER_TOPIC_PRE_CLEARED);
+					// if the mode is on drop and the sum drops is less than the removal we need to credited merchant account.
+					if(removalMessage.getMerchantSettlementMode() == DROP_SETTLEMENT_MODE) { 
+						// TODO :: add into pre-cleared topic.
+						CoreTransactionModel transactionPreCleared = new CoreTransactionModel();
+						transactionPreCleared.setBagNumber(bagNumber);
+						transactionPreCleared.setDeviceNumber(deviceNumber);
+						transactionPreCleared.setTransactionId(transactionId);
+						transactionPreCleared.setMerchantNumber(removalMessage.getMerchantNumber());
+						transactionPreCleared.setTransmitionDate(currentRemovalTransactionDate);
+						transactionPreCleared.setCurrency(removalMessage.getCurrency());
+						transactionPreCleared.setTotalAmount(removalMessage.getTotalAmount().subtract(sumDrops));
+						transactionPreCleared.setTypeCD(CREDITED_TYPE);
+						preClearedTransaction.sendTransactionEvent(transactionPreCleared, PRODUCER_TOPIC_PRE_CLEARED);
+					}
+					
 					
 				} else if (removalMessage.getTotalAmount().compareTo(sumDrops) == -1) {
 					
@@ -154,7 +159,7 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 //					removalEvents.setTransferSign(TransferSign.D);
 //					String accountNumber = merchantDeviceProxy.getMerchantAccount(removalMessage.getMerchantNumber(), "debited");
 //					removalEvents.setAccountNumber(accountNumber);
-					caseMessage = "account debited";
+					caseMessage = "sum of drops is smaller than the removal value. case Information has bean genereted";
 					
 				}
 				

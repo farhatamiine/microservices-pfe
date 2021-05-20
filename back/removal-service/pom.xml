@@ -90,6 +90,10 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<image>
+						<name>pfeHps/pfe-${project.artifactId}:${project.version}</name>
+					</image>
+					<pullPolicy>IF_NOT_PRESENT</pullPolicy>
 				</configuration>
 			</plugin>
 		</plugins>

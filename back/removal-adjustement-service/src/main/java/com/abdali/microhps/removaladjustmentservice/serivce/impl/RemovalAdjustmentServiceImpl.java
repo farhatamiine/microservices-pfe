@@ -159,7 +159,7 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 //					removalEvents.setTransferSign(TransferSign.D);
 //					String accountNumber = merchantDeviceProxy.getMerchantAccount(removalMessage.getMerchantNumber(), "debited");
 //					removalEvents.setAccountNumber(accountNumber);
-					caseMessage = "sum of drops is smaller than the removal value. case Information has bean genereted";
+					caseMessage = "sum of drops is greater than the removal value. case Information has bean genereted";
 					
 				}
 				

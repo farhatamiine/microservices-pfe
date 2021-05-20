@@ -7,4 +7,15 @@ public interface Constants {
 		
 		//Topics Names
 		String TOPIC_REMOVAL_NAME = "removal-transaction-events"; 
+
+		//Topics Names 
+		String PRODUCER_TOPIC_PRE_CLEARED = "pre-cleared-settlement-events";
+		
+		// type of cleared transaction
+		String CREDITED_TYPE = "credited";
+		
+		//Settlement Mode
+		String DROP_SETTLEMENT_MODE = "onDrop";
+		String REMOVAL_SETTLEMENT_MODE = "onRemoval";
+		String VERIFICATION_SETTLEMENT_MODE = "onCount";
 }

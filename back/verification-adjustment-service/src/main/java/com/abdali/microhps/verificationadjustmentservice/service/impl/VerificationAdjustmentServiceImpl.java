@@ -2,6 +2,9 @@ package com.abdali.microhps.verificationadjustmentservice.service.impl;
 
 import static com.abdali.microhps.verificationadjustmentservice.utils.Constants.REMOVAL_INDICATOR;
 import static com.abdali.microhps.verificationadjustmentservice.utils.Constants.TOPIC_REMOVAL_NAME;
+import static com.abdali.microhps.verificationadjustmentservice.utils.Constants.VERIFICATION_SETTLEMENT_MODE;
+import static com.abdali.microhps.verificationadjustmentservice.utils.Constants.CREDITED_TYPE;
+import static com.abdali.microhps.verificationadjustmentservice.utils.Constants.PRODUCER_TOPIC_PRE_CLEARED;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.abdali.microhps.verificationadjustmentservice.model.CoreTransactionModel;
 import com.abdali.microhps.verificationadjustmentservice.model.RemovalDropTransaction;
 import com.abdali.microhps.verificationadjustmentservice.model.RemovalTransaction;
+import com.abdali.microhps.verificationadjustmentservice.producer.PreClearedTransactionProducer;
 import com.abdali.microhps.verificationadjustmentservice.producer.TransactionProducer;
 import com.abdali.microhps.verificationadjustmentservice.proxy.DropTransactionProxy;
 import com.abdali.microhps.verificationadjustmentservice.proxy.RemovalTransactionProxy;
@@ -39,6 +43,7 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 	VerificationTransactionProxy verificationTransactionProxy;
 	DropTransactionProxy dropTransactionProxy;
 	TransactionProducer transactionProducer;
+	PreClearedTransactionProducer preClearedTransactionProducer;
     ObjectMapper objectMapper; 
 	
 	@Autowired
@@ -47,12 +52,14 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 			DropTransactionProxy dropTransactionProxy,
 			VerificationTransactionProxy verificationTransactionProxy, 
 			TransactionProducer transactionProducer,
+			PreClearedTransactionProducer preClearedTransactionProducer,
 		    ObjectMapper objectMapper
 			) { 
 		this.removalTransactionProxy = removalTransactionProxy;
 		this.dropTransactionProxy = dropTransactionProxy;
 		this.verificationTransactionProxy = verificationTransactionProxy; 
 		this.transactionProducer = transactionProducer;
+		this.preClearedTransactionProducer = preClearedTransactionProducer;
 	    this.objectMapper = objectMapper; 
 	} 
 	
@@ -64,6 +71,13 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 		String bagNumber = verificationMessage.getBagNumber();
 		Integer transactionId = verificationMessage.getTransactionId();
 		
+		// add verification value to pre cleared.
+		if(verificationMessage.getMerchantSettlementMode() == VERIFICATION_SETTLEMENT_MODE) { 
+			verificationMessage.setTypeCD(CREDITED_TYPE);
+			preClearedTransactionProducer.sendTransactionEvent(verificationMessage, PRODUCER_TOPIC_PRE_CLEARED);
+		}
+				
+				
 		CoreTransactionModel lastVerificationMessage = verificationTransactionProxy.findVerificationTransaction(deviceNumber, bagNumber, transactionId);
 		
 		if(lastVerificationMessage != null) { 
@@ -72,12 +86,11 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");  
 			Instant currentVerificationTransactionDate = verificationMessage.getTransmitionDate();	
 			 
-			 // find removal message.
+			// find removal message.
 			CoreTransactionModel removalMessage = removalTransactionProxy.removalMessageBetwwenDates(deviceNumber, bagNumber, formatter.format(lastVerificationTransactionDate), formatter.format(currentVerificationTransactionDate));
 			
 			if(removalMessage != null) {
 				// start verification processing -- using SUM DROPS.
-				
 			} else {
 				// generate removal message based on verification transaction. i will added to topic directly.
 				/**

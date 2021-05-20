@@ -1,6 +1,6 @@
 package com.abdali.microhps.preclearedadjustmentservice.service.impl;
 
-import static com.abdali.microhps.preclearedadjustmentservice.utils.Constants.TOPIC_PRECLEARED_SETTLEMENT_EVENTS;
+import static com.abdali.microhps.preclearedadjustmentservice.utils.Constants.PRODUCER_TOPIC_SETTLEMENT_EVENTS;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.stereotype.Service;
@@ -41,19 +41,19 @@ public class DropAdjustmentServiceImpl implements DropAdjustmentService {
 		// Credited Amount :: to change .
 		CoreTransactionModel clearedTransaction = objectMapper.readValue(consumerRecord.value(), CoreTransactionModel.class);
 		
-		PreClearedTransaction clearedDropTransaction = objectMapper.convertValue(clearedTransaction, PreClearedTransaction.class);
+		PreClearedTransaction finalClearedTransaction = objectMapper.convertValue(clearedTransaction, PreClearedTransaction.class);
 		
-		clearedDropTransaction.setCreaditedAmount(clearedTransaction.getTotalAmount()); 
+		finalClearedTransaction.setCreaditedAmount(clearedTransaction.getTotalAmount()); 
 		
 		//Account Number
-		String accountNumber = merchantDeviceProxy.getMerchantCreditedAccount(clearedDropTransaction.getMerchantNumber(), clearedTransaction.getTypeCD());
-		clearedDropTransaction.setAccountNumber(accountNumber);  
+		String accountNumber = merchantDeviceProxy.getMerchantCreditedAccount(finalClearedTransaction.getMerchantNumber(), clearedTransaction.getTypeCD());
+		finalClearedTransaction.setAccountNumber(accountNumber);  
 		
 //		PreClearedTransaction clearedDropTransaction = new PreClearedTransaction();
 		 
-		PreClearedTransaction result = preClearedTransactionRepository.save(clearedDropTransaction);
+		PreClearedTransaction result = preClearedTransactionRepository.save(finalClearedTransaction);
 		
 		// add to drop adjustment topic. just if mode is removal or it will be duplicated.
-		preClearedTransactionProducer.sendTransactionEvent(clearedDropTransaction, TOPIC_PRECLEARED_SETTLEMENT_EVENTS); 
+		preClearedTransactionProducer.sendTransactionEvent(finalClearedTransaction, PRODUCER_TOPIC_SETTLEMENT_EVENTS); 
 	}
 } 

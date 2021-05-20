@@ -12,9 +12,9 @@ public interface Constants {
 	String REMOVAL_SETTLEMENT_MODE = "onRemoval";
 	String VERIFICATION_SETTLEMENT_MODE = "onCount";
 	
-	//Topics Names
-	String TOPIC_PRECLEARED_SETTLEMENT_EVENTS = "pre-cleared-settlement-events";
-
+	//Topics Names 
+	String PRODUCER_TOPIC_PRE_CLEARED = "pre-cleared-settlement-events";
+	
 	// type of cleared transaction
 	String CREDITED_TYPE = "credited";
 }

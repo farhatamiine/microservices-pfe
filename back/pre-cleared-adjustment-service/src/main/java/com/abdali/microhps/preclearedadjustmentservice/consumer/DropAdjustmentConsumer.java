@@ -1,5 +1,7 @@
 package com.abdali.microhps.preclearedadjustmentservice.consumer;
 
+import static com.abdali.microhps.preclearedadjustmentservice.utils.Constants.CONSUMER_TOPIC_PRE_CLEARED;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -22,7 +24,7 @@ public class DropAdjustmentConsumer {
 		// TODO Auto-generated constructor stub
 	}
 	 
-	@KafkaListener(topics = {"drop-transaction-settlement-events"})
+	@KafkaListener(topics = {CONSUMER_TOPIC_PRE_CLEARED})
    public void onMessage(ConsumerRecord<Integer, String> consumerRecord) throws JsonProcessingException {
        log.info("from consumer ConsumerRecord : {} ", consumerRecord );
        dropAdjustmentService.save(consumerRecord);

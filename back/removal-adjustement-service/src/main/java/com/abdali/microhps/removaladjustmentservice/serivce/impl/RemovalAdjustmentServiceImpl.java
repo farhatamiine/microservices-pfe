@@ -1,16 +1,13 @@
 package com.abdali.microhps.removaladjustmentservice.serivce.impl;
 
-import static com.abdali.microhps.removaladjustmentservice.utils.Constants.TOPIC_PRECLEARED_SETTLEMENT_EVENTS;
+import static com.abdali.microhps.removaladjustmentservice.utils.Constants.PRODUCER_TOPIC_PRE_CLEARED;
 import static com.abdali.microhps.removaladjustmentservice.utils.Constants.CREDITED_TYPE; 
 import static com.abdali.microhps.removaladjustmentservice.utils.Constants.REMOVAL_SETTLEMENT_MODE;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.Instant; 
-import java.util.List;
-import java.util.Random;
-
-import javax.persistence.Column;
+import java.util.List; 
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -97,7 +94,7 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 				if(removalMessage.getMerchantSettlementMode() == REMOVAL_SETTLEMENT_MODE) {
 					CoreTransactionModel transactionSettlement = objectMapper.convertValue(dropTransaction, CoreTransactionModel.class);
 					transactionSettlement.setTypeCD(CREDITED_TYPE);
-					preClearedTransaction.sendTransactionEvent(transactionSettlement, TOPIC_PRECLEARED_SETTLEMENT_EVENTS);
+					preClearedTransaction.sendTransactionEvent(transactionSettlement, PRODUCER_TOPIC_PRE_CLEARED);
 				}
 			}
 			if(removalMessage.getTotalAmount().equals(sumDrops) ) {
@@ -131,19 +128,34 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 				 * 0 if a is equal to b
 				 */
 				if(removalMessage.getTotalAmount().compareTo(sumDrops) == 1) {
+					
 					removalEvents.setTransferAmount(removalMessage.getTotalAmount().subtract(sumDrops));
 					removalEvents.setTransferSign(TransferSign.C);
 					String accountNumber = merchantDeviceProxy.getMerchantAccount(removalMessage.getMerchantNumber(), CREDITED_TYPE);
 					removalEvents.setAccountNumber(accountNumber);
 					caseMessage = "account credited"; 
-					// TODO :: add into pre cleared topic.
+					
+					// TODO :: add into pre-cleared topic.
+					CoreTransactionModel transactionPreCleared = new CoreTransactionModel();
+					transactionPreCleared.setBagNumber(bagNumber);
+					transactionPreCleared.setDeviceNumber(deviceNumber);
+					transactionPreCleared.setTransactionId(transactionId);
+					transactionPreCleared.setMerchantNumber(removalMessage.getMerchantNumber());
+					transactionPreCleared.setTransmitionDate(currentRemovalTransactionDate);
+					transactionPreCleared.setCurrency(removalMessage.getCurrency());
+					transactionPreCleared.setTotalAmount(removalMessage.getTotalAmount().subtract(sumDrops));
+					transactionPreCleared.setTypeCD(CREDITED_TYPE);
+					preClearedTransaction.sendTransactionEvent(transactionPreCleared, PRODUCER_TOPIC_PRE_CLEARED);
+					
 				} else if (removalMessage.getTotalAmount().compareTo(sumDrops) == -1) {
+					
 					// PowerCARD will create a case with no financial for a user consultation/investigation purposes.
 //					removalEvents.setTransferAmount(sumDrops.subtract(removalMessage.getTotalAmount()));
 //					removalEvents.setTransferSign(TransferSign.D);
 //					String accountNumber = merchantDeviceProxy.getMerchantAccount(removalMessage.getMerchantNumber(), "debited");
 //					removalEvents.setAccountNumber(accountNumber);
 					caseMessage = "account debited";
+					
 				}
 				
 				// save adjustment event.

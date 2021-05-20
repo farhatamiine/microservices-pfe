@@ -74,26 +74,26 @@ public class ModeCheckerService {
 				bagNumber = transactionCore.getBagNumber();
 				// get last drop message for this removal.
 				merchantNumber = dropTransactionProxy.getMerchantNumber(deviceNumber, bagNumber);
+				TransactionModel transactionSettlement = objectMapper.convertValue(transactionCore, TransactionModel.class);
+				transactionSettlement.setMerchantNumber(merchantNumber);
 				merchantSettlementMode = deviceMerchantProxy.returnMerchantSettlementMode(merchantNumber);
-				if(merchantSettlementMode == REMOVAL_SETTLEMENT_MODE || merchantSettlementMode == DROP_SETTLEMENT_MODE) {
-					TransactionModel transactionSettlement = objectMapper.convertValue(transactionCore, TransactionModel.class);
-					transactionSettlement.setMerchantNumber(merchantNumber);
+				if(merchantSettlementMode == REMOVAL_SETTLEMENT_MODE) {
 					transactionSettlement.setMerchantSettlementMode(merchantSettlementMode);
-					settlementTransactionProducer.sendTransactionEvent(transactionSettlement, TOPIC_REMOVAL_SETTLEMENT_EVENTS); 
-					// TODO: add list of drops to topic. will did in removal adjustment service.
 				}
+				settlementTransactionProducer.sendTransactionEvent(transactionSettlement, TOPIC_REMOVAL_SETTLEMENT_EVENTS); 
+				// TODO: add list of drops to topic. will did in removal adjustment service.
 				break;
 			case VERIFICATION_INDICATOR: 
 				deviceNumber = transactionCore.getDeviceNumber();
 				bagNumber = transactionCore.getBagNumber(); 
 				merchantNumber = dropTransactionProxy.getMerchantNumber(deviceNumber, bagNumber);
 				merchantSettlementMode = deviceMerchantProxy.returnMerchantSettlementMode(merchantNumber);
-				if(merchantSettlementMode == VERIFICATION_SETTLEMENT_MODE || merchantSettlementMode == DROP_SETTLEMENT_MODE) {
-					TransactionModel transactionSettlement = objectMapper.convertValue(transactionCore, TransactionModel.class);
-					transactionSettlement.setMerchantNumber(merchantNumber);
-					transactionSettlement.setMerchantSettlementMode(merchantSettlementMode);
-					settlementTransactionProducer.sendTransactionEvent(transactionSettlement, TOPIC_VERIFICATION_SETTLEMENT_EVENTS);
+				TransactionModel transactionCountSettlement = objectMapper.convertValue(transactionCore, TransactionModel.class);
+				transactionCountSettlement.setMerchantNumber(merchantNumber);
+				if(merchantSettlementMode == VERIFICATION_SETTLEMENT_MODE) {
+					transactionCountSettlement.setMerchantSettlementMode(merchantSettlementMode);
 				}
+				settlementTransactionProducer.sendTransactionEvent(transactionCountSettlement, TOPIC_VERIFICATION_SETTLEMENT_EVENTS);
 				break;
 		}
 		

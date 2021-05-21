@@ -16,7 +16,6 @@ public class MerchantAccountDto {
 	private int id;
 	private String accountNumber;
 	private AccountTypeEnum accountType;
-	private AccountLimitsDto accountLimits;
 	private BigDecimal virtualAmount;
 	
 	@JsonIgnore
@@ -29,7 +28,6 @@ public class MerchantAccountDto {
 				.id(merchantAccount.getId())
 				.accountNumber(merchantAccount.getAccountNumber())
 				.accountType(merchantAccount.getAccountType()) 
-				.accountLimits(AccountLimitsDto.fromEntity(merchantAccount.getAccountLimits()))
 				.virtualAmount(merchantAccount.getVirtualAmount())
 				.build();
 	}
@@ -43,7 +41,6 @@ public class MerchantAccountDto {
 		merchantAccount.setAccountNumber(merchantAccountDto.getAccountNumber());
 		merchantAccount.setAccountType(merchantAccountDto.getAccountType());	
 		merchantAccount.setVirtualAmount(merchantAccountDto.getVirtualAmount());
-		merchantAccount.setAccountLimits(AccountLimitsDto.toEntity(merchantAccountDto.getAccountLimits()));
 		return merchantAccount;
 	}
 }

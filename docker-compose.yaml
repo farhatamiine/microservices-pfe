@@ -1,1 +1,115 @@
 version: '3.7'
+
+services:
+
+  integrity-checks-service: #8001
+    image: pfeHps/pfe-integrity-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8001:8001"
+    networks:
+      - global-network
+    deponds-on:
+      -registry-server
+      
+  device-merchant-service: #8006
+    image: pfeHps/pfe-device-merchant-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8006:8006"
+    networks:
+      - global-network
+    deponds-on:
+      -registry-server
+      
+  drop-service: #8003
+    image: pfeHps/pfe-drop-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8003:8003"
+    networks:
+      - global-network
+    deponds-on:
+      -registry-server
+      
+  removal-service: #8005
+    image: pfeHps/pfe-removal-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8005:8005"
+    networks:
+      - global-network
+    deponds-on:
+      -registry-server
+      
+  verification-service: #8004
+    image: pfeHps/pfe-verification-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8004:8004"
+    networks:
+      - global-network
+    deponds-on:
+      -registry-server
+      
+  verification-adjustment-service: #8010
+    image: pfeHps/pfe-verification-adjustment-service:0.0.1-SNAPSHOT
+    mem_limit: 500m
+    ports:
+      - "8010:8010"
+    networks:
+      - global-network
+    deponds-on:
+      -registry-server
+          
+  removal-adjustment-service: #8009
+    image: pfeHps/pfe-removal-adjustment-service:0.0.1-SNAPSHOT
+    mem_limit: 500m
+    ports:
+      - "8009:8009"
+    networks:
+      - global-network
+    deponds-on:
+      -registry-server
+             
+  pre-cleared-adjustment-service: #8011
+    image: pfeHps/pfe-pre-cleared-adjustment-service:0.0.1-SNAPSHOT
+    mem_limit: 500m
+    ports:
+      - "8011:8011"
+    networks:
+      - global-network
+    deponds-on:
+      -registry-server
+      
+  registry-server: #8761
+    image: pfeHps/pfe-registry-server-service:0.0.1-SNAPSHOT
+    mem_limit: 500m
+    ports:
+      - "8761:8761"
+    networks:
+      - global-network
+      
+  api-gateway: #8765
+    image: pfeHps/pfe-api-gateway-service:0.0.1-SNAPSHOT
+    mem_limit: 500m
+    ports:
+      - "8765;8765"
+    networks:
+      - global-network
+    deponds:
+      - registry-server
+      
+  mode-checker: #8012
+    image: pfeHps/pfe-mode-checker:0.0.1-SNAPSHOT
+    mem_limit: 500m
+    ports:
+      - "8012:8012"
+    networks:
+      - global-network
+    deponds:
+      - registry-server
+      
+   
+networks:
+  global-network:

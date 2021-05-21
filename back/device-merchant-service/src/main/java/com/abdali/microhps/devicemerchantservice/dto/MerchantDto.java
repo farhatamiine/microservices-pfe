@@ -21,6 +21,7 @@ public class MerchantDto {
 	private List<MerchantAccountDto> merchantAccounts;
 	private List<DeviceDto> devices;
 	private SettlementTypeDto settlementType;
+	private AccountLimitsDto merchantLimits;
 	
 	public static MerchantDto fromEntity(Merchant merchant) {
 		if(merchant == null) {
@@ -45,6 +46,7 @@ public class MerchantDto {
 								.map(MerchantAccountDto::fromEntity)
 								.collect(Collectors.toList()) : null
 						)
+				.merchantLimits(AccountLimitsDto.fromEntity(merchant.getMerchantLimits()))
 				.build();
 	}
 	
@@ -71,6 +73,7 @@ public class MerchantDto {
 						.map(MerchantAccountDto::toEntity)
 						.collect(Collectors.toList()) : null
 				);
+		merchant.setMerchantLimits(AccountLimitsDto.toEntity(merchantDto.getMerchantLimits()));
 		return merchant;
 		
 	}

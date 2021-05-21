@@ -1,10 +1,7 @@
 package com.abdali.microhps.devicemerchantservice.controller;
-
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+ 
+import java.util.Map; 
+import java.util.stream.Collectors; 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,10 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.abdali.microhps.devicemerchantservice.dto.DeviceDto;
-import com.abdali.microhps.devicemerchantservice.dto.MerchantAccountDto;
-import com.abdali.microhps.devicemerchantservice.dto.MerchantDto;
-import com.abdali.microhps.devicemerchantservice.model.MerchantAccount;
+import com.abdali.microhps.devicemerchantservice.dto.AccountLimitsDto;
+import com.abdali.microhps.devicemerchantservice.dto.DeviceDto; 
+import com.abdali.microhps.devicemerchantservice.dto.MerchantDto; 
 import com.abdali.microhps.devicemerchantservice.model.enumeration.AccountTypeEnum;
 import com.abdali.microhps.devicemerchantservice.model.enumeration.MerchantStatus; 
 import com.abdali.microhps.devicemerchantservice.service.MerchantService;
@@ -104,11 +100,12 @@ public class MerchantController {
 	}
 	
 	@GetMapping("/merchant-account/{merchantNumber}/account-type/{type}")
-	public String getMerchantCreditedAccount(@PathVariable("merchantNumber") Long merchantNumber,@PathVariable("type") String type) throws Exception {
+	public String getMerchantCreditedAccount(@PathVariable("merchantNumber") Long merchantNumber, @PathVariable("type") String type) {
 		
 		MerchantDto merchant = merchantService.findByMerchantNumber(merchantNumber);
 		
 		AccountTypeEnum accountType;
+		
 		if(type == "credited") {			
 			accountType = AccountTypeEnum.credited;
 		} else if(type == "debited") {
@@ -128,5 +125,12 @@ public class MerchantController {
 		return creditedAccountNumber;
 	}
 	
-	
+	@GetMapping("/account-limits/merchant-number/{merchantNumber}/account-type/{type}")
+	public AccountLimitsDto getMerchantLimits(@PathVariable("merchantNumber") Long merchantNumber, @PathVariable("type") String type) {
+		
+		MerchantDto merchant = merchantService.findByMerchantNumber(merchantNumber);
+		
+		return merchant.getMerchantLimits();
+		
+	}
 }

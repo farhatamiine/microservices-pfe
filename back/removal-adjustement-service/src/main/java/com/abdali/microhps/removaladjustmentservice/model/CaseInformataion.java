@@ -26,10 +26,7 @@ public class CaseInformataion extends AuditEntity {
 	@Column(columnDefinition = "varchar(14)")
 	private String bagNumber; 
 	private Instant transmitionDate;
-	private BigDecimal totalAmount;
-	@Column(columnDefinition = "varchar(3)")
-	private String currency;
-	private String merchantSettlementMode;
+	private BigDecimal totalAmount; 
 	private Long merchantNumber;
 	private String message;
 	

@@ -36,8 +36,4 @@ public class MerchantAccount extends AuditEntity {
 	@JoinColumn(name="idmerchant")
 	private Merchant merchants;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "merchant_limits_id", referencedColumnName = "id")
-	private AccountLimits accountLimits;
-	
 }

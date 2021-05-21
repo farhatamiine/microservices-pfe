@@ -1,7 +1,5 @@
 package com.abdali.microhps.devicemerchantservice.model;
-
-import java.math.BigDecimal;
-
+ 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,6 +24,6 @@ public class AccountLimits {
 	private Double minExchange;
 	private Double maxExchange;
 	
-	@OneToOne(mappedBy = "accountLimits")
-	private MerchantAccount merchantAccount;
+	@OneToOne(mappedBy = "merchantLimits")
+	private Merchant merchant;
 }

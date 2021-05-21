@@ -86,11 +86,12 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");  
 			Instant currentVerificationTransactionDate = verificationMessage.getTransmitionDate();	
 			 
-			// find removal message.
+			/************** START :: check if REMOVAL message EXIST **************************/
 			CoreTransactionModel removalMessage = removalTransactionProxy.removalMessageBetwwenDates(deviceNumber, bagNumber, formatter.format(lastVerificationTransactionDate), formatter.format(currentVerificationTransactionDate));
 			
 			if(removalMessage != null) {
 				// start verification processing -- using SUM DROPS.
+				
 			} else {
 				// generate removal message based on verification transaction. i will added to topic directly.
 				/**
@@ -118,6 +119,16 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 				// add to removal topic to save into db.
 				transactionProducer.sendTransactionEvent(generatedRemovalTransaction, TOPIC_REMOVAL_NAME);
 			}
+			/************** END :: check if REMOVAL message EXIST **************************/
+			
+			/************** START :: VERIFICATION Process **************************/
+			/*
+			 * get drops between the two removal.
+			 * get merchant min/max exchanges.
+			 */
+			
+			
+			/************** END :: VERIFICATION Process **************************/
 		} 
 	}
 }

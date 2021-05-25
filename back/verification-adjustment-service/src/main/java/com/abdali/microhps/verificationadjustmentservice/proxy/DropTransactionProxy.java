@@ -24,4 +24,11 @@ public interface DropTransactionProxy {
 			@PathVariable("bagNumber") String bagNumber,
 			@PathVariable("startDate") String startDate,
 			@PathVariable("endDate") String endDate);
+
+	@GetMapping("/drop-transaction/device/{deviceNumber}/bag/{bagNumber}")
+	public Long getMerchantNumber(
+			@PathVariable("deviceNumber") String deviceNumber,
+			@PathVariable("bagNumber") String bagNumber
+			);
+
 }

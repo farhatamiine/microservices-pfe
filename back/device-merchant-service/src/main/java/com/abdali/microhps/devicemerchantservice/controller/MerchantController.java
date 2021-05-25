@@ -22,16 +22,15 @@ import com.abdali.microhps.devicemerchantservice.dto.MerchantDto;
 import com.abdali.microhps.devicemerchantservice.model.enumeration.AccountTypeEnum;
 import com.abdali.microhps.devicemerchantservice.model.enumeration.MerchantStatus; 
 import com.abdali.microhps.devicemerchantservice.service.MerchantService;
-
-import lombok.extern.slf4j.Slf4j;
+ 
  
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/merchant-device")
-@Slf4j
+@RequestMapping("/merchant-device")  
 public class MerchantController {
 	
 	private MerchantService merchantService;
+	
 	
 	@Autowired
 	public MerchantController(MerchantService merchantService) {
@@ -89,6 +88,7 @@ public class MerchantController {
 	
 	@GetMapping("/status/{merchantNumber}")
 	public Boolean isMerchantStatusActive(@PathVariable("merchantNumber") Long merchantNumber) throws Exception {
+		 
 		// TODO : EXception to check if merchant Number exist if not Notify PowerCard.
 		return merchantService.merchantCheckStatus(merchantNumber, MerchantStatus.normal);
 	}
@@ -125,8 +125,8 @@ public class MerchantController {
 		return creditedAccountNumber;
 	}
 	
-	@GetMapping("/account-limits/merchant-number/{merchantNumber}/account-type/{type}")
-	public AccountLimitsDto getMerchantLimits(@PathVariable("merchantNumber") Long merchantNumber, @PathVariable("type") String type) {
+	@GetMapping("/account-limits/merchant-number/{merchantNumber}")
+	public AccountLimitsDto getMerchantLimits(@PathVariable("merchantNumber") Long merchantNumber) {
 		
 		MerchantDto merchant = merchantService.findByMerchantNumber(merchantNumber);
 		

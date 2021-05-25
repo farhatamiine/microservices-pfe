@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.abdali.microhps.devicemerchantservice.dto.DeviceDto;
 import com.abdali.microhps.devicemerchantservice.dto.SettlementTypeDto;
 import com.abdali.microhps.devicemerchantservice.service.SettlementTypeService;
 

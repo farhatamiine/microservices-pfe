@@ -24,20 +24,20 @@ import lombok.extern.slf4j.Slf4j;
 public class TransactionProducer {
 
 	@Autowired
-    KafkaTemplate<Long,String> kafkaTemplate;
+    KafkaTemplate<Long, String> kafkaTemplate;
     
     @Autowired
     ObjectMapper objectMapper;
     
-    public ListenableFuture<SendResult<Long,String>> sendTransactionEvent(Transaction transaction, String topic) throws JsonProcessingException {
+    public ListenableFuture<SendResult<Long, String>> sendTransactionEvent(Transaction transaction, String topic) throws JsonProcessingException {
 
         Long key = transaction.getId();
         String value = objectMapper.writeValueAsString(transaction);
         
-		ProducerRecord<Long,String> producerRecord2 = buildProducerRecord(key, value, GLOBAL_TOPIC_NAME);
+		ProducerRecord<Long, String> producerRecord2 = buildProducerRecord(key, value, GLOBAL_TOPIC_NAME);
 	    ListenableFuture<SendResult<Long,String>> listenableFuture2 =  kafkaTemplate.send(producerRecord2);
         
-        ProducerRecord<Long,String> producerRecord = buildProducerRecord(key, value, topic);
+        ProducerRecord<Long, String> producerRecord = buildProducerRecord(key, value, topic);
 
         ListenableFuture<SendResult<Long,String>> listenableFuture =  kafkaTemplate.send(producerRecord);
 

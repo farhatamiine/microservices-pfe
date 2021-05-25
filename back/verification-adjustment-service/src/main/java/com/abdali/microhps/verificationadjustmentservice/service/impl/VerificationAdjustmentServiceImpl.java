@@ -13,13 +13,17 @@ import java.time.temporal.ChronoUnit;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import com.abdali.microhps.verificationadjustmentservice.model.AccountLimitsModel;
 import com.abdali.microhps.verificationadjustmentservice.model.CoreTransactionModel;
 import com.abdali.microhps.verificationadjustmentservice.model.RemovalDropTransaction;
 import com.abdali.microhps.verificationadjustmentservice.model.RemovalTransaction;
 import com.abdali.microhps.verificationadjustmentservice.producer.PreClearedTransactionProducer;
 import com.abdali.microhps.verificationadjustmentservice.producer.TransactionProducer;
 import com.abdali.microhps.verificationadjustmentservice.proxy.DropTransactionProxy;
+import com.abdali.microhps.verificationadjustmentservice.proxy.MerchantDeviceProxy;
 import com.abdali.microhps.verificationadjustmentservice.proxy.RemovalTransactionProxy;
 import com.abdali.microhps.verificationadjustmentservice.proxy.VerificationTransactionProxy;
 import com.abdali.microhps.verificationadjustmentservice.service.VerificationAdjustmentService;
@@ -42,6 +46,7 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 	RemovalTransactionProxy removalTransactionProxy; 
 	VerificationTransactionProxy verificationTransactionProxy;
 	DropTransactionProxy dropTransactionProxy;
+	MerchantDeviceProxy merchantDeviceProxy;
 	TransactionProducer transactionProducer;
 	PreClearedTransactionProducer preClearedTransactionProducer;
     ObjectMapper objectMapper; 
@@ -52,6 +57,7 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 			DropTransactionProxy dropTransactionProxy,
 			VerificationTransactionProxy verificationTransactionProxy, 
 			TransactionProducer transactionProducer,
+			MerchantDeviceProxy merchantDeviceProxy,
 			PreClearedTransactionProducer preClearedTransactionProducer,
 		    ObjectMapper objectMapper
 			) { 
@@ -59,6 +65,7 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 		this.dropTransactionProxy = dropTransactionProxy;
 		this.verificationTransactionProxy = verificationTransactionProxy; 
 		this.transactionProducer = transactionProducer;
+		this.merchantDeviceProxy = merchantDeviceProxy;
 		this.preClearedTransactionProducer = preClearedTransactionProducer;
 	    this.objectMapper = objectMapper; 
 	} 
@@ -126,7 +133,9 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 			 * get drops between the two removal.
 			 * get merchant min/max exchanges.
 			 */
+			Long merchantNumber = dropTransactionProxy.getMerchantNumber(deviceNumber, bagNumber);
 			
+			AccountLimitsModel accountLimits = merchantDeviceProxy.getMerchantLimits(merchantNumber);
 			
 			/************** END :: VERIFICATION Process **************************/
 		} 

@@ -10,6 +10,7 @@ import static com.abdali.microhps.integrityservice.utils.Constants.TOPIC_VERIFIC
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,11 +29,18 @@ import com.abdali.microhps.integrityservice.validation.TransactionVerify;
 import com.abdali.microhps.integrityservice.validation.powerCard.PowerCardValidation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
  
 
 @RestController
+@Slf4j
 public class IntegrityController {
+	
+
+	private Logger logger = LoggerFactory.getLogger(IntegrityController.class);
 
 	private MessageFormat messageFormat;
 	private MerchantNotFound merchantNotFound;
@@ -65,6 +73,13 @@ public class IntegrityController {
 		this.powerCardValidation = powerCardValidation;
 	}
 	
+
+	@GetMapping("/hello")
+	public String test() {
+		logger.info("retrieveExchangeValue called with {} to {}");
+		log.info("from tets hello");
+		return "hello world";
+	}
 	
 	@PostMapping("/check")
 	public ResponseEntity<ResponseRequest> checkMessage(@RequestBody TransactionRequest transactionRequest) throws JsonProcessingException {

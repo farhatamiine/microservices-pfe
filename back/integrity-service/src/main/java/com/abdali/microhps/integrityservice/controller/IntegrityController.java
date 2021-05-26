@@ -114,6 +114,7 @@ public class IntegrityController {
 			
 			// GLOBAL STEPS 1 : INVALID MESSAGE FORMAT .
 			if(messageFormat.checkMessageFormat(indicator, messageSplited[1], deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId, messageSplited, transactionRequest.getMessage()) 
+					&& duplicatedMessage.checkForDuplicatedMessage(merchantNumber, bagNumber, transmitionDate, Integer.parseInt(transactionId), containerType, messageSplited, transactionRequest.getMessage()) 
 					&& merchantNotFound.checkMerchantNotFound(merchantNumber, containerType, messageSplited, transactionRequest.getMessage()) 
 					&& merchantNotMapped.simpleMerchant(merchantNumber, deviceNumber, containerType, messageSplited, transactionRequest.getMessage())
 					&& powerCardValidation.powerCardSimpleValidation(indicator, sequenceNumber, bagNumber, transactionId, deviceNumber, containerType, messageSplited, transactionRequest.getMessage())) {				

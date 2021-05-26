@@ -22,11 +22,14 @@ import com.abdali.microhps.devicemerchantservice.dto.MerchantDto;
 import com.abdali.microhps.devicemerchantservice.model.enumeration.AccountTypeEnum;
 import com.abdali.microhps.devicemerchantservice.model.enumeration.MerchantStatus; 
 import com.abdali.microhps.devicemerchantservice.service.MerchantService;
+
+import lombok.extern.slf4j.Slf4j;
  
  
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/merchant-device")  
+@RequestMapping("/merchant-device") 
+@Slf4j
 public class MerchantController {
 	
 	private MerchantService merchantService;
@@ -78,6 +81,7 @@ public class MerchantController {
 	 */
 	@GetMapping(value = "/merchant-number/{merchantNumber}/device-number/{deviceNumber}")
 	public Boolean isDeviceRelatedToMerchant(@PathVariable Long merchantNumber, @PathVariable String deviceNumber) {
+		log.info("from DM device merchant");
 		MerchantDto merchant = merchantService.findByMerchantNumber(merchantNumber);
 		if(merchant.getDevices().isEmpty()) {
 			return false;
@@ -88,12 +92,12 @@ public class MerchantController {
 	
 	@GetMapping("/status/{merchantNumber}")
 	public Boolean isMerchantStatusActive(@PathVariable("merchantNumber") Long merchantNumber) throws Exception {
-		 
+		log.info("from status MD");
 		// TODO : EXception to check if merchant Number exist if not Notify PowerCard.
 		return merchantService.merchantCheckStatus(merchantNumber, MerchantStatus.normal);
 	}
 	
-	@GetMapping("/merchant-device/settlement-mode/{merchantNumber}")
+	@GetMapping("/settlement-mode/{merchantNumber}")
 	public String returnMerchantSettlementMode(@PathVariable("merchantNumber") Long merchantNumber) {
 		MerchantDto merchant = merchantService.findByMerchantNumber(merchantNumber);
 		return merchant.getSettlementType().getSettlementTypeName();

@@ -40,8 +40,6 @@ import org.springframework.util.StringUtils;
 public class IntegrityController {
 	
 
-	private Logger logger = LoggerFactory.getLogger(IntegrityController.class);
-
 	private MessageFormat messageFormat;
 	private MerchantNotFound merchantNotFound;
 	private MerchantNotMapped merchantNotMapped;
@@ -75,14 +73,15 @@ public class IntegrityController {
 	
 
 	@GetMapping("/hello")
-	public String test() {
-		logger.info("retrieveExchangeValue called with {} to {}");
+	public String test() { 
 		log.info("from tets hello");
 		return "hello world";
 	}
 	
 	@PostMapping("/check")
 	public ResponseEntity<ResponseRequest> checkMessage(@RequestBody TransactionRequest transactionRequest) throws JsonProcessingException {
+
+		log.info("from tets hello");
 		
 		// variable.
 		Long merchantNumber; 
@@ -115,7 +114,6 @@ public class IntegrityController {
 			
 			// GLOBAL STEPS 1 : INVALID MESSAGE FORMAT .
 			if(messageFormat.checkMessageFormat(indicator, messageSplited[1], deviceNumber, bagNumber, containerType, sequenceNumber, transmitionDate, transactionId, messageSplited, transactionRequest.getMessage()) 
-					&& duplicatedMessage.checkForDuplicatedMessage(merchantNumber, bagNumber, transmitionDate, Integer.parseInt(transactionId), containerType, messageSplited, transactionRequest.getMessage()) 
 					&& merchantNotFound.checkMerchantNotFound(merchantNumber, containerType, messageSplited, transactionRequest.getMessage()) 
 					&& merchantNotMapped.simpleMerchant(merchantNumber, deviceNumber, containerType, messageSplited, transactionRequest.getMessage())
 					&& powerCardValidation.powerCardSimpleValidation(indicator, sequenceNumber, bagNumber, transactionId, deviceNumber, containerType, messageSplited, transactionRequest.getMessage())) {				

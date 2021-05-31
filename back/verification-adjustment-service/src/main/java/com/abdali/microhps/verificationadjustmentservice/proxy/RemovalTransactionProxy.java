@@ -5,6 +5,8 @@ import java.time.Instant;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import com.abdali.microhps.verificationadjustmentservice.model.AdjustmentEvent;
 import com.abdali.microhps.verificationadjustmentservice.model.CoreTransactionModel;
 
 @FeignClient(name="removal-service")
@@ -21,4 +23,5 @@ public interface RemovalTransactionProxy {
 	public Instant getDatefromLastRemoval(
 			@PathVariable("deviceNumber") String deviceNumber, 
 			@PathVariable("bagNumber") String bagNumber);
+	
 }

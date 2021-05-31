@@ -20,15 +20,16 @@ import com.abdali.microhps.removaladjustmentservice.model.CaseInformataion;
 import com.abdali.microhps.removaladjustmentservice.model.CoreTransactionModel;
 import com.abdali.microhps.removaladjustmentservice.model.enumeration.TransferSign;
 import com.abdali.microhps.removaladjustmentservice.producer.PreClearedTransaction;
+import com.abdali.microhps.removaladjustmentservice.proxy.AdjustmentEventProxy;
 import com.abdali.microhps.removaladjustmentservice.proxy.DropTransactionProxy;
 import com.abdali.microhps.removaladjustmentservice.proxy.MerchantDeviceProxy;
-import com.abdali.microhps.removaladjustmentservice.proxy.RemovalTransactionProxy;
-import com.abdali.microhps.removaladjustmentservice.repository.AdjustmentEventRepository;
+import com.abdali.microhps.removaladjustmentservice.proxy.RemovalTransactionProxy; 
 import com.abdali.microhps.removaladjustmentservice.repository.CaseInformationRepository;
 import com.abdali.microhps.removaladjustmentservice.serivce.RemovalAdjustmentService;
+import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper; 
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,10 +39,10 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 	
 	MerchantDeviceProxy merchantDeviceProxy;
 	RemovalTransactionProxy removalTransactionProxy;
-	DropTransactionProxy dropTransactionService;
+	DropTransactionProxy dropTransactionProxy;
 	PreClearedTransaction preClearedTransaction;
     ObjectMapper objectMapper;
-    AdjustmentEventRepository adjustementEventRepository;
+    AdjustmentEventProxy adjustementEventProxy;
     CaseInformationRepository caseInformationRepository;
 	
 	@Autowired
@@ -51,13 +52,13 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 			DropTransactionProxy dropTransactionProxy,
 			PreClearedTransaction preClearedTransaction,
 		    ObjectMapper objectMapper,
-		    AdjustmentEventRepository adjustementEventRepository,
+		    AdjustmentEventProxy adjustementEventProxy,
 		    CaseInformationRepository caseInformationRepository
 			) {
 		this.merchantDeviceProxy = merchantDeviceProxy;
-		this.adjustementEventRepository = adjustementEventRepository;
+		this.adjustementEventProxy = adjustementEventProxy;
 		this.removalTransactionProxy = removalTransactionProxy;
-		this.dropTransactionService = dropTransactionProxy;
+		this.dropTransactionProxy = dropTransactionProxy;
 	    this.objectMapper = objectMapper;
 	    this.preClearedTransaction = preClearedTransaction;
 	    this.caseInformationRepository = caseInformationRepository;
@@ -79,7 +80,7 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 		String bagNumber = removalMessage.getBagNumber();
 		Integer transactionId = removalMessage.getTransactionId();
 		
-		// add to drop adjustment topic. just if mode is removal or it will be duplicated.
+		// add to pre-cleared adjustment topic.
 		if(removalMessage.getMerchantSettlementMode() == REMOVAL_SETTLEMENT_MODE) { 
 			removalMessage.setTypeCD(CREDITED_TYPE);
 			preClearedTransaction.sendTransactionEvent(removalMessage, PRODUCER_TOPIC_PRE_CLEARED);
@@ -93,7 +94,7 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 			Instant currentRemovalTransactionDate = removalMessage.getTransmitionDate();	
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");  
 			
-			List<CoreTransactionModel> listDrops = dropTransactionService.listDropsBetwwenDates(deviceNumber, bagNumber, formatter.format(lastRemovalTransactionDate), formatter.format(currentRemovalTransactionDate));
+			List<CoreTransactionModel> listDrops = dropTransactionProxy.listDropsBetwwenDates(deviceNumber, bagNumber, formatter.format(lastRemovalTransactionDate), formatter.format(currentRemovalTransactionDate));
 			BigDecimal sumDrops = new BigDecimal(0);
 			for (CoreTransactionModel dropTransaction : listDrops) { 
 				sumDrops = sumDrops.add(dropTransaction.getTotalAmount());  
@@ -107,21 +108,21 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 				Long referenceNumber;
 				String eventIndicator;  
 				String caseMessage = "";
+				
 				/**
 				 * an adjustment event is generated indicating the merchant number, 
 				 * the amount to be credited or debited and the account concerned with the adjustment operation. 
-				*/
-
+				*/ 
 		        Long leftLimit = (long) Math.pow(10, 11);
 		        Long rightLimit = (long) Math.pow(10, 11);
-		        referenceNumber = leftLimit + (long) (Math.random() * (9*rightLimit - leftLimit));
+		        referenceNumber = leftLimit + (long) (Math.random() * (9 * rightLimit - leftLimit));
 				eventIndicator = RandomStringUtils.randomAlphanumeric(15); 
 				
-				AdjustmentEvent removalEvents = objectMapper.convertValue(removalMessage, AdjustmentEvent.class);
-				removalEvents.setTransferCurrency(removalMessage.getCurrency());
-				removalEvents.setReferenceNumber(referenceNumber);
-				removalEvents.setEventIndicator(eventIndicator);
-				removalEvents.setSettlementDate(removalMessage.getTransmitionDate());
+				AdjustmentEvent removalAdjustmentEvent = objectMapper.convertValue(removalMessage, AdjustmentEvent.class);
+				removalAdjustmentEvent.setTransferCurrency(removalMessage.getCurrency());
+				removalAdjustmentEvent.setReferenceNumber(referenceNumber);
+				removalAdjustmentEvent.setEventIndicator(eventIndicator);
+				removalAdjustmentEvent.setSettlementDate(removalMessage.getTransmitionDate());
 				
 				/*
 				 * 1 if a is greater than b
@@ -130,15 +131,27 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 				 */
 				if(removalMessage.getTotalAmount().compareTo(sumDrops) == 1) {
 					
-					removalEvents.setTransferAmount(removalMessage.getTotalAmount().subtract(sumDrops));
-					removalEvents.setTransferSign(TransferSign.C);
+					removalAdjustmentEvent.setTransferAmount(removalMessage.getTotalAmount().subtract(sumDrops));
+					removalAdjustmentEvent.setTransferSign(TransferSign.C);
 					String accountNumber = merchantDeviceProxy.getMerchantAccount(removalMessage.getMerchantNumber(), CREDITED_TYPE);
-					removalEvents.setAccountNumber(accountNumber);
+					removalAdjustmentEvent.setAccountNumber(accountNumber);
+					 
+					// from Entity to string JSON.
+					try {
+					    // convert user object to JSON string and return it 
+					    String jsonEvent = objectMapper.writeValueAsString(removalAdjustmentEvent);
+					    // save adjustment event.
+					    adjustementEventProxy.saveVerificationMessage(jsonEvent);
+					}
+					catch (JsonGenerationException | JsonMappingException  e) {
+					    // catch various errors
+					    e.printStackTrace();
+					} 
+					 
 					caseMessage = "sum of the drops is smaller than the removal value. Means the customer has been short credited."; 
 					
 					// if the mode is on drop and the sum drops is less than the removal we need to credited merchant account.
-					if(removalMessage.getMerchantSettlementMode() == DROP_SETTLEMENT_MODE) { 
-						// TODO :: add into pre-cleared topic.
+					if(removalMessage.getMerchantSettlementMode() == DROP_SETTLEMENT_MODE) {  
 						CoreTransactionModel transactionPreCleared = new CoreTransactionModel();
 						transactionPreCleared.setBagNumber(bagNumber);
 						transactionPreCleared.setDeviceNumber(deviceNumber);
@@ -151,10 +164,9 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 						preClearedTransaction.sendTransactionEvent(transactionPreCleared, PRODUCER_TOPIC_PRE_CLEARED);
 					}
 					
-					
 				} else if (removalMessage.getTotalAmount().compareTo(sumDrops) == -1) {
 					
-					// PowerCARD will create a case with no financial for a user consultation/investigation purposes.
+//					PowerCARD will create a case with no financial for a user consultation/investigation purposes.
 //					removalEvents.setTransferAmount(sumDrops.subtract(removalMessage.getTotalAmount()));
 //					removalEvents.setTransferSign(TransferSign.D);
 //					String accountNumber = merchantDeviceProxy.getMerchantAccount(removalMessage.getMerchantNumber(), "debited");
@@ -162,10 +174,7 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 					caseMessage = "sum of drops is greater than the removal value. case Information has bean genereted";
 					
 				}
-				
-				// save adjustment event.
-				adjustementEventRepository.save(removalEvents);
-				
+				 
 				// case information.
 				CaseInformataion generatedCase = objectMapper.convertValue(removalMessage, CaseInformataion.class);
 				generatedCase.setMessage(caseMessage);

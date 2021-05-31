@@ -11,4 +11,3 @@ public interface MerchantDeviceProxy {
 	public Boolean checkDeviceNumber(@PathVariable("deviceNumber") String deviceNumber);
 	
 }
-

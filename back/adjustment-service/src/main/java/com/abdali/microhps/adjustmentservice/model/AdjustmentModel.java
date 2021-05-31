@@ -1,4 +1,4 @@
-package com.abdali.microhps.verificationadjustmentservice.model;
+package com.abdali.microhps.adjustmentservice.model;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -7,20 +7,20 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import com.abdali.microhps.verificationadjustmentservice.model.enumeration.TransferSign;
+import com.abdali.microhps.adjustmentservice.model.enumeration.TransferSign;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+ 
 @Setter
 @Getter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="VERIFICATION_ADJUSTEMENT_EVENTS")
-public class AdjustmentEvent extends AuditEntity {
+@Table(name="ADJUSTEMENT_EVENTS")
+public class AdjustmentModel {
 	
 	private String eventIndicator;
 	private char indicator = 'A';

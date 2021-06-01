@@ -15,16 +15,13 @@ import java.util.List;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.stereotype.Service; 
  
 import com.abdali.microhps.verificationadjustmentservice.model.AccountLimitsModel;
 import com.abdali.microhps.verificationadjustmentservice.model.AdjustmentEvent;
 import com.abdali.microhps.verificationadjustmentservice.model.CoreTransactionModel;
 import com.abdali.microhps.verificationadjustmentservice.model.RemovalDropTransaction;
-import com.abdali.microhps.verificationadjustmentservice.model.RemovalTransaction;
-import com.abdali.microhps.verificationadjustmentservice.model.enumeration.TransferSign;
+import com.abdali.microhps.verificationadjustmentservice.model.RemovalTransaction; 
 import com.abdali.microhps.verificationadjustmentservice.producer.PreClearedTransactionProducer;
 import com.abdali.microhps.verificationadjustmentservice.producer.TransactionProducer;
 import com.abdali.microhps.verificationadjustmentservice.proxy.AdjustmentEventProxy;
@@ -40,13 +37,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
 /** 
- * @author samurai.
+ * @author Samurai.
  * 1 - after get verification message : find removal message for it.
  * 	   if not create removal message for it using verification transaction.
  * 		- to find it search between two verification message with same devicenUmber and bagNumber.
  */
-@Service
-@Slf4j
+@Service 
 public class VerificationAdjustmentServiceImpl implements VerificationAdjustmentService {
 	 
 	RemovalTransactionProxy removalTransactionProxy; 
@@ -82,7 +78,6 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 	
 	public void validateTransaction(ConsumerRecord<Long,String> consumerRecord) throws JsonMappingException, JsonProcessingException { 
 		
-		String caseMessage = null;
 		
 		CoreTransactionModel verificationMessage = objectMapper.readValue(consumerRecord.value(), CoreTransactionModel.class);
 		String deviceNumber = verificationMessage.getDeviceNumber();
@@ -162,8 +157,12 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 				sumDrops = sumDrops.add(dropTransaction.getTotalAmount());  
 			}
 			
-			/*** Adjustment from removal ***/
+			/*** Adjustment from removal -- amount -- credited(normal) -- debited ***/
 			AdjustmentEvent removalAdjustment = adjustmentEventProxy.getAdjustment(merchantNumber, formatter.format(lastVerificationTransactionDate));
+			
+			removalAdjustment.getTransferSign();
+			
+			sumDrops = sumDrops.add(removalAdjustment.getTransferAmount());
 			
 			/*
 			 * 1 if a is greater than b
@@ -172,7 +171,40 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 			 */
 			if(verificationMessage.getTotalAmount().compareTo(sumDrops) == 1) {
 				
-				// FOR ADjustement Event
+
+				String caseMessage = null;
+				
+				/**
+				 * Document : TRX-Details :: PAGE --> 20/27.
+				 *  When the verification message is greater than the sum of drop we are talking about a surplus in that case the merchant has been short credited.
+				 */
+				BigDecimal diffrentBetween = verificationMessage.getTotalAmount().subtract(sumDrops);
+				
+				if(diffrentBetween.compareTo(new BigDecimal(maxValue)) == 1) {
+					/*  X > Max vendor value.
+						Create case
+						- No automatic processing is done.
+						- Case with the credit transaction as follow.
+						- Create a credit adjustment transaction to the customer DDA account.
+						- User must approve the case to trigger the processing of the adjustment to DDA account after investigation
+					 */
+					
+				} else if(diffrentBetween.compareTo(new BigDecimal(maxValue)) == -1 && diffrentBetween.compareTo(new BigDecimal(minValue)) == 1) {
+					/*  min value < X < max value.
+						Credit customer DDA:
+						- Create a case with the credit transaction as follow.
+						- Create a credit adjustment transaction to the customer DDA account and process it automatically.
+					 */
+				} else {
+					/*  X <= min vendor value.
+						Credit Vendor DDA:
+					   - Retrieve the account of the vendor.
+					   - Create a case with the credit transaction as follow.
+					   - Create a credit adjustment transaction to the vendor DDA account and process it automatically.
+					 */
+				}
+				
+				// FOR Adjustement Event
 //				removalEvents.setTransferAmount(verificationMessage.getTotalAmount().subtract(sumDrops));
 //				removalEvents.setTransferSign(TransferSign.C);
 //				String accountNumber = merchantDeviceProxy.getMerchantAccount(verificationMessage.getMerchantNumber(), CREDITED_TYPE);
@@ -181,13 +213,13 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 				
 				// if the mode is on drop and the sum drops is less than the removal we need to credited merchant account.
 				if(verificationMessage.getMerchantSettlementMode() == DROP_SETTLEMENT_MODE) { 
-					// TODO :: add into pre-cleared topic.
+					// TODO :: add into Pre-cleared topic.
 					CoreTransactionModel transactionPreCleared = new CoreTransactionModel();
 					transactionPreCleared.setBagNumber(bagNumber);
 					transactionPreCleared.setDeviceNumber(deviceNumber);
 					transactionPreCleared.setTransactionId(transactionId);
 					transactionPreCleared.setMerchantNumber(verificationMessage.getMerchantNumber());
-					transactionPreCleared.setTransmitionDate(currentRemovalTransactionDate);
+//					transactionPreCleared.setTransmitionDate(currentRemovalTransactionDate);
 					transactionPreCleared.setCurrency(verificationMessage.getCurrency());
 					transactionPreCleared.setTotalAmount(verificationMessage.getTotalAmount().subtract(sumDrops));
 					transactionPreCleared.setTypeCD(CREDITED_TYPE);
@@ -195,15 +227,8 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 				}
 				
 				
-			} else if (removalMessage.getTotalAmount().compareTo(sumDrops) == -1) {
-				
-				// PowerCARD will create a case with no financial for a user consultation/investigation purposes.
-//				removalEvents.setTransferAmount(sumDrops.subtract(removalMessage.getTotalAmount()));
-//				removalEvents.setTransferSign(TransferSign.D);
-//				String accountNumber = merchantDeviceProxy.getMerchantAccount(removalMessage.getMerchantNumber(), "debited");
-//				removalEvents.setAccountNumber(accountNumber);
-				caseMessage = "sum of drops is greater than the removal value. case Information has bean genereted";
-				
+			} else if (verificationMessage.getTotalAmount().compareTo(sumDrops) == -1) {
+				 
 			}
 			/************** END :: VERIFICATION Process **************************/
 		} 

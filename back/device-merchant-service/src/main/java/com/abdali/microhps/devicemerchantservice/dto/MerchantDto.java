@@ -3,6 +3,7 @@ package com.abdali.microhps.devicemerchantservice.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.abdali.microhps.devicemerchantservice.model.FeesCalculation;
 import com.abdali.microhps.devicemerchantservice.model.Merchant;
 import com.abdali.microhps.devicemerchantservice.model.enumeration.MerchantStatus;
 
@@ -19,6 +20,7 @@ public class MerchantDto {
 	private MerchantStatus status;
 	
 	private List<MerchantAccountDto> merchantAccounts;
+	private List<FeesCalculationDto> merchantFees;
 	private List<DeviceDto> devices;
 	private SettlementTypeDto settlementType;
 	private AccountLimitsDto merchantLimits;
@@ -46,6 +48,13 @@ public class MerchantDto {
 								.map(MerchantAccountDto::fromEntity)
 								.collect(Collectors.toList()) : null
 						)
+				.merchantFees(
+						merchant.getMerchantFees() != null ? 
+								merchant.getMerchantFees().stream()
+								.map(FeesCalculationDto::fromEntity)
+								.collect(Collectors.toList()) : null
+						)
+				
 				.merchantLimits(AccountLimitsDto.fromEntity(merchant.getMerchantLimits()))
 				.build();
 	}
@@ -72,6 +81,12 @@ public class MerchantDto {
 						merchantDto.getMerchantAccounts().stream()
 						.map(MerchantAccountDto::toEntity)
 						.collect(Collectors.toList()) : null
+				);
+		merchant.setMerchantFees(
+				merchantDto.getMerchantFees() != null ?
+				merchantDto.getMerchantFees().stream()
+				.map(FeesCalculationDto::toEntity)
+				.collect(Collectors.toList()) : null
 				);
 		merchant.setMerchantLimits(AccountLimitsDto.toEntity(merchantDto.getMerchantLimits()));
 		return merchant;

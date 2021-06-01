@@ -28,6 +28,7 @@ public class AdjustmentController {
 	public void save(@RequestBody AdjustmentEvent message) {
 		log.info("hello " + message);
 		
+		
 	}
 	
 	

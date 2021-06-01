@@ -29,5 +29,5 @@ public class CaseInformataion extends AuditEntity {
 	private BigDecimal totalAmount; 
 	private Long merchantNumber;
 	private String message;
-	
+	//drops number sum number.
 }

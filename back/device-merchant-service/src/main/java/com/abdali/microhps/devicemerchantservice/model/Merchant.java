@@ -38,6 +38,9 @@ public class Merchant extends AuditEntity {
 	@OneToMany(mappedBy ="merchants")
 	private List<MerchantAccount> merchantAccounts;
 	
+	@OneToMany(mappedBy ="merchantFeesCalc")
+	private List<FeesCalculation> merchantFees;
+	
 	@ManyToMany
 	@JoinTable(
 			  name = "mechant_device", 

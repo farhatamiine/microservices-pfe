@@ -30,8 +30,6 @@ import com.abdali.microhps.integrityservice.validation.powerCard.PowerCardValida
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
  
 

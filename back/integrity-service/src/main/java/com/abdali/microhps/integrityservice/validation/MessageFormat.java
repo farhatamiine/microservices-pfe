@@ -15,7 +15,6 @@ import static com.abdali.microhps.integrityservice.utils.Constants.VERIFICATION_
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-
 import org.springframework.stereotype.Service;
 
 import com.abdali.microhps.integrityservice.exceptions.IntegrityException;

@@ -12,4 +12,7 @@ public interface MerchantDeviceProxy {
 	@GetMapping("/account-limits/merchant-number/{merchantNumber}")
 	public AccountLimitsModel getMerchantLimits(@PathVariable("merchantNumber") Long merchantNumber);
 	
+	@GetMapping("/merchant-account/{merchantNumber}/account-type/{type}")
+	public String getMerchantAccount(@PathVariable("merchantNumber") Long merchantNumber,@PathVariable("type") String type);
+	
 }

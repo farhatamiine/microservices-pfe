@@ -3,7 +3,6 @@ package com.abdali.microhps.devicemerchantservice.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.abdali.microhps.devicemerchantservice.model.FeesCalculation;
 import com.abdali.microhps.devicemerchantservice.model.Merchant;
 import com.abdali.microhps.devicemerchantservice.model.enumeration.MerchantStatus;
 

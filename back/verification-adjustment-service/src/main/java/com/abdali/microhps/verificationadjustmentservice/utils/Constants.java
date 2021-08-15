@@ -13,6 +13,7 @@ public interface Constants {
 		
 		// type of cleared transaction
 		String CREDITED_TYPE = "credited";
+		String DEBITED_TYPE = "debited";
 		
 		//Settlement Mode
 		String DROP_SETTLEMENT_MODE = "onDrop";

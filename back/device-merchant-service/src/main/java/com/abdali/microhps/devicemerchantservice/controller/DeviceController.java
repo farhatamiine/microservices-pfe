@@ -30,6 +30,11 @@ public class DeviceController {
 	    this.deviceService = deviceService;
 	  }
 	
+	@GetMapping("/basic")
+	public String getBasic() {
+		return "hello world";
+	}
+	
 	@GetMapping("/merchant-device/devices")
     public ResponseEntity<Map<String, Object>> getAllDevices(
     	  @RequestParam(required = false) String deviceNumber,

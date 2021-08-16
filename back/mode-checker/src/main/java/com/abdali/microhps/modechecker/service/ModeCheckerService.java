@@ -77,6 +77,7 @@ public class ModeCheckerService {
 				TransactionModel transactionSettlement = objectMapper.convertValue(transactionCore, TransactionModel.class);
 				transactionSettlement.setMerchantNumber(merchantNumber);
 				merchantSettlementMode = deviceMerchantProxy.returnMerchantSettlementMode(merchantNumber);
+				// TODO: 16-08-21 :: maybe need to be removed if we will verify until Verif message come.
 				if(merchantSettlementMode == REMOVAL_SETTLEMENT_MODE) {
 					transactionSettlement.setMerchantSettlementMode(merchantSettlementMode);
 				}

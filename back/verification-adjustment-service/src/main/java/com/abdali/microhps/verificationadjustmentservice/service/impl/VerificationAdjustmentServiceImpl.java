@@ -192,7 +192,7 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 			
 			/*
 			 * 1 if a is greater than b
-			 * -1 if b is less than b
+			 * -1 if a is less than b
 			 * 0 if a is equal to b
 			 */
 			if(verificationMessage.getTotalAmount().compareTo(sumDrops) == 1) {
@@ -214,7 +214,7 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 						- User must approve the case to trigger the processing of the adjustment to DDA account after investigation
 					 */
 					// Create Adjustment.
-					verificationAdjustmentEvent.setTransferAmount(verificationMessage.getTotalAmount().subtract(sumDrops));
+					verificationAdjustmentEvent.setTransferAmount(diffrentBetween);
 					verificationAdjustmentEvent.setTransferSign(TransferSign.C);
 					String accountNumber = merchantDeviceProxy.getMerchantAccount(verificationMessage.getMerchantNumber(), CREDITED_TYPE);
 					verificationAdjustmentEvent.setAccountNumber(accountNumber);
@@ -234,7 +234,7 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 					verificationAdjustmentEvent.setAccountNumber(accountNumber);
 					
 					// Process it.
-					// if the mode is on drop and the sum drops is less than the removal we need to credited merchant account.
+					// if the mode is on drop and the sum drops is less than the Verif we need to credited merchant account.
 					if(verificationMessage.getMerchantSettlementMode() == DROP_SETTLEMENT_MODE || verificationMessage.getMerchantSettlementMode() == REMOVAL_SETTLEMENT_MODE) { 
 						// TODO :: add into Pre-cleared topic.
 						CoreTransactionModel transactionPreCleared = new CoreTransactionModel();
@@ -266,7 +266,7 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 					verificationAdjustmentEvent.setAccountNumber(accountNumber);
 					
 					// Process it.
-					// if the mode is on drop and the sum drops is less than the removal we need to credited merchant account.
+					// if the mode is on drop and the sum drops is less than the verif we need to credited merchant account.
 					if(verificationMessage.getMerchantSettlementMode() == DROP_SETTLEMENT_MODE || verificationMessage.getMerchantSettlementMode() == REMOVAL_SETTLEMENT_MODE) { 
 						// TODO :: add into Pre-cleared topic.
 						CoreTransactionModel transactionPreCleared = new CoreTransactionModel();

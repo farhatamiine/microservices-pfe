@@ -65,6 +65,7 @@ public class ModeCheckerService {
 					TransactionModel transactionSettlement = objectMapper.convertValue(transactionCore, TransactionModel.class);
 					transactionSettlement.setMerchantNumber(merchantNumber);
 					transactionSettlement.setTypeCD(CREDITED_TYPE);
+					// XXX :: put it into Pre-cleared directly.
 					settlementTransactionProducer.sendTransactionEvent(transactionSettlement, TOPIC_PRECLEARED_SETTLEMENT_EVENTS);
 				}
 				break;
@@ -77,12 +78,13 @@ public class ModeCheckerService {
 				TransactionModel transactionSettlement = objectMapper.convertValue(transactionCore, TransactionModel.class);
 				transactionSettlement.setMerchantNumber(merchantNumber);
 				merchantSettlementMode = deviceMerchantProxy.returnMerchantSettlementMode(merchantNumber);
-				// TODO: 16-08-21 :: maybe need to be removed if we will verify until Verif message come.
+				// TODO: 16-08-21 :: maybe need to be removed if we will verify until Verify message come.
+				// XXX : 25/08/21 :: To know -- the drop verification it will be processed on "count adjustment".
 				if(merchantSettlementMode == REMOVAL_SETTLEMENT_MODE) {
 					transactionSettlement.setMerchantSettlementMode(merchantSettlementMode);
 				}
-				settlementTransactionProducer.sendTransactionEvent(transactionSettlement, TOPIC_REMOVAL_SETTLEMENT_EVENTS); 
-				// TODO: add list of drops to topic. will did in removal adjustment service.
+				// XXX : 25-08-21 sent to removal adjustment for process "to check with drops before cleared". 
+				settlementTransactionProducer.sendTransactionEvent(transactionSettlement, TOPIC_REMOVAL_SETTLEMENT_EVENTS);
 				break;
 			case VERIFICATION_INDICATOR: 
 				deviceNumber = transactionCore.getDeviceNumber();
@@ -94,6 +96,7 @@ public class ModeCheckerService {
 				if(merchantSettlementMode == VERIFICATION_SETTLEMENT_MODE) {
 					transactionCountSettlement.setMerchantSettlementMode(merchantSettlementMode);
 				}
+				// XXX : 25-08-21 sent to count adjustment for process "multiple checks before cleared". 
 				settlementTransactionProducer.sendTransactionEvent(transactionCountSettlement, TOPIC_VERIFICATION_SETTLEMENT_EVENTS);
 				break;
 		}

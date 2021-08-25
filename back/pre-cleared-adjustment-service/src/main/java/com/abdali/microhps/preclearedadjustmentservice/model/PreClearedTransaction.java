@@ -28,10 +28,13 @@ public class PreClearedTransaction extends AuditEntity {
 //	private Instant transmitionDate;
 //	private String merchantSettlementMode;
 	
+	private Integer transactionId; 
 	private String deviceNumber;
 	private String bagNumber;  
 	private Long merchantNumber;
 	private BigDecimal creaditedAmount;
 	private BigDecimal debitedAmount;
+	// credited/debited.
+	private String typeCD;
 	private String accountNumber;
 }

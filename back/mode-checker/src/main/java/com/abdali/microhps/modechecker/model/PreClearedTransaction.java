@@ -1,4 +1,4 @@
-package com.abdali.microhps.verificationadjustmentservice.model;
+package com.abdali.microhps.modechecker.model;
 
 import java.math.BigDecimal;
 import lombok.AllArgsConstructor;

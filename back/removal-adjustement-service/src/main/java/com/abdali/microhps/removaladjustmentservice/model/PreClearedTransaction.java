@@ -1,4 +1,4 @@
-package com.abdali.microhps.verificationadjustmentservice.model;
+package com.abdali.microhps.removaladjustmentservice.model;
 
 import java.math.BigDecimal;
 import lombok.AllArgsConstructor;

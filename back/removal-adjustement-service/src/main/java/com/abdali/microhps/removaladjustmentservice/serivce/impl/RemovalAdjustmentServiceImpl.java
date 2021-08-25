@@ -1,6 +1,6 @@
 package com.abdali.microhps.removaladjustmentservice.serivce.impl;
 
-import static com.abdali.microhps.removaladjustmentservice.utils.Constants.PRODUCER_TOPIC_PRE_CLEARED;
+import static com.abdali.microhps.removaladjustmentservice.utils.Constants.PRODUCER_TOPIC_PRE_CLEARED; 
 import static com.abdali.microhps.removaladjustmentservice.utils.Constants.CREDITED_TYPE; 
 import static com.abdali.microhps.removaladjustmentservice.utils.Constants.REMOVAL_SETTLEMENT_MODE;
 import static com.abdali.microhps.removaladjustmentservice.utils.Constants.DROP_SETTLEMENT_MODE;
@@ -14,12 +14,13 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
- 
+
 import com.abdali.microhps.removaladjustmentservice.model.AdjustmentEvent;
 import com.abdali.microhps.removaladjustmentservice.model.CaseInformataion;
 import com.abdali.microhps.removaladjustmentservice.model.CoreTransactionModel;
+import com.abdali.microhps.removaladjustmentservice.model.PreClearedTransaction;
 import com.abdali.microhps.removaladjustmentservice.model.enumeration.TransferSign;
-import com.abdali.microhps.removaladjustmentservice.producer.PreClearedTransaction;
+import com.abdali.microhps.removaladjustmentservice.producer.PreClearedTransactionProducer;
 import com.abdali.microhps.removaladjustmentservice.proxy.AdjustmentEventProxy;
 import com.abdali.microhps.removaladjustmentservice.proxy.DropTransactionProxy;
 import com.abdali.microhps.removaladjustmentservice.proxy.MerchantDeviceProxy;
@@ -40,7 +41,7 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 	MerchantDeviceProxy merchantDeviceProxy;
 	RemovalTransactionProxy removalTransactionProxy;
 	DropTransactionProxy dropTransactionProxy;
-	PreClearedTransaction preClearedTransaction;
+	PreClearedTransactionProducer preClearedTransactionProducer;
     ObjectMapper objectMapper;
     AdjustmentEventProxy adjustementEventProxy;
     CaseInformationRepository caseInformationRepository;
@@ -50,7 +51,7 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 			MerchantDeviceProxy merchantDeviceProxy,
 			RemovalTransactionProxy removalTransactionProxy,
 			DropTransactionProxy dropTransactionProxy,
-			PreClearedTransaction preClearedTransaction,
+			PreClearedTransactionProducer preClearedTransactionProducer,
 		    ObjectMapper objectMapper,
 		    AdjustmentEventProxy adjustementEventProxy,
 		    CaseInformationRepository caseInformationRepository
@@ -60,7 +61,7 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 		this.removalTransactionProxy = removalTransactionProxy;
 		this.dropTransactionProxy = dropTransactionProxy;
 	    this.objectMapper = objectMapper;
-	    this.preClearedTransaction = preClearedTransaction;
+	    this.preClearedTransactionProducer = preClearedTransactionProducer;
 	    this.caseInformationRepository = caseInformationRepository;
 	} 
 	
@@ -82,8 +83,11 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 		
 		// add to pre-cleared adjustment topic.
 		if(removalMessage.getMerchantSettlementMode() == REMOVAL_SETTLEMENT_MODE) { 
-			removalMessage.setTypeCD(CREDITED_TYPE);
-			preClearedTransaction.sendTransactionEvent(removalMessage, PRODUCER_TOPIC_PRE_CLEARED);
+			// TODO :: missing -- creaditedAmount / debitedAmount.
+			PreClearedTransaction preClearedTransaction = objectMapper.convertValue(removalMessage, PreClearedTransaction.class);
+			preClearedTransaction.setTypeCD(CREDITED_TYPE);
+			preClearedTransaction.setCreaditedAmount(removalMessage.getTotalAmount());
+			preClearedTransactionProducer.sendClearedTransactionEvent(preClearedTransaction, PRODUCER_TOPIC_PRE_CLEARED);
 		}
 		
 		CoreTransactionModel lastRemovalMessage = removalTransactionProxy.findRemovalTransaction(deviceNumber, bagNumber, transactionId);
@@ -152,16 +156,12 @@ public class RemovalAdjustmentServiceImpl implements RemovalAdjustmentService {
 					
 					// if the mode is on drop and the sum drops is less than the removal we need to credited merchant account.
 					if(removalMessage.getMerchantSettlementMode() == DROP_SETTLEMENT_MODE) {  
-						CoreTransactionModel transactionPreCleared = new CoreTransactionModel();
-						transactionPreCleared.setBagNumber(bagNumber);
-						transactionPreCleared.setDeviceNumber(deviceNumber);
-						transactionPreCleared.setTransactionId(transactionId);
-						transactionPreCleared.setMerchantNumber(removalMessage.getMerchantNumber());
-						transactionPreCleared.setTransmitionDate(currentRemovalTransactionDate);
-						transactionPreCleared.setCurrency(removalMessage.getCurrency());
-						transactionPreCleared.setTotalAmount(removalMessage.getTotalAmount().subtract(sumDrops));
-						transactionPreCleared.setTypeCD(CREDITED_TYPE);
-						preClearedTransaction.sendTransactionEvent(transactionPreCleared, PRODUCER_TOPIC_PRE_CLEARED);
+						// TODO :: missing -- creaditedAmount / debitedAmount.
+						PreClearedTransaction preClearedTransaction = objectMapper.convertValue(removalMessage, PreClearedTransaction.class);
+						preClearedTransaction.setTypeCD(CREDITED_TYPE);
+						preClearedTransaction.setCreaditedAmount(removalMessage.getTotalAmount());
+						preClearedTransaction.setCreaditedAmount(removalMessage.getTotalAmount().subtract(sumDrops));
+						preClearedTransactionProducer.sendClearedTransactionEvent(preClearedTransaction, PRODUCER_TOPIC_PRE_CLEARED);
 					}
 					
 				} else if (removalMessage.getTotalAmount().compareTo(sumDrops) == -1) {

@@ -8,7 +8,6 @@ import static com.abdali.microhps.modechecker.utils.Constants.DROP_SETTLEMENT_MO
 import static com.abdali.microhps.modechecker.utils.Constants.REMOVAL_SETTLEMENT_MODE;
 import static com.abdali.microhps.modechecker.utils.Constants.VERIFICATION_SETTLEMENT_MODE;
 
-import static com.abdali.microhps.modechecker.utils.Constants.TOPIC_PRECLEARED_SETTLEMENT_EVENTS;
 import static com.abdali.microhps.modechecker.utils.Constants.TOPIC_REMOVAL_SETTLEMENT_EVENTS;
 import static com.abdali.microhps.modechecker.utils.Constants.TOPIC_VERIFICATION_SETTLEMENT_EVENTS;
 
@@ -18,8 +17,10 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.abdali.microhps.modechecker.model.PreClearedTransaction;
 import com.abdali.microhps.modechecker.model.Transaction;
 import com.abdali.microhps.modechecker.model.TransactionModel;
+import com.abdali.microhps.modechecker.producer.PreClearedTransactionProducer;
 import com.abdali.microhps.modechecker.producer.SettlementTransactionProducer;
 import com.abdali.microhps.modechecker.proxy.DeviceMerchantProxy;
 import com.abdali.microhps.modechecker.proxy.DropTransactionProxy;
@@ -33,6 +34,7 @@ public class ModeCheckerService {
 	DeviceMerchantProxy deviceMerchantProxy;
 	DropTransactionProxy dropTransactionProxy;
 	SettlementTransactionProducer settlementTransactionProducer;
+	PreClearedTransactionProducer preClearedTransactionProducer;
     ObjectMapper objectMapper; 
 	
 	@Autowired
@@ -40,10 +42,12 @@ public class ModeCheckerService {
 			DeviceMerchantProxy deviceMerchantProxy,
 			DropTransactionProxy dropTransactionProxy,
 			SettlementTransactionProducer settlementTransactionProducer,
+			PreClearedTransactionProducer preClearedTransactionProducer,
 		    ObjectMapper objectMapper
 			) {
 		this.deviceMerchantProxy = deviceMerchantProxy;
 		this.settlementTransactionProducer = settlementTransactionProducer;
+		this.preClearedTransactionProducer = preClearedTransactionProducer;
 		this.dropTransactionProxy = dropTransactionProxy;
 	    this.objectMapper = objectMapper;
 	} 
@@ -52,6 +56,7 @@ public class ModeCheckerService {
 		
 		// Save into topic depend on merchant mode.
 		Transaction transactionCore = objectMapper.readValue(consumerRecord.value(), Transaction.class);
+		
 		Long merchantNumber;
 		String merchantSettlementMode;
 		String deviceNumber;
@@ -62,11 +67,12 @@ public class ModeCheckerService {
 				merchantNumber = transactionCore.getDropTransaction().getMerchantNumber(); 
 				merchantSettlementMode = deviceMerchantProxy.returnMerchantSettlementMode(merchantNumber);
 				if(merchantSettlementMode == DROP_SETTLEMENT_MODE) {
-					TransactionModel transactionSettlement = objectMapper.convertValue(transactionCore, TransactionModel.class);
-					transactionSettlement.setMerchantNumber(merchantNumber);
-					transactionSettlement.setTypeCD(CREDITED_TYPE);
+					// TODO :: missing -- creaditedAmount / debitedAmount.
+					PreClearedTransaction preClearedTransaction = objectMapper.convertValue(transactionCore, PreClearedTransaction.class);
+					preClearedTransaction.setMerchantNumber(merchantNumber);
+					preClearedTransaction.setTypeCD(CREDITED_TYPE);
 					// XXX :: put it into Pre-cleared directly.
-					settlementTransactionProducer.sendTransactionEvent(transactionSettlement, TOPIC_PRECLEARED_SETTLEMENT_EVENTS);
+					preClearedTransactionProducer.sendClearedTransactionEvent(preClearedTransaction);
 				}
 				break;
 			case REMOVAL_INDICATOR:

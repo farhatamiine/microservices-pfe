@@ -5,7 +5,6 @@ import static com.abdali.microhps.preclearedadjustmentservice.utils.Constants.PR
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.stereotype.Service;
 
-import com.abdali.microhps.preclearedadjustmentservice.model.CoreTransactionModel;
 import com.abdali.microhps.preclearedadjustmentservice.model.PreClearedTransaction;
 import com.abdali.microhps.preclearedadjustmentservice.producer.PreClearedTransactionProducer;
 import com.abdali.microhps.preclearedadjustmentservice.proxy.MerchantDeviceProxy;
@@ -39,21 +38,21 @@ public class DropAdjustmentServiceImpl implements DropAdjustmentService {
 	public void save(ConsumerRecord<Integer, String> consumerRecord) throws JsonMappingException, JsonProcessingException {
 		 
 		// Credited Amount :: to change .
-		CoreTransactionModel clearedTransaction = objectMapper.readValue(consumerRecord.value(), CoreTransactionModel.class);
+		PreClearedTransaction clearedTransaction = objectMapper.readValue(consumerRecord.value(), PreClearedTransaction.class);
 		
-		PreClearedTransaction finalClearedTransaction = objectMapper.convertValue(clearedTransaction, PreClearedTransaction.class);
+//		PreClearedTransaction finalClearedTransaction = objectMapper.convertValue(clearedTransaction, PreClearedTransaction.class);
 		
-		finalClearedTransaction.setCreaditedAmount(clearedTransaction.getTotalAmount()); 
+//		clearedTransaction.setCreaditedAmount(clearedTransaction.getTotalAmount()); 
 		
 		//Account Number
-		String accountNumber = merchantDeviceProxy.getMerchantCreditedAccount(finalClearedTransaction.getMerchantNumber(), clearedTransaction.getTypeCD());
-		finalClearedTransaction.setAccountNumber(accountNumber);  
+		String accountNumber = merchantDeviceProxy.getMerchantAccount(clearedTransaction.getMerchantNumber(), clearedTransaction.getTypeCD());
+		clearedTransaction.setAccountNumber(accountNumber);  
 		
 //		PreClearedTransaction clearedDropTransaction = new PreClearedTransaction();
 		 
-		PreClearedTransaction result = preClearedTransactionRepository.save(finalClearedTransaction);
+		PreClearedTransaction result = preClearedTransactionRepository.save(clearedTransaction);
 		
-		// add to drop adjustment topic. just if mode is removal or it will be duplicated.
-		preClearedTransactionProducer.sendTransactionEvent(finalClearedTransaction, PRODUCER_TOPIC_SETTLEMENT_EVENTS); 
+		// send to settlement event
+		preClearedTransactionProducer.sendTransactionEvent(clearedTransaction, PRODUCER_TOPIC_SETTLEMENT_EVENTS); 
 	}
 } 

@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import com.abdali.microhps.verificationadjustmentservice.model.AccountLimitsModel;
 import com.abdali.microhps.verificationadjustmentservice.model.AdjustmentEvent;
 import com.abdali.microhps.verificationadjustmentservice.model.CoreTransactionModel;
+import com.abdali.microhps.verificationadjustmentservice.model.PreClearedTransaction;
 import com.abdali.microhps.verificationadjustmentservice.model.RemovalDropTransaction;
 import com.abdali.microhps.verificationadjustmentservice.model.RemovalTransaction;
 import com.abdali.microhps.verificationadjustmentservice.model.enumeration.TransferSign;
@@ -84,8 +85,11 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 
 		// add verification value to Pre-cleared.
 		if (verificationMessage.getMerchantSettlementMode() == VERIFICATION_SETTLEMENT_MODE) {
-			verificationMessage.setTypeCD(CREDITED_TYPE);
-			preClearedTransactionProducer.sendTransactionEvent(verificationMessage, PRODUCER_TOPIC_PRE_CLEARED);
+			// TODO :: missing :: totalAmount(creaditedAmount/debitedAmount).
+			PreClearedTransaction preClearedTransaction = objectMapper.convertValue(verificationMessage, PreClearedTransaction.class);
+			preClearedTransaction.setTypeCD(CREDITED_TYPE);
+			preClearedTransaction.setCreaditedAmount(verificationMessage.getTotalAmount());
+			preClearedTransactionProducer.sendClearedTransactionEvent(preClearedTransaction, PRODUCER_TOPIC_PRE_CLEARED);
 		}
 
 		CoreTransactionModel lastVerificationMessage = verificationTransactionProxy
@@ -251,16 +255,14 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 					if (verificationMessage.getMerchantSettlementMode() == DROP_SETTLEMENT_MODE
 							|| verificationMessage.getMerchantSettlementMode() == REMOVAL_SETTLEMENT_MODE) {
 						// TODO :: add into Pre-cleared topic.
-						CoreTransactionModel transactionPreCleared = new CoreTransactionModel();
-						transactionPreCleared.setBagNumber(bagNumber);
-						transactionPreCleared.setDeviceNumber(deviceNumber);
-						transactionPreCleared.setTransactionId(transactionId);
-						transactionPreCleared.setMerchantNumber(verificationMessage.getMerchantNumber());
-						transactionPreCleared.setTransmitionDate(currentVerificationTransactionDate);
-						transactionPreCleared.setCurrency(verificationMessage.getCurrency());
-						transactionPreCleared.setTotalAmount(diffrentBetween);
-						transactionPreCleared.setTypeCD(CREDITED_TYPE);
-						preClearedTransactionProducer.sendTransactionEvent(transactionPreCleared,
+						PreClearedTransaction preClearedTransaction = new PreClearedTransaction();
+						preClearedTransaction.setBagNumber(bagNumber);
+						preClearedTransaction.setDeviceNumber(deviceNumber);
+						preClearedTransaction.setTransactionId(transactionId);
+						preClearedTransaction.setMerchantNumber(verificationMessage.getMerchantNumber());
+						preClearedTransaction.setCreaditedAmount(diffrentBetween);
+						preClearedTransaction.setTypeCD(CREDITED_TYPE);
+						preClearedTransactionProducer.sendClearedTransactionEvent(preClearedTransaction,
 								PRODUCER_TOPIC_PRE_CLEARED);
 					}
 
@@ -290,16 +292,14 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 					if (verificationMessage.getMerchantSettlementMode() == DROP_SETTLEMENT_MODE
 							|| verificationMessage.getMerchantSettlementMode() == REMOVAL_SETTLEMENT_MODE) {
 						// TODO :: add into Pre-cleared topic.
-						CoreTransactionModel transactionPreCleared = new CoreTransactionModel();
-						transactionPreCleared.setBagNumber(bagNumber);
-						transactionPreCleared.setDeviceNumber(deviceNumber);
-						transactionPreCleared.setTransactionId(transactionId);
-						transactionPreCleared.setMerchantNumber(verificationMessage.getMerchantNumber());
-						transactionPreCleared.setTransmitionDate(currentVerificationTransactionDate);
-						transactionPreCleared.setCurrency(verificationMessage.getCurrency());
-						transactionPreCleared.setTotalAmount(diffrentBetween);
-						transactionPreCleared.setTypeCD(CREDITED_TYPE);
-						preClearedTransactionProducer.sendTransactionEvent(transactionPreCleared,
+						PreClearedTransaction preClearedTransaction = new PreClearedTransaction();
+						preClearedTransaction.setBagNumber(bagNumber);
+						preClearedTransaction.setDeviceNumber(deviceNumber);
+						preClearedTransaction.setTransactionId(transactionId);
+						preClearedTransaction.setMerchantNumber(verificationMessage.getMerchantNumber());
+						preClearedTransaction.setCreaditedAmount(diffrentBetween);
+						preClearedTransaction.setTypeCD(CREDITED_TYPE);
+						preClearedTransactionProducer.sendClearedTransactionEvent(preClearedTransaction,
 								PRODUCER_TOPIC_PRE_CLEARED);
 					}
 
@@ -322,6 +322,7 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 			} else if (verificationMessage.getTotalAmount().compareTo(sumDrops) == -1) {
 
 				String caseMessage = null;
+				
 				BigDecimal diffrentBetween = sumDrops.subtract(verificationMessage.getTotalAmount());
 
 				if (diffrentBetween.compareTo(new BigDecimal(maxValue)) == 1) {
@@ -333,9 +334,7 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 					verificationAdjustmentEvent
 							.setTransferAmount(diffrentBetween);
 					verificationAdjustmentEvent.setTransferSign(TransferSign.D);
-					String accountNumber = merchantDeviceProxy
-							.getMerchantAccount(verificationMessage.getMerchantNumber(), DEBITED_TYPE);
-					verificationAdjustmentEvent.setAccountNumber(accountNumber);
+					
 
 					caseMessage = "verification messasge is less than the sum of drops and the different betwen them is greater than max vendor value : "
 							+ diffrentBetween + " > " + maxValue
@@ -382,16 +381,14 @@ public class VerificationAdjustmentServiceImpl implements VerificationAdjustment
 					if (verificationMessage.getMerchantSettlementMode() == DROP_SETTLEMENT_MODE
 							|| verificationMessage.getMerchantSettlementMode() == REMOVAL_SETTLEMENT_MODE) {
 						// TODO :: add into Pre-cleared topic.
-						CoreTransactionModel transactionPreCleared = new CoreTransactionModel();
-						transactionPreCleared.setBagNumber(bagNumber);
-						transactionPreCleared.setDeviceNumber(deviceNumber);
-						transactionPreCleared.setTransactionId(transactionId);
-						transactionPreCleared.setMerchantNumber(verificationMessage.getMerchantNumber());
-						transactionPreCleared.setTransmitionDate(currentVerificationTransactionDate);
-						transactionPreCleared.setCurrency(verificationMessage.getCurrency());
-						transactionPreCleared.setTotalAmount(diffrentBetween);
-						transactionPreCleared.setTypeCD(DEBITED_TYPE);
-						preClearedTransactionProducer.sendTransactionEvent(transactionPreCleared,
+						PreClearedTransaction preClearedTransaction = new PreClearedTransaction();
+						preClearedTransaction.setBagNumber(bagNumber);
+						preClearedTransaction.setDeviceNumber(deviceNumber);
+						preClearedTransaction.setTransactionId(transactionId);
+						preClearedTransaction.setMerchantNumber(verificationMessage.getMerchantNumber());
+						preClearedTransaction.setDebitedAmount(diffrentBetween);
+						preClearedTransaction.setTypeCD(DEBITED_TYPE);
+						preClearedTransactionProducer.sendClearedTransactionEvent(preClearedTransaction,
 								PRODUCER_TOPIC_PRE_CLEARED);
 					}
 

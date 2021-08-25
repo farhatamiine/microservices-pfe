@@ -20,5 +20,4 @@ public class PreClearedTransaction {
 	private BigDecimal debitedAmount;
 	// credited/debited.
 	private String typeCD;
-	private String accountNumber;
 }

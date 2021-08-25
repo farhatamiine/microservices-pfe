@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
-import com.abdali.microhps.verificationadjustmentservice.model.CoreTransactionModel; 
+import com.abdali.microhps.verificationadjustmentservice.model.PreClearedTransaction;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,14 +29,14 @@ public class PreClearedTransactionProducer {
     @Autowired
     ObjectMapper objectMapper;
     
-    public ListenableFuture<SendResult<Integer,String>> sendTransactionEvent(CoreTransactionModel coreTransactionModel, String topic) throws JsonProcessingException {
+    public ListenableFuture<SendResult<Integer,String>> sendClearedTransactionEvent(PreClearedTransaction preClearedTransaction, String topic) throws JsonProcessingException {
 
     	Random rand = new Random(); 
         //generate random values from 0-24
         int int_random = rand.nextInt(25);
         
         Integer key = int_random; 
-        String value = objectMapper.writeValueAsString(coreTransactionModel);
+        String value = objectMapper.writeValueAsString(preClearedTransaction);
         
         ProducerRecord<Integer,String> producerRecord = buildProducerRecord(key, value, topic);
 

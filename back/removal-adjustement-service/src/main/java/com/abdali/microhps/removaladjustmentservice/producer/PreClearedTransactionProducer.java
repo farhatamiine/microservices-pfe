@@ -1,6 +1,8 @@
 package com.abdali.microhps.removaladjustmentservice.producer;
 
 import java.util.List;
+import java.util.Random;
+
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -11,7 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
  
-import com.abdali.microhps.removaladjustmentservice.model.CoreTransactionModel;
+import com.abdali.microhps.removaladjustmentservice.model.PreClearedTransaction;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -19,17 +21,21 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class PreClearedTransaction {
+public class PreClearedTransactionProducer {
 	@Autowired
     KafkaTemplate<Long,String> kafkaTemplate;
     
     @Autowired
     ObjectMapper objectMapper;
     
-    public ListenableFuture<SendResult<Long,String>> sendTransactionEvent(CoreTransactionModel coreTransactionModel, String topic) throws JsonProcessingException {
-
-        Long key = coreTransactionModel.getId();
-        String value = objectMapper.writeValueAsString(coreTransactionModel);
+    public ListenableFuture<SendResult<Long,String>> sendClearedTransactionEvent(PreClearedTransaction preClearedTransaction, String topic) throws JsonProcessingException {
+    	
+    	Random rand = new Random(); 
+        //generate random values from 0-24
+        Long long_random = rand.nextLong();
+        
+        Long key = long_random;
+        String value = objectMapper.writeValueAsString(preClearedTransaction);
         
         ProducerRecord<Long,String> producerRecord = buildProducerRecord(key, value, topic);
 
